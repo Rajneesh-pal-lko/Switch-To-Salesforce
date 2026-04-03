@@ -1,5 +1,6 @@
 {
   "name": "switch-to-salesforce-frontend",
+  "version": "1.0.1",
   "private": true,
   "description": "Static frontend — build step only writes API URL for production",
   "scripts": {
