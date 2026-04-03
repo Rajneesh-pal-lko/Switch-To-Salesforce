@@ -1,0 +1,8 @@
+# Netlify: connect this repo; base directory is set here for the monorepo layout.
+[build]
+  base = "switch-to-salesforce-frontend"
+  command = "npm run build"
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "20"

@@ -1,0 +1,14 @@
+# Render Blueprint — set secrets in the Render dashboard (or link repo and add env vars).
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: switch-to-salesforce-api
+    runtime: node
+    plan: free
+    rootDir: switch-to-salesforce-backend
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production

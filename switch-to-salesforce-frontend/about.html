@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="About Switch To Salesforce — who this site is for and how it works." />
+    <title>Switch To Salesforce — About</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body data-page="about">
+    <div data-include="navbar"></div>
+    <div class="layout">
+      <div data-include="sidebar"></div>
+      <main class="main">
+        <header class="page-header">
+          <h1 class="page-title">About Switch To Salesforce</h1>
+          <p class="page-lead">
+            A documentation-style blog for people moving into Salesforce roles and leveling up on the platform.
+          </p>
+        </header>
+        <article class="prose">
+          <p>
+            <strong>Switch To Salesforce</strong> teaches Salesforce development and administration through clear,
+            long-form articles — inspired by modern docs sites and product blogs. Expect tutorials on Apex, Lightning Web
+            Components, Flow Builder, data modeling, security, interviews, certification paths, and career roadmaps.
+          </p>
+          <h2>Who it is for</h2>
+          <ul>
+            <li>Developers transitioning to Salesforce</li>
+            <li>Salesforce administrators expanding their skills</li>
+            <li>Students preparing for certifications</li>
+            <li>Professionals preparing for Salesforce interviews</li>
+          </ul>
+          <h2>How it is built</h2>
+          <ul>
+            <li><strong>Frontend</strong> — static HTML, CSS, and JavaScript; deployable to Vercel, Netlify, or Cloudflare Pages.</li>
+            <li><strong>Backend</strong> — separate Express + MongoDB API with JWT admin auth and image uploads. The browser only talks to REST endpoints.</li>
+          </ul>
+          <h2>Features</h2>
+          <p>
+            Responsive layout, dark mode, reading progress on articles, syntax highlighting, and copy-to-clipboard for code
+            blocks.
+          </p>
+        </article>
+      </main>
+    </div>
+    <div data-include="footer"></div>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

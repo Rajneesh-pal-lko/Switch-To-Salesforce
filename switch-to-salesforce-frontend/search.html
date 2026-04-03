@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Search Switch To Salesforce articles." />
+    <title>Switch To Salesforce — Search</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body data-page="search">
+    <div data-include="navbar"></div>
+    <div class="layout">
+      <div data-include="sidebar"></div>
+      <main class="main">
+        <header class="page-header">
+          <h1 class="page-title">Search</h1>
+          <p class="page-lead">Full-text search powered by the API (<code>GET /api/posts?q=</code>).</p>
+        </header>
+        <div class="search-panel">
+          <form id="search-form" role="search">
+            <label class="sr-only" for="search-input">Query</label>
+            <input id="search-input" type="search" name="q" placeholder="Try: Apex, LWC, Flow, SOQL…" autocomplete="off" />
+            <button type="submit" class="btn btn--primary">Search</button>
+          </form>
+        </div>
+        <div id="search-results" class="blog-grid"></div>
+      </main>
+    </div>
+    <div data-include="footer"></div>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/search.js"></script>
+  </body>
+</html>

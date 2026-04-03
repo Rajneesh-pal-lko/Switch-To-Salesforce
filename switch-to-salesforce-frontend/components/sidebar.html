@@ -1,0 +1,54 @@
+<aside class="sidebar" id="app-sidebar" data-sidebar>
+  <div class="sidebar__inner">
+    <div class="sidebar__block">
+      <p class="sidebar__label">On this site</p>
+      <nav class="sidebar__nav" aria-label="Primary">
+        <a data-nav-link href="index.html">Home</a>
+        <a data-nav-link href="blog.html">Articles</a>
+        <a data-nav-link href="search.html">Search</a>
+        <a data-nav-link href="about.html">About</a>
+        <a data-nav-link href="contact.html">Contact</a>
+      </nav>
+    </div>
+
+    <div class="sidebar__block">
+      <button type="button" class="sidebar__accordion-toggle" data-accordion-toggle aria-expanded="true" aria-controls="sidebar-tutorials">
+        Tutorials
+      </button>
+      <div id="sidebar-tutorials" class="sidebar__accordion-panel">
+        <ul class="sidebar__tree">
+          <li><a href="category.html?slug=sf-admin">SF Admin</a></li>
+          <li><a href="category.html?slug=objects-and-fields">Objects &amp; Fields</a></li>
+          <li><a href="category.html?slug=flow-builder">Flow Builder</a></li>
+          <li><a href="category.html?slug=apex-development">Apex Development</a></li>
+          <li><a href="category.html?slug=lightning-web-components">Lightning Web Components</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sidebar__block">
+      <button type="button" class="sidebar__accordion-toggle" data-accordion-toggle aria-expanded="true" aria-controls="sidebar-prep">
+        Preparation
+      </button>
+      <div id="sidebar-prep" class="sidebar__accordion-panel">
+        <ul class="sidebar__tree">
+          <li><a href="category.html?slug=interview-questions">Interview Questions</a></li>
+          <li><a href="category.html?slug=career-roadmap">Career Roadmap</a></li>
+          <li><a href="category.html?slug=certification-preparation">Certification Preparation</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sidebar__block">
+      <button type="button" class="sidebar__accordion-toggle" data-accordion-toggle aria-expanded="true" aria-controls="sidebar-categories">
+        Categories
+      </button>
+      <div id="sidebar-categories" class="sidebar__accordion-panel">
+        <ul class="sidebar__tree" data-category-list>
+          <li class="muted">Loading…</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</aside>
+<div class="sidebar-overlay" data-sidebar-overlay hidden></div>

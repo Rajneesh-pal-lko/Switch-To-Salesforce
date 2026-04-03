@@ -1,0 +1,44 @@
+<footer class="site-footer">
+  <div class="site-footer__grid">
+    <div>
+      <p class="site-footer__brand">Switch To Salesforce</p>
+      <p class="muted">
+        Documentation-style tutorials and guides for Salesforce development and administration — Apex, LWC, Flows, admin
+        patterns, interviews, and certifications.
+      </p>
+    </div>
+    <div>
+      <p class="site-footer__label">Learn</p>
+      <ul class="site-footer__links">
+        <li><a href="category.html?slug=sf-admin">SF Admin</a></li>
+        <li><a href="category.html?slug=apex-development">Apex</a></li>
+        <li><a href="category.html?slug=lightning-web-components">Lightning Web Components</a></li>
+        <li><a href="category.html?slug=flow-builder">Flow Builder</a></li>
+        <li><a href="blog.html">All articles</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="site-footer__label">Preparation</p>
+      <ul class="site-footer__links">
+        <li><a href="category.html?slug=interview-questions">Interview questions</a></li>
+        <li><a href="category.html?slug=career-roadmap">Career roadmap</a></li>
+        <li><a href="category.html?slug=certification-preparation">Certification prep</a></li>
+        <li><a href="search.html">Search</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="site-footer__label">Connect</p>
+      <ul class="site-footer__links">
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact &amp; newsletter</a></li>
+        <li><a href="index.html">Home</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="site-footer__copy">© <span data-year></span> Switch To Salesforce. All rights reserved.</p>
+</footer>
+<script>
+  document.querySelectorAll("[data-year]").forEach(function (el) {
+    el.textContent = new Date().getFullYear();
+  });
+</script>

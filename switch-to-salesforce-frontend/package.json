@@ -1,0 +1,12 @@
+{
+  "name": "switch-to-salesforce-frontend",
+  "private": true,
+  "description": "Static frontend — build step only writes API URL for production",
+  "scripts": {
+    "build": "node scripts/write-api-config.js",
+    "start": "python3 -m http.server 5500"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
