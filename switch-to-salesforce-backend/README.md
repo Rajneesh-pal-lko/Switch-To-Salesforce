@@ -86,6 +86,17 @@ curl -s -X POST http://localhost:5000/api/categories \
   -d '{"name":"Engineering"}'
 ```
 
+Optional **`section`** controls the sidebar: `tutorials`, `preparation`, or `general` (default). The frontend groups lists under **Tutorials** and **Preparation** by this field; **All categories** lists every category.
+
+```bash
+curl -s -X POST http://localhost:5000/api/categories \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Apex basics","section":"tutorials"}'
+```
+
+List categories filtered by section: `GET /api/categories?section=tutorials`
+
 Create post (JSON, no cover image):
 
 ```bash

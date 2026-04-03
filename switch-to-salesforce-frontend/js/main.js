@@ -15,13 +15,23 @@
     }
   }
 
+  var themeToggleDelegationBound = false;
+
+  /** One listener only — injectComponent runs 3× (navbar/sidebar/footer); per-button listeners stacked and cancelled each other out. */
   function bindThemeToggle() {
-    document.querySelectorAll('[data-theme-toggle]').forEach(function (el) {
-      el.addEventListener('click', function () {
+    if (themeToggleDelegationBound) return;
+    themeToggleDelegationBound = true;
+    document.addEventListener(
+      'click',
+      function (e) {
+        var btn = e.target && e.target.closest && e.target.closest('[data-theme-toggle]');
+        if (!btn) return;
+        e.preventDefault();
         var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         setTheme(next);
-      });
-    });
+      },
+      false
+    );
   }
 
   function fetchText(url) {
@@ -35,15 +45,34 @@
     var root = document.querySelector(selector);
     if (!root) return;
     root.innerHTML = html;
-    bindThemeToggle();
     highlightActiveNav();
   }
 
   function highlightActiveNav() {
     var path = window.location.pathname.split('/').pop() || 'index.html';
+    var pageParams = new URLSearchParams(window.location.search);
+    var currentSlug = pageParams.get('slug');
+    document.querySelectorAll('[data-nav-link]').forEach(function (a) {
+      a.classList.remove('is-active');
+      a.removeAttribute('aria-current');
+    });
     document.querySelectorAll('[data-nav-link]').forEach(function (a) {
       var href = a.getAttribute('href');
       if (!href) return;
+      var pathPart = href.split('?')[0].split('/').pop();
+      if (pathPart !== path) return;
+      if (path === 'category.html') {
+        var hp = href.indexOf('?');
+        var linkSlug = '';
+        if (hp !== -1) {
+          linkSlug = new URLSearchParams(href.slice(hp)).get('slug') || '';
+        }
+        if (currentSlug && linkSlug && currentSlug === linkSlug) {
+          a.classList.add('is-active');
+          a.setAttribute('aria-current', 'page');
+        }
+        return;
+      }
       var name = href.split('/').pop();
       if (name === path) {
         a.classList.add('is-active');
@@ -64,21 +93,8 @@
       injectComponent('[data-include="footer"]', parts[2]);
       setTheme(getTheme());
       bindThemeToggle();
-      initSidebarAccordion();
       initMobileSidebar();
       return null;
-    });
-  }
-
-  function initSidebarAccordion() {
-    document.querySelectorAll('[data-accordion-toggle]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = btn.getAttribute('aria-controls');
-        var panel = id && document.getElementById(id);
-        var expanded = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-        if (panel) panel.hidden = expanded;
-      });
     });
   }
 
@@ -266,7 +282,11 @@
         renderBlogCards(el, res.data);
       })
       .catch(function () {
-        el.innerHTML = '<p class="muted">Connect the API to see latest posts.</p>';
+        el.innerHTML =
+          '<div class="empty-state empty-state--compact">' +
+          '<p class="empty-state__title">Couldn’t load posts</p>' +
+          '<p class="empty-state__hint">Check your internet connection. If you just deployed, ensure the production API URL is set on your frontend host and redeploy.</p>' +
+          '</div>';
       });
   }
 
@@ -299,7 +319,7 @@
     setTheme(getTheme());
     bindThemeToggle();
     loadLayout().then(function () {
-      populateSidebarCategories();
+      populateSidebarFromApi();
       var page = document.body.getAttribute('data-page');
       if (page === 'blog') initBlogPage();
       if (page === 'category') initCategoryPage();
@@ -308,29 +328,57 @@
     });
   });
 
-  function populateSidebarCategories() {
-    var container = document.querySelector('[data-category-list]');
-    if (!container || !window.BlogApi) return;
-    window.BlogApi.getCategories().then(function (res) {
-      var cats = res.data || [];
-      if (!cats.length) {
-        container.innerHTML = '<li class="muted">No categories yet.</li>';
-        return;
-      }
-      container.innerHTML = cats
-        .map(function (c) {
-          return (
-            '<li><a data-nav-link href="category.html?slug=' +
-            encodeURIComponent(c.slug) +
-            '">' +
-            escapeHtml(c.name) +
-            '</a></li>'
-          );
-        })
-        .join('');
-      highlightActiveNav();
-    }).catch(function () {
-      container.innerHTML = '<li class="muted">API offline</li>';
-    });
+  function sectionOf(cat) {
+    var s = cat && cat.section;
+    return s ? String(s).toLowerCase() : 'general';
+  }
+
+  function renderCategoryLinks(cats) {
+    return cats
+      .map(function (c) {
+        return (
+          '<li><a data-nav-link href="category.html?slug=' +
+          encodeURIComponent(c.slug) +
+          '">' +
+          escapeHtml(c.name) +
+          '</a></li>'
+        );
+      })
+      .join('');
+  }
+
+  /** Fills Tutorials / Preparation / All categories from GET /api/categories (uses each category’s section). */
+  function populateSidebarFromApi() {
+    if (!window.BlogApi) return;
+    var prepEl = document.querySelector('[data-section-list="preparation"]');
+    var allEl = document.querySelector('[data-category-list]');
+    if (!prepEl && !allEl) return;
+
+    window.BlogApi
+      .getCategories()
+      .then(function (res) {
+        var cats = res.data || [];
+        function fill(el, list, emptyMsg) {
+          if (!el) return;
+          if (!list.length) {
+            el.innerHTML = '<li class="muted">' + (emptyMsg || 'No topics yet.') + '</li>';
+            return;
+          }
+          el.innerHTML = renderCategoryLinks(list);
+        }
+        fill(
+          prepEl,
+          cats.filter(function (c) {
+            return sectionOf(c) === 'preparation';
+          })
+        );
+        fill(allEl, cats, 'No categories yet.');
+        highlightActiveNav();
+      })
+      .catch(function () {
+        var err = '<li class="muted">Couldn’t load topics</li>';
+        if (prepEl) prepEl.innerHTML = err;
+        if (allEl) allEl.innerHTML = err;
+      });
   }
 })();

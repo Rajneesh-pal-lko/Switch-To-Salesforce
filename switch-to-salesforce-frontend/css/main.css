@@ -11,6 +11,8 @@
     "Segoe UI Emoji";
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
+  /* Sticky sidebar sits below the fixed navbar */
+  --navbar-sticky-offset: 3.5rem;
   /* Content width: comfortable on laptop; scales up on large / external monitors */
   --layout-max: 1280px;
   --layout-pad-x: 1.25rem;
@@ -111,16 +113,25 @@ img {
   display: grid;
   grid-template-columns: var(--sidebar-col) minmax(0, 1fr);
   width: 100%;
-  max-width: var(--layout-max);
-  margin: 0 auto;
-  padding: 0 var(--layout-pad-x) 3rem;
-  gap: clamp(1.5rem, 2vw, 2.75rem);
+  max-width: none;
+  margin: 0;
+  /* Sidebar flush to the viewport left; breathing room only on the main column (right) */
+  padding: 0 0 3rem 0;
+  gap: clamp(1rem, 2vw, 2rem);
   align-items: start;
 }
 
 .main {
   min-width: 0;
-  padding-top: 1rem;
+  padding: 1rem var(--layout-pad-x) 0 0;
+  max-width: var(--layout-max);
+}
+
+/* Home only: center the column so the hero and latest posts aren’t glued to the left edge */
+body[data-page="home"] .main {
+  max-width: min(52rem, 100%);
+  justify-self: center;
+  width: 100%;
 }
 
 .page-header {
@@ -238,10 +249,42 @@ img {
   }
 }
 
+.empty-state {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+}
+
+.empty-state--compact {
+  padding: 1.35rem 1.25rem;
+  text-align: left;
+}
+
+.empty-state__title {
+  margin: 0 0 0.35rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.empty-state__hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 .section-title {
   font-size: 1.25rem;
   margin: 2.5rem 0 1rem;
   letter-spacing: -0.02em;
+}
+
+.hero + section .section-title {
+  margin-top: 1.75rem;
 }
 
 .related-grid {

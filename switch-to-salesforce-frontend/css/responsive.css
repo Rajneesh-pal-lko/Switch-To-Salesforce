@@ -1,7 +1,14 @@
 @media (max-width: 960px) {
   .layout {
     grid-template-columns: 1fr;
-    padding-bottom: 2rem;
+    padding: 0 var(--layout-pad-x, 1.25rem) 2rem;
+    max-width: var(--layout-max, 1280px);
+    margin-inline: auto;
+  }
+
+  .main {
+    padding-right: 0;
+    max-width: none;
   }
 
   .navbar__search-wrap {

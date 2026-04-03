@@ -11,7 +11,11 @@ router.post(
   '/',
   authMiddleware,
   requireAdmin,
-  [body('name').trim().notEmpty().isLength({ max: 200 }), body('slug').optional().trim().isLength({ max: 200 })],
+  [
+    body('name').trim().notEmpty().isLength({ max: 200 }),
+    body('slug').optional().trim().isLength({ max: 200 }),
+    body('section').optional().isIn(['tutorials', 'preparation', 'general']),
+  ],
   createCategory
 );
 

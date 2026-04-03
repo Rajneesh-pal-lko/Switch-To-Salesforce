@@ -16,7 +16,12 @@ function ensureUniqueSlug(excludeId) {
 
 async function listCategories(req, res, next) {
   try {
-    const categories = await Category.find().sort({ name: 1 }).lean();
+    const { section } = req.query;
+    const q = {};
+    if (section && ['tutorials', 'preparation', 'general'].includes(String(section))) {
+      q.section = section;
+    }
+    const categories = await Category.find(q).sort({ name: 1 }).lean();
     res.json({ success: true, data: categories });
   } catch (err) {
     next(err);
@@ -29,7 +34,7 @@ async function createCategory(req, res, next) {
     if (!errors.isEmpty()) {
       return res.status(400).json({ success: false, errors: errors.array() });
     }
-    let { name, slug } = req.body;
+    let { name, slug, section } = req.body;
     name = name.trim();
     if (!slug) {
       slug = slugify(name, { lower: true, strict: true });
@@ -38,7 +43,9 @@ async function createCategory(req, res, next) {
     }
     const getUnique = ensureUniqueSlug();
     slug = await getUnique(slug);
-    const category = await Category.create({ name, slug });
+    const allowed = ['tutorials', 'preparation', 'general'];
+    const sec = allowed.includes(String(section || '').toLowerCase()) ? String(section).toLowerCase() : 'general';
+    const category = await Category.create({ name, slug, section: sec });
     res.status(201).json({ success: true, data: category });
   } catch (err) {
     if (err.code === 11000) {
