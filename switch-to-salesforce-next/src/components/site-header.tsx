@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { HeaderActions } from "@/components/header-actions";
 import { cn } from "@/lib/utils";
 
 const nav = [
@@ -32,7 +32,7 @@ export function SiteHeader({ className }: { className?: string }) {
               {item.label}
             </Link>
           ))}
-          <ThemeToggle className="ml-1" />
+          <HeaderActions />
         </nav>
       </div>
     </header>

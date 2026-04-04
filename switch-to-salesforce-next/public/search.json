@@ -1,0 +1,10 @@
+{
+  "posts": [
+    {
+      "slug": "welcome",
+      "title": "Welcome to the Switch to Salesforce blog",
+      "excerpt": "How we use MDX, Shiki, and Giscus — with categories, tags, and a sample Apex-style block.",
+      "category": "Getting started"
+    }
+  ]
+}

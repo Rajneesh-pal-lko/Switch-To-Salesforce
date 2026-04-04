@@ -17,3 +17,26 @@
     @apply min-h-screen bg-white text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50;
   }
 }
+
+/* rehype-pretty-code + Shiki */
+[data-rehype-pretty-code-figure] {
+  @apply my-6;
+}
+
+[data-rehype-pretty-code-figure] pre {
+  @apply overflow-x-auto rounded-xl border border-neutral-200 bg-neutral-950 px-4 py-3 text-sm leading-relaxed dark:border-neutral-800;
+}
+
+[data-rehype-pretty-code-title] {
+  @apply mb-0 rounded-t-xl border border-b-0 border-neutral-200 bg-neutral-100 px-3 py-2 font-mono text-xs text-neutral-600 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-400;
+}
+
+/* rehype-autolink-headings (append) */
+.prose .icon.icon-link {
+  @apply ml-1 inline-block align-middle text-neutral-400 opacity-0 transition;
+}
+
+.prose h2:hover .icon.icon-link,
+.prose h3:hover .icon.icon-link {
+  @apply opacity-70;
+}

@@ -6,36 +6,58 @@ This app lives beside the legacy static site (`../switch-to-salesforce-frontend/
 
 - **ReadingContainer** — `max-w-3xl`, centered, `leading-relaxed`
 - **Inter** — body font via `next/font/google`
-- **Dark mode** — `next-themes` + `ThemeToggle` (Sun/Moon via `lucide-react`)
-- **Home hero** — H1 *Mastering the Switch to Salesforce*, subcopy, CTAs to `/blog` and `/projects`
-- **Blog** — local MDX in `content/posts/`, rendered with `next-mdx-remote` (RSC)
-- **AuthorBox** — avatar placeholder, bio, GitHub / LinkedIn / Trailhead links
+- **Dark mode** — `next-themes` + `ThemeToggle`
+- **Home hero** — CTAs to `/blog` and `/projects`
+- **AuthorBox** — bio + social links
+
+## Phase 2 — MDX, Shiki, Giscus, SEO, search index
+
+- **`lib/content.ts`** — reads `content/blog/*.mdx`, `gray-matter`, exports `getAllPosts()`, `getPostBySlug()`, `getPostSlugs()` (swap-in friendly for an API later).
+- **MDX** — `next-mdx-remote/rsc` with `remark-gfm`, `rehype-pretty-code` + **Shiki** themes `github-light` (light) / **`one-dark-pro`** (dark). Fenced `apex` blocks are mapped to **Java** grammar via `remark-apex-as-java.ts` (Shiki has no Apex bundle everywhere).
+- **`components/mdx-components.tsx`** — `Callout`, `CodeBlock`, `img` → `MDXImage`.
+- **`components/Comments.tsx`** — `@giscus/react`, theme follows `next-themes`. Configure `NEXT_PUBLIC_GISCUS_*` in `.env` (see `.env.example`).
+- **SEO** — `generateMetadata` on `/blog/[slug]` with **Open Graph** + **Twitter**; `metadataBase` from `getSiteUrl()` in root `layout.tsx`.
+- **Search index** — `npm run search:index` or automatic at end of `npm run build` → `public/search.json` (`title`, `slug`, `excerpt`, `category`).
 
 ### Commands
 
-From this folder:
-
 ```bash
 npm install
-npm run dev
-# open http://localhost:3000
+npm run dev          # http://localhost:3000
+npm run build        # next build + search index
+npm run search:index # regenerate public/search.json only
 ```
 
-### Phase 1 — packages (already in package.json)
-
-Scaffold + foundation dependencies:
+### Phase 2 — npm packages
 
 ```bash
-npm install next@15 react react-dom next-themes lucide-react next-mdx-remote gray-matter clsx tailwind-merge
-npm install -D @tailwindcss/typography typescript tailwindcss postcss eslint eslint-config-next @types/node @types/react @types/react-dom
+npm install remark-gfm rehype-pretty-code shiki @giscus/react unist-util-visit
 ```
 
-`create-next-app` was used once to generate the project; the versions above match the committed `package.json`.
+(`next-mdx-remote` and `gray-matter` were already added in Phase 1.)
 
 ## Content
 
-Add posts as `content/posts/<slug>.mdx` with YAML frontmatter (`title`, `description`, `date`, optional `author`).
+Add posts as **`content/blog/<slug>.mdx`**.
 
-## Phase 2+ (planned)
+Frontmatter:
 
-- Shiki, Giscus (env placeholders reserved), `generateMetadata` enhancements, cmdk search, categories/tags, `/projects` content.
+| Field | Notes |
+|--------|--------|
+| `title` | Required |
+| `description` | Optional; used for SEO + search excerpt |
+| `date` | ISO date string |
+| `category` | Optional string |
+| `tags` | Optional YAML array or comma string |
+| `coverImage` | Optional; path (e.g. `/og.png`) or absolute URL |
+| `author` | Optional nested `name`, `bio`, `github`, `linkedin`, `trailhead` |
+
+## Environment
+
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SITE_URL` for production OG URLs. Add Giscus variables when ready.
+
+## Phase 3+ (planned)
+
+- `cmdk` search UI consuming `public/search.json`
+- Richer `/projects` page
+- Optional CMS/API behind `lib/content.ts`
