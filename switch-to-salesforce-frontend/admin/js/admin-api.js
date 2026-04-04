@@ -125,6 +125,13 @@
       });
     },
 
+    /** GET /api/admin/media — recent uploads for image picker */
+    listMedia: function () {
+      return authJson('/api/admin/media').then(function (r) {
+        return r.data || [];
+      });
+    },
+
     /** POST /api/admin/media — FormData with field name `file` */
     uploadMedia: function (formData) {
       return fetch(A.apiOrigin() + '/api/admin/media', {

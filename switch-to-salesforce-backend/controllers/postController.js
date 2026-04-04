@@ -1,6 +1,8 @@
 const { validationResult } = require('express-validator');
 const slugify = require('slugify');
 const Post = require('../models/Post');
+const PageContent = require('../models/PageContent');
+const { sanitizeRichHtml } = require('../utils/sanitizeContent');
 const Category = require('../models/Category');
 const SidebarTopic = require('../models/SidebarTopic');
 
@@ -191,12 +193,13 @@ async function createPost(req, res, next) {
     const getUnique = ensureUniquePostSlug();
     slug = await getUnique(slug);
 
-    const readingTimeMinutes = estimateReadingTimeMinutes(content);
+    const safeContent = sanitizeRichHtml(content);
+    const readingTimeMinutes = estimateReadingTimeMinutes(safeContent);
 
     const post = await Post.create({
       title: title.trim(),
       slug,
-      content,
+      content: safeContent,
       excerpt: excerpt || '',
       coverImage: coverImage || '',
       author: author.trim(),
@@ -245,8 +248,9 @@ async function updatePost(req, res, next) {
 
     if (title != null) post.title = title.trim();
     if (content != null) {
-      post.content = content;
-      post.readingTimeMinutes = estimateReadingTimeMinutes(content);
+      const safeContent = sanitizeRichHtml(content);
+      post.content = safeContent;
+      post.readingTimeMinutes = estimateReadingTimeMinutes(safeContent);
     }
     if (excerpt != null) post.excerpt = excerpt;
     if (author != null) post.author = author.trim();
@@ -308,12 +312,26 @@ async function sitemap(req, res, next) {
       process.env.SITE_URL ||
       `${req.protocol}://${req.get('host')}`
     ).replace(/\/$/, '');
-    const posts = await Post.find({ published: { $ne: false } })
-      .select('slug updatedAt')
-      .sort({ updatedAt: -1 })
-      .lean();
+    const [posts, pages] = await Promise.all([
+      Post.find({ published: { $ne: false } })
+        .select('slug updatedAt')
+        .sort({ updatedAt: -1 })
+        .lean(),
+      PageContent.find({
+        $or: [{ status: 'published' }, { status: { $exists: false } }],
+      })
+        .select('slug updatedAt')
+        .sort({ updatedAt: -1 })
+        .lean(),
+    ]);
     const urls = [
       { loc: `${publicSite}/`, changefreq: 'daily', priority: '1.0' },
+      ...pages.map((p) => ({
+        loc: `${publicSite}/page.html?slug=${encodeURIComponent(p.slug)}`,
+        lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : undefined,
+        changefreq: 'weekly',
+        priority: '0.7',
+      })),
       ...posts.map((p) => ({
         loc: `${publicSite}/post.html?slug=${encodeURIComponent(p.slug)}`,
         lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : undefined,

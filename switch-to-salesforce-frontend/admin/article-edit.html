@@ -29,7 +29,7 @@
             <label>Featured image URL <input name="coverImage" id="field-cover" placeholder="/uploads/..." /></label>
             <label>Status <select name="status" id="field-status"><option value="published">Published</option><option value="draft">Draft</option></select></label>
             <label>Order <input name="order" id="field-order" type="number" value="0" /></label>
-            <label>Content (HTML) <textarea name="content" id="field-content" class="markdown-lg" rows="16" required></textarea></label>
+            <label>Content <textarea name="content" id="field-content" class="markdown-lg" rows="16"></textarea></label>
             <div class="admin-actions">
               <button type="submit" class="admin-btn">Save</button>
               <a href="articles.html" class="admin-btn admin-btn--ghost">Cancel</a>
@@ -39,14 +39,16 @@
         </main>
       </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
     <script src="../js/config.js"></script>
     <script src="js/admin-core.js"></script>
     <script src="js/admin-api.js"></script>
+    <script src="js/tinymce-init.js"></script>
     <script src="js/admin-ui.js"></script>
     <script>
       (function () {
         AdminUi.bootstrap({ active: 'articles' });
-        if (!window.AdminData) return;
+        if (!window.AdminData || !AdminApi.requireAuth()) return;
 
         var params = new URLSearchParams(window.location.search);
         var id = params.get('id');
@@ -97,6 +99,11 @@
             }
             document.getElementById('page-title').textContent = 'New article';
           })
+          .then(function () {
+            if (window.StsTinyMce) {
+              StsTinyMce.init({ fieldId: 'field-content' });
+            }
+          })
           .catch(function (err) {
             document.getElementById('msg').innerHTML =
               '<div class="admin-msg admin-msg--error">' + (err.message || 'Load failed') + '</div>';
@@ -109,7 +116,7 @@
           var payload = {
             title: fd.get('title'),
             slug: fd.get('slug') || undefined,
-            content: fd.get('content'),
+            content: window.StsTinyMce ? StsTinyMce.getContent('field-content') : fd.get('content'),
             topicId: fd.get('topicId'),
             excerpt: fd.get('excerpt') || '',
             author: fd.get('author') || '',

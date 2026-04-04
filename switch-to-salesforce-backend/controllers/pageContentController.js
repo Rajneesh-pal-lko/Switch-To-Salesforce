@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const slugify = require('slugify');
 const PageContent = require('../models/PageContent');
+const { sanitizeRichHtml } = require('../utils/sanitizeContent');
 const SidebarTopic = require('../models/SidebarTopic');
 const Category = require('../models/Category');
 
@@ -142,7 +143,7 @@ async function createPage(req, res, next) {
     const doc = await PageContent.create({
       title: title.trim(),
       slug,
-      content,
+      content: sanitizeRichHtml(content),
       topicId,
       category: catId,
       tags: parseTagsField(tags),
@@ -180,7 +181,7 @@ async function updatePage(req, res, next) {
     const { title, slug, content, topicId, category, tags, author, excerpt, status, order } = req.body;
 
     if (title != null) doc.title = String(title).trim();
-    if (content != null) doc.content = content;
+    if (content != null) doc.content = sanitizeRichHtml(content);
     if (author != null) doc.author = String(author).trim();
     if (tags != null) doc.tags = parseTagsField(tags);
     if (excerpt != null) doc.excerpt = String(excerpt).trim();

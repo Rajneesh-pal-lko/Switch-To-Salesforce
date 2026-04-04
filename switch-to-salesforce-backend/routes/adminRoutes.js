@@ -6,6 +6,7 @@ const fs = require('fs');
 const { param, validationResult } = require('express-validator');
 const { login } = require('../controllers/authController');
 const { dashboardStats } = require('../controllers/adminController');
+const { listMedia } = require('../controllers/adminMediaController');
 const { listPosts, getPostBySlug } = require('../controllers/postController');
 const { getPageById, listPages } = require('../controllers/pageContentController');
 const { authMiddleware, requireAdmin } = require('../middleware/authMiddleware');
@@ -77,6 +78,8 @@ router.get('/pages/:id', authMiddleware, requireAdmin, param('id').isMongoId(), 
 
 router.get('/posts', authMiddleware, requireAdmin, markAdminList, listPosts);
 router.get('/posts/:slug', authMiddleware, requireAdmin, markAdminPreview, getPostBySlug);
+
+router.get('/media', authMiddleware, requireAdmin, listMedia);
 
 router.post(
   '/media',
