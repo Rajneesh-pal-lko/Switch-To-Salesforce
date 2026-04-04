@@ -1,7 +1,16 @@
 /**
- * API origin for the browser (scheme + host, no trailing slash).
- * - Local dev: default matches backend when the static site is on port 5000 and the API on 5050.
- *   If your API runs on 5000 and the site on 5500, set this to "" or http://localhost:5000.
- * - Production: set at deploy time via `npm run build` and env STS_API_ORIGIN.
+ * API origin (scheme + host, no trailing slash).
+ * - Vercel (*.vercel.app): defaults to Render API below (edit if your Render service name differs).
+ * - Local: http://localhost:5050
+ * - Override: set env STS_API_ORIGIN at build (see npm run build) or window.STS_API_ORIGIN before this script.
  */
-window.STS_API_ORIGIN = window.STS_API_ORIGIN || "http://localhost:5050";
+(function () {
+  if (window.STS_API_ORIGIN) {
+    return;
+  }
+  var h = typeof location !== 'undefined' ? location.hostname : '';
+  var onVercel = h.indexOf('vercel.app') !== -1;
+  /** Must match your Render Web Service URL (see render.yaml name: switch-to-salesforce-api). */
+  var renderApi = 'https://switch-to-salesforce-api.onrender.com';
+  window.STS_API_ORIGIN = onVercel ? renderApi : 'http://localhost:5050';
+})();
