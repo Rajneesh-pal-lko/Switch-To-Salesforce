@@ -53,6 +53,10 @@ function corsAllowed(origin) {
   if (env.corsAllowVercel && /^https:\/\/[^/]+\.vercel\.app$/i.test(o)) {
     return true;
   }
+  /** Always allow this site (Vercel) even if FRONTEND_URL / CORS_ALLOW_VERCEL missing on Render. */
+  if (o === 'https://switch-to-salesforce.vercel.app') {
+    return true;
+  }
   return false;
 }
 
