@@ -7,7 +7,7 @@ const { param, validationResult } = require('express-validator');
 const { login } = require('../controllers/authController');
 const { dashboardStats } = require('../controllers/adminController');
 const { listPosts, getPostBySlug } = require('../controllers/postController');
-const { getPageById } = require('../controllers/pageContentController');
+const { getPageById, listPages } = require('../controllers/pageContentController');
 const { authMiddleware, requireAdmin } = require('../middleware/authMiddleware');
 
 const uploadDir = path.join(__dirname, '..', 'uploads');
@@ -54,6 +54,11 @@ function markAdminPreview(req, res, next) {
   next();
 }
 
+function markAdminFullPageList(req, res, next) {
+  req.adminFullPageList = true;
+  next();
+}
+
 router.post(
   '/login',
   [
@@ -64,6 +69,9 @@ router.post(
 );
 
 router.get('/stats', authMiddleware, requireAdmin, dashboardStats);
+
+/** All CMS articles (draft + published) for admin list */
+router.get('/pages', authMiddleware, requireAdmin, markAdminFullPageList, listPages);
 
 router.get('/pages/:id', authMiddleware, requireAdmin, param('id').isMongoId(), handleValidationErrors, getPageById);
 

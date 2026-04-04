@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit article — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-app" id="admin-app">
+      <aside class="admin-sidebar" id="admin-sidebar"></aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
+          <h1 class="admin-topbar__title" id="page-title">Article</h1>
+        </header>
+        <main class="admin-content">
+          <div id="msg"></div>
+          <form id="form" class="admin-form admin-card">
+            <input type="hidden" name="id" id="field-id" />
+            <label>Title <input name="title" id="field-title" required /></label>
+            <label>Slug <input name="slug" id="field-slug" placeholder="url-segment" /></label>
+            <label>Topic <select name="topicId" id="field-topic" required></select></label>
+            <label>Excerpt <textarea name="excerpt" id="field-excerpt" rows="3"></textarea></label>
+            <label>Category <small class="muted">(optional)</small> <select name="category" id="field-cat"><option value="">—</option></select></label>
+            <label>Author <input name="author" id="field-author" /></label>
+            <label>Featured image URL <input name="coverImage" id="field-cover" placeholder="/uploads/..." /></label>
+            <label>Status <select name="status" id="field-status"><option value="published">Published</option><option value="draft">Draft</option></select></label>
+            <label>Order <input name="order" id="field-order" type="number" value="0" /></label>
+            <label>Content (HTML) <textarea name="content" id="field-content" class="markdown-lg" rows="16" required></textarea></label>
+            <div class="admin-actions">
+              <button type="submit" class="admin-btn">Save</button>
+              <a href="articles.html" class="admin-btn admin-btn--ghost">Cancel</a>
+              <button type="button" class="admin-btn admin-btn--danger" id="btn-del" hidden>Delete</button>
+            </div>
+          </form>
+        </main>
+      </div>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script src="js/admin-api.js"></script>
+    <script src="js/admin-ui.js"></script>
+    <script>
+      (function () {
+        AdminUi.bootstrap({ active: 'articles' });
+        if (!window.AdminData) return;
+
+        var params = new URLSearchParams(window.location.search);
+        var id = params.get('id');
+
+        Promise.all([
+          AdminData.listTopics().then(function (topics) {
+            return topics.map(function (t) {
+              return { id: t._id, label: t.name + ' (' + t.slug + ')' };
+            });
+          }),
+          AdminData.listCategories(),
+        ])
+          .then(function (results) {
+            var topics = results[0];
+            var cats = results[1];
+            var ts = document.getElementById('field-topic');
+            ts.innerHTML = topics
+              .map(function (t) {
+                return '<option value="' + t.id + '">' + t.label + '</option>';
+              })
+              .join('');
+            var cs = document.getElementById('field-cat');
+            cs.innerHTML =
+              '<option value="">—</option>' +
+              cats
+                .map(function (c) {
+                  return '<option value="' + c._id + '">' + c.name + '</option>';
+                })
+                .join('');
+
+            if (id) {
+              document.getElementById('page-title').textContent = 'Edit article';
+              document.getElementById('btn-del').hidden = false;
+              return AdminData.getArticleById(id).then(function (res) {
+                var p = res.data;
+                document.getElementById('field-id').value = p._id;
+                document.getElementById('field-title').value = p.title || '';
+                document.getElementById('field-slug').value = p.slug || '';
+                document.getElementById('field-topic').value = p.topicId && p.topicId._id ? p.topicId._id : p.topicId;
+                document.getElementById('field-excerpt').value = p.excerpt || '';
+                document.getElementById('field-cat').value = p.category && p.category._id ? p.category._id : p.category || '';
+                document.getElementById('field-author').value = p.author || '';
+                document.getElementById('field-cover').value = p.coverImage || '';
+                document.getElementById('field-content').value = p.content || '';
+                document.getElementById('field-status').value = p.status === 'draft' ? 'draft' : 'published';
+                document.getElementById('field-order').value = p.order != null ? p.order : 0;
+              });
+            }
+            document.getElementById('page-title').textContent = 'New article';
+          })
+          .catch(function (err) {
+            document.getElementById('msg').innerHTML =
+              '<div class="admin-msg admin-msg--error">' + (err.message || 'Load failed') + '</div>';
+          });
+
+        document.getElementById('form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var fd = new FormData(e.target);
+          var pageId = fd.get('id');
+          var payload = {
+            title: fd.get('title'),
+            slug: fd.get('slug') || undefined,
+            content: fd.get('content'),
+            topicId: fd.get('topicId'),
+            excerpt: fd.get('excerpt') || '',
+            author: fd.get('author') || '',
+            coverImage: fd.get('coverImage') || '',
+            status: fd.get('status'),
+            order: Number(fd.get('order')) || 0,
+          };
+          var cat = fd.get('category');
+          payload.category = cat || null;
+
+          if (pageId) {
+            AdminData.updateArticle(pageId, payload)
+              .then(function () {
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--ok">Saved.</div>';
+              })
+              .catch(function (err) {
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+              });
+          } else {
+            AdminData.createArticle(payload)
+              .then(function (res) {
+                var nid = res.data && res.data._id;
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--ok">Created. <a href="article-edit.html?id=' +
+                  nid +
+                  '">Continue editing</a></div>';
+                if (nid) {
+                  document.getElementById('field-id').value = nid;
+                  document.getElementById('btn-del').hidden = false;
+                  history.replaceState({}, '', 'article-edit.html?id=' + encodeURIComponent(nid));
+                }
+              })
+              .catch(function (err) {
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+              });
+          }
+        });
+
+        document.getElementById('btn-del').addEventListener('click', function () {
+          var fid = document.getElementById('field-id').value;
+          if (!fid || !confirm('Delete this article?')) return;
+          AdminData.deleteArticle(fid).then(function () {
+            window.location.href = 'articles.html';
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

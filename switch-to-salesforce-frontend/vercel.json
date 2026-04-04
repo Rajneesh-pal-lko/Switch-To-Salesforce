@@ -2,5 +2,15 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".",
   "framework": null,
-  "installCommand": "npm install"
+  "installCommand": "npm install",
+  "rewrites": [
+    {
+      "source": "/:group/:topic/:article",
+      "destination": "/post.html?group=:group&topic=:topic&slug=:article"
+    },
+    {
+      "source": "/:group/:topic",
+      "destination": "/topic.html?group=:group&topic=:topic"
+    }
+  ]
 }

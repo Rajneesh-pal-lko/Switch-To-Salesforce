@@ -27,6 +27,9 @@ router.post(
     body('category').optional(),
     body('tags').optional(),
     body('author').optional().trim().isLength({ max: 120 }),
+    body('excerpt').optional().isString().isLength({ max: 2000 }),
+    body('status').optional().isIn(['draft', 'published']),
+    body('order').optional().isNumeric(),
   ],
   createPage
 );
@@ -45,6 +48,9 @@ router.put(
     body('tags').optional(),
     body('author').optional().trim(),
     body('coverImage').optional().isString(),
+    body('excerpt').optional().isString().isLength({ max: 2000 }),
+    body('status').optional().isIn(['draft', 'published']),
+    body('order').optional().isNumeric(),
   ],
   updatePage
 );

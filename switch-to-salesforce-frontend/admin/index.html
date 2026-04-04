@@ -1,93 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0;url=dashboard.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Dashboard — Admin</title>
-    <link rel="stylesheet" href="../css/main.css" />
-    <link rel="stylesheet" href="../css/components.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+    <title>Redirect — Admin</title>
+    <link rel="canonical" href="dashboard.html" />
   </head>
-  <body class="admin-body">
-    <div class="admin-layout">
-      <nav class="admin-nav">
-        <span class="admin-nav__title">Admin</span>
-        <a href="index.html">Dashboard</a>
-        <a href="sidebar-topics.html">Sidebar</a>
-        <a href="pages.html">Pages</a>
-        <a href="posts.html">Posts</a>
-        <a href="categories.html">Categories</a>
-        <a href="media.html">Media</a>
-        <a href="#" id="logout">Log out</a>
-      </nav>
-      <h1>Overview</h1>
-      <div id="msg"></div>
-      <div class="admin-stats admin-card" id="stats">
-        <p class="muted">Loading…</p>
-      </div>
-      <div class="admin-card">
-        <h2>Recent posts</h2>
-        <div id="recent"></div>
-      </div>
-    </div>
-    <script src="../js/config.js"></script>
-    <script src="js/admin-core.js"></script>
-    <script>
-      (function () {
-        if (!AdminApi.requireAuth()) return;
-        document.getElementById('logout').addEventListener('click', function (e) {
-          e.preventDefault();
-          AdminApi.clearToken();
-          window.location.href = 'login.html';
-        });
-        AdminApi.api('/api/admin/stats', { headers: AdminApi.authHeaders() })
-          .then(function (res) {
-            var d = res.data || {};
-            document.getElementById('stats').innerHTML =
-              '<div class="admin-stats">' +
-              '<div class="admin-stat"><strong>' +
-              (d.totalPosts || 0) +
-              '</strong><span>Posts</span></div>' +
-              '<div class="admin-stat"><strong>' +
-              (d.totalCategories || 0) +
-              '</strong><span>Categories</span></div>' +
-              '<div class="admin-stat"><strong>' +
-              (d.totalSidebarTopics || 0) +
-              '</strong><span>Sidebar topics</span></div>' +
-              '<div class="admin-stat"><strong>' +
-              (d.totalPages || 0) +
-              '</strong><span>CMS pages</span></div>' +
-              '</div>';
-            var posts = d.recentPosts || [];
-            var el = document.getElementById('recent');
-            if (!posts.length) {
-              el.innerHTML = '<p class="muted">No posts yet.</p>';
-              return;
-            }
-            el.innerHTML =
-              '<table class="admin-table"><thead><tr><th>Title</th><th>Published</th><th>Date</th></tr></thead><tbody>' +
-              posts
-                .map(function (p) {
-                  return (
-                    '<tr><td><a href="post-edit.html?slug=' +
-                    encodeURIComponent(p.slug) +
-                    '">' +
-                    (p.title || '') +
-                    '</a></td><td>' +
-                    (p.published === false ? 'No' : 'Yes') +
-                    '</td><td>' +
-                    (p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '') +
-                    '</td></tr>'
-                  );
-                })
-                .join('') +
-              '</tbody></table>';
-          })
-          .catch(function (err) {
-            document.getElementById('msg').innerHTML =
-              '<div class="admin-msg admin-msg--error">' + (err.message || 'Failed to load') + '</div>';
-          });
-      })();
-    </script>
+  <body>
+    <p>Redirecting to <a href="dashboard.html">dashboard</a>…</p>
   </body>
 </html>

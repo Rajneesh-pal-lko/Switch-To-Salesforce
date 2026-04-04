@@ -44,11 +44,43 @@
   z-index: 950;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
   padding: 0.75rem var(--layout-pad-x, 1.25rem);
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: blur(10px);
+}
+
+.navbar__spacer {
+  flex: 1;
+  min-width: 0;
+}
+
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.navbar__nav a {
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.navbar__nav a:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.navbar__nav a.is-active {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 .navbar__brand {
@@ -66,40 +98,6 @@
   border-radius: 8px;
   background: linear-gradient(135deg, var(--accent), #22d3ee);
   box-shadow: var(--shadow);
-}
-
-.navbar__search-wrap {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.navbar__search {
-  display: flex;
-  gap: 0.5rem;
-  width: min(520px, 100%);
-}
-
-@media (min-width: 1360px) {
-  .navbar__search {
-    width: min(640px, 100%);
-  }
-}
-
-@media (min-width: 1600px) {
-  .navbar__search {
-    width: min(720px, 100%);
-  }
-}
-
-.navbar__search input {
-  flex: 1;
-  font: inherit;
-  padding: 0.5rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  color: var(--text);
 }
 
 .navbar__actions {
@@ -129,6 +127,168 @@
 
 .sidebar__inner {
   padding: 0.65rem 0.85rem 1rem 0.75rem;
+}
+
+/* Doc sidebar: search first, then group → topic tree */
+.sidebar__doc-root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.sidebar__search-input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  margin-bottom: 0.15rem;
+}
+
+.sidebar__search-input:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  outline-offset: 1px;
+}
+
+.sidebar__doc-tree {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar__doc-tree .sidebar__group {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.sidebar__topic-link.is-active {
+  color: var(--accent);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.sidebar__search-results {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding-top: 0.15rem;
+}
+
+.sidebar__search-section {
+  border-radius: 8px;
+  padding: 0.35rem 0;
+}
+
+.sidebar__search-heading {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+}
+
+.sidebar__search-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar__search-list li {
+  margin: 0.2rem 0;
+}
+
+.sidebar__search-list a {
+  display: block;
+  padding: 0.35rem 0.4rem;
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.sidebar__search-list a:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--accent);
+}
+
+.sidebar__search-hit {
+  display: block;
+  padding: 0.35rem 0.4rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.sidebar__empty {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.topic-header {
+  margin-bottom: 1.5rem;
+}
+
+.topic-section {
+  margin-bottom: 2rem;
+}
+
+.topic-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.topic-list li {
+  margin: 0.35rem 0;
+}
+
+.topic-list a {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.topic-cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.topic-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+}
+
+.topic-card__media img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.topic-card__body {
+  padding: 0.85rem 1rem 1rem;
+}
+
+.topic-card__title {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.topic-card__title a {
+  color: var(--text);
+}
+
+.topic-card__title a:hover {
+  color: var(--accent);
+}
+
+.topic-card__excerpt {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 /* Nested disclosure sections (click summary to expand/collapse lists) */

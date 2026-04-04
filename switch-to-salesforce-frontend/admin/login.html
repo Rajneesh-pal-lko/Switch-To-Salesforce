@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/components.css" />
     <link rel="stylesheet" href="css/admin.css" />
   </head>
-  <body class="admin-body">
+  <body class="admin-body admin-body--login">
     <div class="admin-login">
       <h1>Switch To Salesforce — Admin</h1>
       <p class="muted">Sign in with your admin account.</p>
@@ -21,13 +21,14 @@
           <button type="submit" class="admin-btn">Sign in</button>
         </div>
       </form>
+      <p class="admin-login__back"><a href="../index.html">← Back to site</a></p>
     </div>
     <script src="../js/config.js"></script>
     <script src="js/admin-core.js"></script>
     <script>
       (function () {
         if (AdminApi.getToken()) {
-          window.location.href = 'index.html';
+          window.location.href = 'dashboard.html';
           return;
         }
         (function showConfigHint() {
@@ -60,7 +61,7 @@
             })
             .then(function (data) {
               if (data.token) AdminApi.setToken(data.token);
-              window.location.href = 'index.html';
+              window.location.href = 'dashboard.html';
             })
             .catch(function (err) {
               var m = err.message || 'Login failed';

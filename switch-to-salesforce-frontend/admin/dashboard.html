@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-app" id="admin-app">
+      <aside class="admin-sidebar" id="admin-sidebar"></aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
+          <h1 class="admin-topbar__title">Dashboard</h1>
+        </header>
+        <main class="admin-content">
+          <div id="msg"></div>
+          <div class="admin-stats" id="stat-cards">
+            <p class="muted">Loading…</p>
+          </div>
+          <div class="admin-card">
+            <h2>Recent blog posts</h2>
+            <div id="recent-posts"><p class="muted">Loading…</p></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script src="js/admin-api.js"></script>
+    <script src="js/admin-ui.js"></script>
+    <script>
+      (function () {
+        AdminUi.bootstrap({ active: 'dashboard' });
+        if (!window.AdminData) return;
+
+        AdminData.getStats()
+          .then(function (res) {
+            var d = res.data || {};
+            var el = document.getElementById('stat-cards');
+            function card(n, label) {
+              return (
+                '<div class="admin-stat"><strong>' +
+                (n != null ? n : 0) +
+                '</strong><span>' +
+                label +
+                '</span></div>'
+              );
+            }
+            el.innerHTML =
+              card(d.groups, 'Groups') +
+              card(d.topics, 'Topics') +
+              card(d.articles, 'Articles') +
+              card(d.draftArticles, 'Draft articles') +
+              card(d.totalPosts, 'Blog posts');
+
+            var posts = d.recentPosts || [];
+            var rp = document.getElementById('recent-posts');
+            if (!posts.length) {
+              rp.innerHTML = '<p class="muted">No posts yet.</p>';
+              return;
+            }
+            rp.innerHTML =
+              '<table class="admin-table"><thead><tr><th>Title</th><th>Published</th><th>Date</th></tr></thead><tbody>' +
+              posts
+                .map(function (p) {
+                  return (
+                    '<tr><td><a href="post-edit.html?slug=' +
+                    encodeURIComponent(p.slug) +
+                    '">' +
+                    (p.title || '') +
+                    '</a></td><td>' +
+                    (p.published === false ? 'No' : 'Yes') +
+                    '</td><td>' +
+                    (p.createdAt ? new Date(p.createdAt).toLocaleDateString() : '') +
+                    '</td></tr>'
+                  );
+                })
+                .join('') +
+              '</tbody></table>';
+          })
+          .catch(function (err) {
+            document.getElementById('msg').innerHTML =
+              '<div class="admin-msg admin-msg--error">' + (err.message || 'Failed to load stats') + '</div>';
+            document.getElementById('stat-cards').innerHTML = '';
+          });
+      })();
+    </script>
+  </body>
+</html>

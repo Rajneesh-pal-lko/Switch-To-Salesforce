@@ -125,6 +125,12 @@
   document.addEventListener('DOMContentLoaded', function () {
     var params = new URLSearchParams(window.location.search);
     var slug = params.get('slug');
+    if (!slug) {
+      var segs = window.location.pathname.replace(/^\//, '').split('/').filter(Boolean);
+      if (segs.length === 3 && !/\.html$/i.test(segs[2])) {
+        slug = decodeURIComponent(segs[2]);
+      }
+    }
     var root = document.getElementById('post-root');
     if (!slug || !root) return;
 

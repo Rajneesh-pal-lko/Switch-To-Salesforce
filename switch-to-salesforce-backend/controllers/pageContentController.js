@@ -30,12 +30,31 @@ function ensureUniqueSlug(excludeId) {
   return trySlug;
 }
 
+/** Public list only shows published (or legacy docs with no status). Admin full list uses req.adminFullPageList. */
+function publishedOnlyCondition() {
+  return { $or: [{ status: 'published' }, { status: { $exists: false } }] };
+}
+
 async function listPages(req, res, next) {
   try {
-    const items = await PageContent.find()
+    const topicSlug = req.query.topicSlug;
+    const parts = [];
+    if (topicSlug && String(topicSlug).trim()) {
+      const ts = String(topicSlug).toLowerCase().trim();
+      const topic = await SidebarTopic.findOne({ slug: ts });
+      if (!topic) {
+        return res.json({ success: true, data: [] });
+      }
+      parts.push({ topicId: topic._id });
+    }
+    if (!req.adminFullPageList) {
+      parts.push(publishedOnlyCondition());
+    }
+    const query = parts.length === 0 ? {} : parts.length === 1 ? parts[0] : { $and: parts };
+    const items = await PageContent.find(query)
       .populate('topicId', 'name slug')
       .populate('category', 'name slug')
-      .sort({ updatedAt: -1 })
+      .sort({ order: 1, updatedAt: -1 })
       .lean();
     res.json({ success: true, data: items });
   } catch (err) {
@@ -67,6 +86,10 @@ async function getPageBySlug(req, res, next) {
     if (!page) {
       return res.status(404).json({ success: false, message: 'Page not found' });
     }
+    const isDraft = page.status === 'draft';
+    if (isDraft) {
+      return res.status(404).json({ success: false, message: 'Page not found' });
+    }
     res.json({ success: true, data: page });
   } catch (err) {
     next(err);
@@ -88,6 +111,9 @@ async function createPage(req, res, next) {
       tags,
       coverImage,
       author,
+      excerpt,
+      status,
+      order,
     } = req.body;
 
     const topic = await SidebarTopic.findById(topicId);
@@ -112,6 +138,7 @@ async function createPage(req, res, next) {
     const getUnique = ensureUniqueSlug();
     slug = await getUnique(slug);
 
+    let st = status === 'draft' ? 'draft' : 'published';
     const doc = await PageContent.create({
       title: title.trim(),
       slug,
@@ -121,6 +148,9 @@ async function createPage(req, res, next) {
       tags: parseTagsField(tags),
       coverImage: coverImage || '',
       author: (author && String(author).trim()) || '',
+      excerpt: excerpt != null ? String(excerpt).trim() : '',
+      status: st,
+      order: order != null ? Number(order) || 0 : 0,
     });
 
     const populated = await PageContent.findById(doc._id)
@@ -147,12 +177,15 @@ async function updatePage(req, res, next) {
       return res.status(404).json({ success: false, message: 'Page not found' });
     }
 
-    const { title, slug, content, topicId, category, tags, author } = req.body;
+    const { title, slug, content, topicId, category, tags, author, excerpt, status, order } = req.body;
 
     if (title != null) doc.title = String(title).trim();
     if (content != null) doc.content = content;
     if (author != null) doc.author = String(author).trim();
     if (tags != null) doc.tags = parseTagsField(tags);
+    if (excerpt != null) doc.excerpt = String(excerpt).trim();
+    if (status === 'draft' || status === 'published') doc.status = status;
+    if (order != null) doc.order = Number(order) || 0;
 
     if (req.body.coverImage != null) {
       doc.coverImage = String(req.body.coverImage);
@@ -218,4 +251,5 @@ module.exports = {
   createPage,
   updatePage,
   deletePage,
+  publishedOnlyCondition,
 };

@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const slugify = require('slugify');
 const Post = require('../models/Post');
 const Category = require('../models/Category');
+const SidebarTopic = require('../models/SidebarTopic');
 
 function estimateReadingTimeMinutes(htmlOrText) {
   const text = String(htmlOrText).replace(/<[^>]+>/g, ' ');
@@ -70,12 +71,30 @@ async function listPosts(req, res, next) {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 9));
     const category = req.query.category;
+    const topicSlug = req.query.topicSlug;
     const q = req.query.q;
     const filter = {};
     if (!req.adminList) {
       filter.published = { $ne: false };
     }
-    if (category) {
+    if (topicSlug && String(topicSlug).trim()) {
+      const ts = String(topicSlug).toLowerCase().trim();
+      const topic = await SidebarTopic.findOne({ slug: ts });
+      const cat = topic ? await Category.findOne({ slug: ts }) : null;
+      if (!topic || !cat) {
+        return res.json({
+          success: true,
+          data: [],
+          pagination: {
+            page,
+            limit,
+            total: 0,
+            totalPages: 1,
+          },
+        });
+      }
+      filter.category = cat._id;
+    } else if (category) {
       const cat = await Category.findOne({ slug: String(category).toLowerCase() });
       if (cat) filter.category = cat._id;
     }

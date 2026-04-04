@@ -18,7 +18,11 @@ router.post(
   '/',
   authMiddleware,
   requireAdmin,
-  [body('name').trim().notEmpty().isLength({ max: 200 }), body('order').optional().isNumeric()],
+  [
+    body('name').trim().notEmpty().isLength({ max: 200 }),
+    body('order').optional().isNumeric(),
+    body('slug').optional().trim().isLength({ max: 120 }),
+  ],
   createGroup
 );
 
@@ -26,7 +30,12 @@ router.put(
   '/:id',
   authMiddleware,
   requireAdmin,
-  [param('id').isMongoId(), body('name').optional().trim().notEmpty(), body('order').optional().isNumeric()],
+  [
+    param('id').isMongoId(),
+    body('name').optional().trim().notEmpty(),
+    body('order').optional().isNumeric(),
+    body('slug').optional().trim().isLength({ max: 120 }),
+  ],
   updateGroup
 );
 

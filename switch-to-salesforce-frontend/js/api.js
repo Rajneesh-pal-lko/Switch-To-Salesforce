@@ -29,6 +29,7 @@
       if (params && params.page) q.set('page', params.page);
       if (params && params.limit) q.set('limit', params.limit);
       if (params && params.category) q.set('category', params.category);
+      if (params && params.topicSlug) q.set('topicSlug', params.topicSlug);
       if (params && params.q) q.set('q', params.q);
       var url = API_BASE + '/posts' + (q.toString() ? '?' + q.toString() : '');
       return fetch(url).then(json);
@@ -64,6 +65,24 @@
 
     getCmsPageBySlug: function (slug) {
       return fetch(API_BASE + '/pages/' + encodeURIComponent(slug)).then(json);
+    },
+
+    /** Doc site: group → topic tree for the sidebar */
+    getSidebar: function () {
+      return fetch(API_BASE + '/sidebar').then(json);
+    },
+
+    /** Doc site: filter groups, topics, and articles (sidebar search) */
+    searchSite: function (q) {
+      var qs = new URLSearchParams();
+      qs.set('q', q || '');
+      return fetch(API_BASE + '/search?' + qs.toString()).then(json);
+    },
+
+    listCmsPages: function (params) {
+      var qs = new URLSearchParams();
+      if (params && params.topicSlug) qs.set('topicSlug', params.topicSlug);
+      return fetch(API_BASE + '/pages' + (qs.toString() ? '?' + qs.toString() : '')).then(json);
     },
   };
 })();

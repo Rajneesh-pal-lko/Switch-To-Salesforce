@@ -17,6 +17,7 @@ const sidebarGroupRoutes = require('./routes/sidebarGroupRoutes');
 const sidebarTopicRoutes = require('./routes/sidebarTopicRoutes');
 const pageRoutes = require('./routes/pageRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const publicDocController = require('./controllers/publicDocController');
 
 const app = express();
 const PORT = env.port;
@@ -89,6 +90,10 @@ app.get('/health', (_req, res) => {
     database: env.skipDatabase ? 'skipped' : 'connected',
   });
 });
+
+/** Public doc site: sidebar tree + search (used by static HTML frontend) */
+app.get('/api/sidebar', publicDocController.getPublicSidebar);
+app.get('/api/search', publicDocController.searchSite);
 
 app.get('/sitemap.xml', (req, res, next) => {
   if (env.skipDatabase) {

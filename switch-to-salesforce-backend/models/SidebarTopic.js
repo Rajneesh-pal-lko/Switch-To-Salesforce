@@ -6,6 +6,7 @@ const sidebarTopicSchema = new mongoose.Schema(
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
     groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'SidebarGroup', required: true },
     order: { type: Number, default: 0 },
+    description: { type: String, default: '', trim: true },
   },
   { timestamps: true }
 );

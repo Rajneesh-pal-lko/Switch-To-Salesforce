@@ -9,55 +9,43 @@
     <link rel="stylesheet" href="css/admin.css" />
   </head>
   <body class="admin-body">
-    <div class="admin-layout">
-      <nav class="admin-nav">
-        <span class="admin-nav__title">Admin</span>
-        <a href="index.html">Dashboard</a>
-        <a href="sidebar-topics.html">Sidebar</a>
-        <a href="pages.html">Pages</a>
-        <a href="posts.html">Posts</a>
-        <a href="categories.html">Categories</a>
-        <a href="media.html">Media</a>
-        <a href="#" id="logout">Log out</a>
-      </nav>
-      <h1>Upload image</h1>
-      <p class="muted">Files are stored under <code>/uploads</code> on the API server. Use the returned URL in posts or pages.</p>
-      <div id="msg"></div>
-      <div class="admin-card">
-        <form id="up" class="admin-form">
-          <label>Image <input type="file" name="file" accept="image/*" required /></label>
-          <button type="submit" class="admin-btn">Upload</button>
-        </form>
-        <div id="result"></div>
+    <div class="admin-app" id="admin-app">
+      <aside class="admin-sidebar" id="admin-sidebar"></aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
+          <h1 class="admin-topbar__title">Media</h1>
+        </header>
+        <main class="admin-content">
+          <p class="muted">Files are stored under <code>/uploads</code> on the API server. Use the URL in articles or posts.</p>
+          <div id="msg"></div>
+          <div class="admin-card">
+            <h2>Upload image</h2>
+            <form id="up" class="admin-form">
+              <label>Image <input type="file" name="file" accept="image/*" required /></label>
+              <button type="submit" class="admin-btn">Upload</button>
+            </form>
+            <div id="result"></div>
+          </div>
+        </main>
       </div>
     </div>
     <script src="../js/config.js"></script>
     <script src="js/admin-core.js"></script>
+    <script src="js/admin-api.js"></script>
+    <script src="js/admin-ui.js"></script>
     <script>
       (function () {
-        if (!AdminApi.requireAuth()) return;
-        document.getElementById('logout').addEventListener('click', function (e) {
-          e.preventDefault();
-          AdminApi.clearToken();
-          window.location.href = 'login.html';
-        });
+        AdminUi.bootstrap({ active: 'media' });
+        if (!window.AdminData) return;
+
         document.getElementById('up').addEventListener('submit', function (e) {
           e.preventDefault();
           var fd = new FormData();
           var file = e.target.querySelector('[name=file]').files[0];
           if (!file) return;
           fd.append('file', file);
-          fetch(AdminApi.apiOrigin() + '/api/admin/media', {
-            method: 'POST',
-            headers: { Authorization: 'Bearer ' + AdminApi.getToken() },
-            body: fd,
-          })
-            .then(function (r) {
-              return r.json().then(function (j) {
-                if (!r.ok) throw new Error(j.message || 'Upload failed');
-                return j;
-              });
-            })
+          AdminData.uploadMedia(fd)
             .then(function (data) {
               document.getElementById('msg').innerHTML =
                 '<div class="admin-msg admin-msg--ok">Uploaded.</div>';

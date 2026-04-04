@@ -11,13 +11,15 @@
     max-width: none;
   }
 
-  .navbar__search-wrap {
+  .navbar__nav {
     order: 3;
     flex-basis: 100%;
+    justify-content: flex-end;
+    padding-top: 0.25rem;
   }
 
-  .navbar {
-    flex-wrap: wrap;
+  .navbar__spacer {
+    display: none;
   }
 
   .navbar__menu-btn {
@@ -59,10 +61,6 @@
   .hero__actions {
     flex-direction: column;
     align-items: stretch;
-  }
-
-  .navbar__search {
-    flex-direction: column;
   }
 
   .article-meta span::before {

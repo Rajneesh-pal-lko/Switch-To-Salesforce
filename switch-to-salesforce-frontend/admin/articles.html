@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Blog posts — Admin</title>
+    <title>Articles — Admin</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="stylesheet" href="../css/components.css" />
     <link rel="stylesheet" href="css/admin.css" />
@@ -14,11 +14,11 @@
       <div class="admin-main">
         <header class="admin-topbar">
           <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
-          <h1 class="admin-topbar__title">Blog posts</h1>
+          <h1 class="admin-topbar__title">Articles</h1>
         </header>
         <main class="admin-content">
-          <p class="muted">Markdown-based blog — separate from documentation articles.</p>
-          <p><a class="admin-btn" href="post-edit.html">New post</a></p>
+          <p class="muted">Documentation pages (PageContent) scoped to a topic — separate from blog posts.</p>
+          <p><a class="admin-btn" href="article-edit.html">New article</a></p>
           <div id="msg"></div>
           <div class="admin-card" id="list"><p class="muted">Loading…</p></div>
         </main>
@@ -30,29 +30,35 @@
     <script src="js/admin-ui.js"></script>
     <script>
       (function () {
-        AdminUi.bootstrap({ active: 'posts' });
+        AdminUi.bootstrap({ active: 'articles' });
         if (!window.AdminData) return;
 
-        AdminData.listPosts({ limit: 100 })
+        AdminData.listArticles()
           .then(function (res) {
             var rows = res.data || [];
             if (!rows.length) {
-              document.getElementById('list').innerHTML = '<p class="muted">No posts yet.</p>';
+              document.getElementById('list').innerHTML = '<p class="muted">No articles yet.</p>';
               return;
             }
             document.getElementById('list').innerHTML =
-              '<table class="admin-table"><thead><tr><th>Title</th><th>Slug</th><th>Published</th><th></th></tr></thead><tbody>' +
+              '<table class="admin-table"><thead><tr><th>Title</th><th>Slug</th><th>Topic</th><th>Status</th><th>Order</th><th></th></tr></thead><tbody>' +
               rows
                 .map(function (p) {
+                  var topic = p.topicId && p.topicId.name ? p.topicId.name : '';
+                  var st = p.status === 'draft' ? 'Draft' : 'Published';
                   return (
                     '<tr><td>' +
                     (p.title || '') +
                     '</td><td><code>' +
                     (p.slug || '') +
                     '</code></td><td>' +
-                    (p.published === false ? 'No' : 'Yes') +
-                    '</td><td><a href="post-edit.html?slug=' +
-                    encodeURIComponent(p.slug) +
+                    topic +
+                    '</td><td>' +
+                    st +
+                    '</td><td>' +
+                    (p.order != null ? p.order : 0) +
+                    '</td><td><a href="article-edit.html?id=' +
+                    encodeURIComponent(p._id) +
                     '">Edit</a></td></tr>'
                   );
                 })
@@ -61,7 +67,7 @@
           })
           .catch(function (err) {
             document.getElementById('list').innerHTML =
-              '<p class="muted">' + (err.message || 'Could not load posts.') + '</p>';
+              '<p class="muted">' + (err.message || 'Could not load articles.') + '</p>';
           });
       })();
     </script>

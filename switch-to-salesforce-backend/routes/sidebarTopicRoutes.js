@@ -21,6 +21,7 @@ router.post(
     body('groupId').notEmpty(),
     body('slug').optional().trim(),
     body('order').optional().isNumeric(),
+    body('description').optional().isString().isLength({ max: 2000 }),
   ],
   createTopic
 );
@@ -35,6 +36,7 @@ router.put(
     body('groupId').optional(),
     body('slug').optional().trim(),
     body('order').optional().isNumeric(),
+    body('description').optional().isString().isLength({ max: 2000 }),
   ],
   updateTopic
 );

@@ -9,18 +9,14 @@
     <link rel="stylesheet" href="css/admin.css" />
   </head>
   <body class="admin-body">
-    <div class="admin-layout">
-      <nav class="admin-nav">
-        <span class="admin-nav__title">Admin</span>
-        <a href="index.html">Dashboard</a>
-        <a href="sidebar-topics.html">Sidebar</a>
-        <a href="pages.html">Pages</a>
-        <a href="posts.html">Posts</a>
-        <a href="categories.html">Categories</a>
-        <a href="media.html">Media</a>
-        <a href="#" id="logout">Log out</a>
-      </nav>
-      <h1 id="head">Blog post</h1>
+    <div class="admin-app" id="admin-app">
+      <aside class="admin-sidebar" id="admin-sidebar"></aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
+          <h1 class="admin-topbar__title" id="head">Blog post</h1>
+        </header>
+        <main class="admin-content">
       <div id="msg"></div>
       <div class="admin-split admin-split--2">
         <form id="form" class="admin-form admin-card">
@@ -49,18 +45,17 @@
           <div id="preview" class="preview-pane prose"></div>
         </div>
       </div>
+        </main>
+      </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
     <script src="../js/config.js"></script>
     <script src="js/admin-core.js"></script>
+    <script src="js/admin-ui.js"></script>
     <script>
       (function () {
+        AdminUi.bootstrap({ active: 'posts' });
         if (!AdminApi.requireAuth()) return;
-        document.getElementById('logout').addEventListener('click', function (e) {
-          e.preventDefault();
-          AdminApi.clearToken();
-          window.location.href = 'login.html';
-        });
 
         var slugParam = new URLSearchParams(window.location.search).get('slug');
 

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Topics — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-app" id="admin-app">
+      <aside class="admin-sidebar" id="admin-sidebar"></aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
+          <h1 class="admin-topbar__title">Topics</h1>
+        </header>
+        <main class="admin-content">
+          <p class="muted">Documentation topics under each group (sidebar second level).</p>
+          <div id="msg"></div>
+          <div class="admin-card">
+            <h2>Create topic</h2>
+            <form id="form-create" class="admin-form">
+              <label>Group <select name="groupId" id="sel-group" required></select></label>
+              <label>Name <input name="name" required /></label>
+              <label>Slug <input name="slug" placeholder="optional" /></label>
+              <label>Order <input name="order" type="number" value="0" /></label>
+              <label>Description <small class="muted">(optional)</small> <textarea name="description" rows="3"></textarea></label>
+              <button type="submit" class="admin-btn">Create topic</button>
+            </form>
+          </div>
+          <div class="admin-card">
+            <h2>Filter by group</h2>
+            <p>
+              <select id="filter-group"></select>
+              <button type="button" class="admin-btn admin-btn--ghost" id="btn-clear-filter">Show all</button>
+            </p>
+            <div id="list"><p class="muted">Loading…</p></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script src="js/admin-api.js"></script>
+    <script src="js/admin-ui.js"></script>
+    <script>
+      (function () {
+        AdminUi.bootstrap({ active: 'topics' });
+        if (!window.AdminData) return;
+
+        var groupMap = {};
+
+        function showMsg(html, ok) {
+          document.getElementById('msg').innerHTML =
+            '<div class="admin-msg ' + (ok ? 'admin-msg--ok' : 'admin-msg--error') + '">' + html + '</div>';
+        }
+
+        function escapeAttr(s) {
+          return String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;');
+        }
+
+        function fillGroupSelects(groups) {
+          var opts = groups
+            .map(function (g) {
+              groupMap[g._id] = g.name;
+              return '<option value="' + g._id + '">' + escapeAttr(g.name) + '</option>';
+            })
+            .join('');
+          document.getElementById('sel-group').innerHTML = opts;
+          document.getElementById('filter-group').innerHTML =
+            '<option value="">— All groups —</option>' + opts;
+        }
+
+        function loadTopics() {
+          var gid = document.getElementById('filter-group').value;
+          var p = gid ? AdminData.listTopics(gid) : AdminData.listTopics();
+          return p.then(function (rows) {
+            if (!rows.length) {
+              document.getElementById('list').innerHTML = '<p class="muted">No topics in this filter.</p>';
+              return;
+            }
+            document.getElementById('list').innerHTML =
+              '<table class="admin-table"><thead><tr><th>Name</th><th>Slug</th><th>Group</th><th>Order</th><th>Description</th><th></th></tr></thead><tbody>' +
+              rows
+                .map(function (t) {
+                  var gn = groupMap[t.groupId] || t.groupId;
+                  return (
+                    '<tr data-id="' +
+                    escapeAttr(t._id) +
+                    '"><td><input class="admin-inline-input" data-k="name" value="' +
+                    escapeAttr(t.name) +
+                    '" /></td><td><input class="admin-inline-input" data-k="slug" value="' +
+                    escapeAttr(t.slug) +
+                    '" /></td><td><select class="admin-inline-input" data-k="groupId">' +
+                    Object.keys(groupMap)
+                      .map(function (id) {
+                        return (
+                          '<option value="' +
+                          id +
+                          '"' +
+                          (String(t.groupId) === id ? ' selected' : '') +
+                          '>' +
+                          escapeAttr(groupMap[id]) +
+                          '</option>'
+                        );
+                      })
+                      .join('') +
+                    '</select></td><td><input class="admin-inline-input" type="number" data-k="order" value="' +
+                    (t.order != null ? t.order : 0) +
+                    '" /></td><td><input class="admin-inline-input" data-k="description" value="' +
+                    escapeAttr(t.description || '') +
+                    '" /></td><td><button type="button" class="admin-btn admin-btn--sm row-save">Save</button> ' +
+                    '<button type="button" class="admin-btn admin-btn--sm admin-btn--danger row-del">Delete</button></td></tr>'
+                  );
+                })
+                .join('') +
+              '</tbody></table>';
+
+            document.querySelectorAll('.row-save').forEach(function (btn) {
+              btn.addEventListener('click', function () {
+                var tr = btn.closest('tr');
+                var id = tr.getAttribute('data-id');
+                var payload = {
+                  name: tr.querySelector('[data-k=name]').value,
+                  slug: tr.querySelector('[data-k=slug]').value || undefined,
+                  groupId: tr.querySelector('[data-k=groupId]').value,
+                  order: Number(tr.querySelector('[data-k=order]').value) || 0,
+                  description: tr.querySelector('[data-k=description]').value,
+                };
+                AdminData.updateTopic(id, payload)
+                  .then(function () {
+                    showMsg('Saved.', true);
+                    return loadTopics();
+                  })
+                  .catch(function (e) {
+                    showMsg(e.message || 'Save failed', false);
+                  });
+              });
+            });
+            document.querySelectorAll('.row-del').forEach(function (btn) {
+              btn.addEventListener('click', function () {
+                var tr = btn.closest('tr');
+                var id = tr.getAttribute('data-id');
+                if (!confirm('Delete this topic?')) return;
+                AdminData.deleteTopic(id)
+                  .then(function () {
+                    showMsg('Deleted.', true);
+                    return loadTopics();
+                  })
+                  .catch(function (e) {
+                    showMsg(e.message || 'Delete failed', false);
+                  });
+              });
+            });
+          });
+        }
+
+        AdminData.listGroups()
+          .then(function (groups) {
+            fillGroupSelects(groups);
+            return loadTopics();
+          })
+          .catch(function (e) {
+            document.getElementById('list').innerHTML =
+              '<p class="muted">' + (e.message || 'Failed to load.') + '</p>';
+          });
+
+        document.getElementById('filter-group').addEventListener('change', loadTopics);
+        document.getElementById('btn-clear-filter').addEventListener('click', function () {
+          document.getElementById('filter-group').value = '';
+          loadTopics();
+        });
+
+        document.getElementById('form-create').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var fd = new FormData(e.target);
+          var payload = {
+            groupId: fd.get('groupId'),
+            name: fd.get('name'),
+            order: Number(fd.get('order')) || 0,
+            description: fd.get('description') || '',
+          };
+          var sl = fd.get('slug');
+          if (sl && String(sl).trim()) payload.slug = String(sl).trim();
+          AdminData.createTopic(payload)
+            .then(function () {
+              e.target.reset();
+              showMsg('Topic created.', true);
+              return loadTopics();
+            })
+            .catch(function (err) {
+              showMsg(err.message || 'Create failed', false);
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

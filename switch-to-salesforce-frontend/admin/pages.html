@@ -1,75 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>CMS Pages — Admin</title>
-    <link rel="stylesheet" href="../css/main.css" />
-    <link rel="stylesheet" href="../css/components.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+    <meta http-equiv="refresh" content="0;url=articles.html" />
+    <title>Redirect — Admin</title>
   </head>
-  <body class="admin-body">
-    <div class="admin-layout">
-      <nav class="admin-nav">
-        <span class="admin-nav__title">Admin</span>
-        <a href="index.html">Dashboard</a>
-        <a href="sidebar-topics.html">Sidebar</a>
-        <a href="pages.html">Pages</a>
-        <a href="posts.html">Posts</a>
-        <a href="categories.html">Categories</a>
-        <a href="media.html">Media</a>
-        <a href="#" id="logout">Log out</a>
-      </nav>
-      <h1>CMS pages</h1>
-      <p><a class="admin-btn" href="page-edit.html">New page</a></p>
-      <div id="msg"></div>
-      <div class="admin-card" id="list"><p class="muted">Loading…</p></div>
-    </div>
-    <script src="../js/config.js"></script>
-    <script src="js/admin-core.js"></script>
-    <script>
-      (function () {
-        if (!AdminApi.requireAuth()) return;
-        document.getElementById('logout').addEventListener('click', function (e) {
-          e.preventDefault();
-          AdminApi.clearToken();
-          window.location.href = 'login.html';
-        });
-        fetch(AdminApi.apiOrigin() + '/api/pages')
-          .then(function (r) {
-            return r.json();
-          })
-          .then(function (res) {
-            var rows = res.data || [];
-            if (!rows.length) {
-              document.getElementById('list').innerHTML = '<p class="muted">No pages yet.</p>';
-              return;
-            }
-            document.getElementById('list').innerHTML =
-              '<table class="admin-table"><thead><tr><th>Title</th><th>Slug</th><th>Topic</th><th></th></tr></thead><tbody>' +
-              rows
-                .map(function (p) {
-                  var topic = p.topicId && p.topicId.name ? p.topicId.name : '';
-                  return (
-                    '<tr><td>' +
-                    (p.title || '') +
-                    '</td><td><code>' +
-                    (p.slug || '') +
-                    '</code></td><td>' +
-                    topic +
-                    '</td><td><a href="page-edit.html?id=' +
-                    encodeURIComponent(p._id) +
-                    '">Edit</a></td></tr>'
-                  );
-                })
-                .join('') +
-              '</tbody></table>';
-          })
-          .catch(function () {
-            document.getElementById('list').innerHTML =
-              '<p class="muted">Could not load pages (is the API running with MongoDB?).</p>';
-          });
-      })();
-    </script>
+  <body>
+    <p>Moved to <a href="articles.html">Articles</a>.</p>
   </body>
 </html>

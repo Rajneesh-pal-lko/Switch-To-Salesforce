@@ -48,11 +48,14 @@ async function createTopic(req, res, next) {
     }
     const getUnique = ensureUniqueSlug();
     slug = await getUnique(slug);
+    const description = req.body.description != null ? String(req.body.description).trim() : '';
+
     const doc = await SidebarTopic.create({
       name,
       slug,
       groupId,
       order: order != null ? Number(order) : 0,
+      description,
     });
     res.status(201).json({ success: true, data: doc });
   } catch (err) {
@@ -87,6 +90,9 @@ async function updateTopic(req, res, next) {
       const getUnique = ensureUniqueSlug(doc._id);
       newSlug = await getUnique(newSlug);
       doc.slug = newSlug;
+    }
+    if (req.body.description != null) {
+      doc.description = String(req.body.description).trim();
     }
     await doc.save();
     res.json({ success: true, data: doc });

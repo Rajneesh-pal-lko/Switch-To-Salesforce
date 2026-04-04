@@ -9,47 +9,44 @@
     <link rel="stylesheet" href="css/admin.css" />
   </head>
   <body class="admin-body">
-    <div class="admin-layout">
-      <nav class="admin-nav">
-        <span class="admin-nav__title">Admin</span>
-        <a href="index.html">Dashboard</a>
-        <a href="sidebar-topics.html">Sidebar</a>
-        <a href="pages.html">Pages</a>
-        <a href="posts.html">Posts</a>
-        <a href="categories.html">Categories</a>
-        <a href="media.html">Media</a>
-        <a href="#" id="logout">Log out</a>
-      </nav>
-      <h1>Categories</h1>
-      <div id="msg"></div>
-      <div class="admin-card">
-        <h2>Add category</h2>
-        <form id="add-form" class="admin-form">
-          <label>Name <input name="name" required /></label>
-          <label>Slug <input name="slug" placeholder="optional" /></label>
-          <label
-            >Section
-            <select name="section">
-              <option value="general">general</option>
-              <option value="tutorials">tutorials</option>
-              <option value="preparation">preparation</option>
-            </select>
-          </label>
-          <button type="submit" class="admin-btn">Add</button>
-        </form>
+    <div class="admin-app" id="admin-app">
+      <aside class="admin-sidebar" id="admin-sidebar"></aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
+          <h1 class="admin-topbar__title">Categories</h1>
+        </header>
+        <main class="admin-content">
+          <p class="muted">Blog categories (used by posts, not documentation topics).</p>
+          <div id="msg"></div>
+          <div class="admin-card">
+            <h2>Add category</h2>
+            <form id="add-form" class="admin-form">
+              <label>Name <input name="name" required /></label>
+              <label>Slug <input name="slug" placeholder="optional" /></label>
+              <label
+                >Section
+                <select name="section">
+                  <option value="general">general</option>
+                  <option value="tutorials">tutorials</option>
+                  <option value="preparation">preparation</option>
+                </select>
+              </label>
+              <button type="submit" class="admin-btn">Add</button>
+            </form>
+          </div>
+          <div class="admin-card" id="list"><p class="muted">Loading…</p></div>
+        </main>
       </div>
-      <div class="admin-card" id="list"><p class="muted">Loading…</p></div>
     </div>
     <script src="../js/config.js"></script>
     <script src="js/admin-core.js"></script>
+    <script src="js/admin-api.js"></script>
+    <script src="js/admin-ui.js"></script>
     <script>
       (function () {
+        AdminUi.bootstrap({ active: 'categories' });
         if (!AdminApi.requireAuth()) return;
-        document.getElementById('logout').addEventListener('click', function (e) {
-          e.preventDefault();
-          AdminApi.clearToken();
-          window.location.href = 'login.html';
-        });
 
         function load() {
           return fetch(AdminApi.apiOrigin() + '/api/categories')

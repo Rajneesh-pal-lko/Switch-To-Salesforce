@@ -48,31 +48,103 @@
     highlightActiveNav();
   }
 
+  /**
+   * Slug routes: query params (?group=&topic=) or path /:group/:topic(/:slug) when using static hosting rewrites.
+   */
+  function getDocRouteParams() {
+    var pageParams = new URLSearchParams(window.location.search);
+    var g = pageParams.get('group');
+    var t = pageParams.get('topic');
+    var slug = pageParams.get('slug');
+    if (g && t) {
+      return { group: g, topic: t, slug: slug || '' };
+    }
+    var segs = window.location.pathname.replace(/^\//, '').split('/').filter(Boolean);
+    if (segs.length >= 2) {
+      var last = segs[segs.length - 1];
+      if (!/\.html$/i.test(last)) {
+        if (segs.length === 2) {
+          return {
+            group: decodeURIComponent(segs[0]),
+            topic: decodeURIComponent(segs[1]),
+            slug: '',
+          };
+        }
+        if (segs.length >= 3) {
+          return {
+            group: decodeURIComponent(segs[0]),
+            topic: decodeURIComponent(segs[1]),
+            slug: decodeURIComponent(segs[2]),
+          };
+        }
+      }
+    }
+    return { group: g || '', topic: t || '', slug: slug || '' };
+  }
+
   function highlightActiveNav() {
     var path = window.location.pathname.split('/').pop() || 'index.html';
     var pageParams = new URLSearchParams(window.location.search);
-    var currentSlug = pageParams.get('slug');
+    var route = getDocRouteParams();
+    var currentSlug = pageParams.get('slug') || route.slug;
+    var curGroup = route.group;
+    var curTopic = route.topic;
     document.querySelectorAll('[data-nav-link]').forEach(function (a) {
       a.classList.remove('is-active');
       a.removeAttribute('aria-current');
     });
+    var isTopicPage = document.body.getAttribute('data-page') === 'topic';
+
     document.querySelectorAll('[data-nav-link]').forEach(function (a) {
       var href = a.getAttribute('href');
       if (!href) return;
-      var pathPart = href.split('?')[0].split('/').pop();
-      if (pathPart !== path) return;
-      if (path === 'category.html' || path === 'page.html') {
-        var hp = href.indexOf('?');
+
+      if (isTopicPage && curGroup && curTopic) {
+        if (href.charAt(0) === '/') {
+          var pathParts = href.replace(/^\//, '').split('/').filter(Boolean);
+          if (
+            pathParts.length === 2 &&
+            decodeURIComponent(pathParts[0]) === curGroup &&
+            decodeURIComponent(pathParts[1]) === curTopic
+          ) {
+            a.classList.add('is-active');
+            a.setAttribute('aria-current', 'page');
+          }
+          return;
+        }
+        var hpt = href.indexOf('?');
+        if (hpt !== -1) {
+          var pst = new URLSearchParams(href.slice(hpt));
+          if (pst.get('group') === curGroup && pst.get('topic') === curTopic) {
+            a.classList.add('is-active');
+            a.setAttribute('aria-current', 'page');
+          }
+        }
+        return;
+      }
+
+      if (path === 'category.html' || path === 'page.html' || path === 'post.html') {
+        var hp2 = href.indexOf('?');
         var linkSlug = '';
-        if (hp !== -1) {
-          linkSlug = new URLSearchParams(href.slice(hp)).get('slug') || '';
+        if (hp2 !== -1) {
+          linkSlug = new URLSearchParams(href.slice(hp2)).get('slug') || '';
         }
         if (currentSlug && linkSlug && currentSlug === linkSlug) {
+          if (path === 'post.html' || path === 'page.html') {
+            var lg = hp2 !== -1 ? new URLSearchParams(href.slice(hp2)).get('group') : null;
+            var lt = hp2 !== -1 ? new URLSearchParams(href.slice(hp2)).get('topic') : null;
+            if (curGroup && curTopic && (lg !== curGroup || lt !== curTopic)) {
+              return;
+            }
+          }
           a.classList.add('is-active');
           a.setAttribute('aria-current', 'page');
         }
         return;
       }
+
+      var pathPart = href.split('?')[0].split('/').pop();
+      if (pathPart !== path) return;
       var name = href.split('/').pop();
       if (name === path) {
         a.classList.add('is-active');
@@ -80,6 +152,8 @@
       }
     });
   }
+
+  window.highlightActiveNav = highlightActiveNav;
 
   function loadLayout() {
     var base = '';
@@ -319,83 +393,23 @@
     setTheme(getTheme());
     bindThemeToggle();
     loadLayout().then(function () {
-      populateSidebarFromApi();
-      populateSidebarTutorialsFromApi();
+      if (typeof window.initDocSidebar === 'function') {
+        window.initDocSidebar();
+      }
       var page = document.body.getAttribute('data-page');
       if (page === 'blog') initBlogPage();
       if (page === 'category') initCategoryPage();
       if (page === 'home') initHomeFeatured();
       if (page === 'contact') initContactForm();
       if (page === 'cms-page') initCmsPage();
+      if (page === 'topic') initTopicPage();
     });
   });
 
-  function sectionOf(cat) {
-    var s = cat && cat.section;
-    return s ? String(s).toLowerCase() : 'general';
-  }
-
-  function renderCategoryLinks(cats) {
-    return cats
-      .map(function (c) {
-        return (
-          '<li><a data-nav-link href="category.html?slug=' +
-          encodeURIComponent(c.slug) +
-          '">' +
-          escapeHtml(c.name) +
-          '</a></li>'
-        );
-      })
-      .join('');
-  }
-
-  /** Renders tutorial groups + topics from GET /api/sidebar-groups/tree (links to page.html?slug=…). */
-  function populateSidebarTutorialsFromApi() {
-    var root = document.querySelector('[data-sidebar-tutorials]');
-    if (!root || !window.BlogApi || !window.BlogApi.getSidebarTree) return;
-    window.BlogApi
-      .getSidebarTree()
-      .then(function (res) {
-        var groups = (res && res.data) || [];
-        if (!groups.length) {
-          root.innerHTML = '<p class="muted">No tutorial topics yet. Add groups in the admin dashboard.</p>';
-          return;
-        }
-        var html = '';
-        groups.forEach(function (g) {
-          var topics = g.topics || [];
-          var inner =
-            '<ul class="sidebar__tree-nested" aria-label="' +
-            escapeHtml(g.name || 'Topics') +
-            '">' +
-            topics
-              .map(function (t) {
-                return (
-                  '<li><a data-nav-link href="page.html?slug=' +
-                  encodeURIComponent(t.slug) +
-                  '">' +
-                  escapeHtml(t.name) +
-                  '</a></li>'
-                );
-              })
-              .join('') +
-            '</ul>';
-          html +=
-            '<details class="sidebar__subdisclosure" open>' +
-            '<summary class="sidebar__subsummary">' +
-            escapeHtml(g.name || 'Topics') +
-            '</summary>' +
-            '<div class="sidebar__subpanel">' +
-            inner +
-            '</div></details>';
-        });
-        root.innerHTML = html;
-        highlightActiveNav();
-      })
-      .catch(function () {
-        root.innerHTML =
-          '<p class="muted">Couldn’t load tutorial topics. Is the API running?</p>';
-      });
+  function initTopicPage() {
+    if (typeof window.runTopicPage === 'function') {
+      window.runTopicPage();
+    }
   }
 
   function initCmsPage() {
@@ -466,38 +480,4 @@
       });
   }
 
-  /** Fills Tutorials / Preparation / All categories from GET /api/categories (uses each category’s section). */
-  function populateSidebarFromApi() {
-    if (!window.BlogApi) return;
-    var prepEl = document.querySelector('[data-section-list="preparation"]');
-    var allEl = document.querySelector('[data-category-list]');
-    if (!prepEl && !allEl) return;
-
-    window.BlogApi
-      .getCategories()
-      .then(function (res) {
-        var cats = res.data || [];
-        function fill(el, list, emptyMsg) {
-          if (!el) return;
-          if (!list.length) {
-            el.innerHTML = '<li class="muted">' + (emptyMsg || 'No topics yet.') + '</li>';
-            return;
-          }
-          el.innerHTML = renderCategoryLinks(list);
-        }
-        fill(
-          prepEl,
-          cats.filter(function (c) {
-            return sectionOf(c) === 'preparation';
-          })
-        );
-        fill(allEl, cats, 'No categories yet.');
-        highlightActiveNav();
-      })
-      .catch(function () {
-        var err = '<li class="muted">Couldn’t load topics</li>';
-        if (prepEl) prepEl.innerHTML = err;
-        if (allEl) allEl.innerHTML = err;
-      });
-  }
 })();

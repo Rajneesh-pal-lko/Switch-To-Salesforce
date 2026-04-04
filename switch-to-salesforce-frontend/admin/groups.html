@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Groups — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-app" id="admin-app">
+      <aside class="admin-sidebar" id="admin-sidebar"></aside>
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <button type="button" class="admin-sidebar-toggle" id="admin-sidebar-toggle" aria-label="Open menu">Menu</button>
+          <h1 class="admin-topbar__title">Groups</h1>
+        </header>
+        <main class="admin-content">
+          <p class="muted">Top-level sidebar sections (e.g. Tutorials, Interview preparation).</p>
+          <div id="msg"></div>
+          <div class="admin-card">
+            <h2>Create group</h2>
+            <form id="form-create" class="admin-form">
+              <label>Name <input name="name" required /></label>
+              <label>Slug <input name="slug" placeholder="auto from name if empty" /></label>
+              <label>Order <input name="order" type="number" value="0" /></label>
+              <button type="submit" class="admin-btn">Create</button>
+            </form>
+          </div>
+          <div class="admin-card" id="list-wrap">
+            <h2>All groups</h2>
+            <div id="list"><p class="muted">Loading…</p></div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script src="js/admin-api.js"></script>
+    <script src="js/admin-ui.js"></script>
+    <script>
+      (function () {
+        AdminUi.bootstrap({ active: 'groups' });
+        if (!window.AdminData) return;
+
+        function showMsg(html, ok) {
+          document.getElementById('msg').innerHTML =
+            '<div class="admin-msg ' + (ok ? 'admin-msg--ok' : 'admin-msg--error') + '">' + html + '</div>';
+        }
+
+        function escapeAttr(s) {
+          return String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;');
+        }
+
+        function load() {
+          return AdminData.listGroups()
+            .then(function (rows) {
+              if (!rows.length) {
+                document.getElementById('list').innerHTML = '<p class="muted">No groups yet.</p>';
+                return;
+              }
+              document.getElementById('list').innerHTML =
+                '<table class="admin-table"><thead><tr><th>Name</th><th>Slug</th><th>Order</th><th></th></tr></thead><tbody>' +
+                rows
+                  .map(function (g) {
+                    return (
+                      '<tr data-id="' +
+                      escapeAttr(g._id) +
+                      '"><td><input class="admin-inline-input" data-k="name" value="' +
+                      escapeAttr(g.name) +
+                      '" /></td><td><input class="admin-inline-input" data-k="slug" value="' +
+                      escapeAttr(g.slug || '') +
+                      '" /></td><td><input class="admin-inline-input" type="number" data-k="order" value="' +
+                      (g.order != null ? g.order : 0) +
+                      '" /></td><td><button type="button" class="admin-btn admin-btn--sm row-save">Save</button> ' +
+                      '<button type="button" class="admin-btn admin-btn--sm admin-btn--danger row-del">Delete</button></td></tr>'
+                    );
+                  })
+                  .join('') +
+                '</tbody></table>';
+
+              document.querySelectorAll('.row-save').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                  var tr = btn.closest('tr');
+                  var id = tr.getAttribute('data-id');
+                  var payload = {
+                    name: tr.querySelector('[data-k=name]').value,
+                    slug: tr.querySelector('[data-k=slug]').value || undefined,
+                    order: Number(tr.querySelector('[data-k=order]').value) || 0,
+                  };
+                  AdminData.updateGroup(id, payload)
+                    .then(function () {
+                      showMsg('Saved.', true);
+                      return load();
+                    })
+                    .catch(function (e) {
+                      showMsg(e.message || 'Save failed', false);
+                    });
+                });
+              });
+              document.querySelectorAll('.row-del').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                  var tr = btn.closest('tr');
+                  var id = tr.getAttribute('data-id');
+                  if (!confirm('Delete this group and its topics?')) return;
+                  AdminData.deleteGroup(id)
+                    .then(function () {
+                      showMsg('Deleted.', true);
+                      return load();
+                    })
+                    .catch(function (e) {
+                      showMsg(e.message || 'Delete failed', false);
+                    });
+                });
+              });
+            })
+            .catch(function (e) {
+              document.getElementById('list').innerHTML =
+                '<p class="muted">' + (e.message || 'Could not load groups.') + '</p>';
+            });
+        }
+
+        document.getElementById('form-create').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var fd = new FormData(e.target);
+          var payload = {
+            name: fd.get('name'),
+            order: Number(fd.get('order')) || 0,
+          };
+          var sl = fd.get('slug');
+          if (sl && String(sl).trim()) payload.slug = String(sl).trim();
+          AdminData.createGroup(payload)
+            .then(function () {
+              e.target.reset();
+              showMsg('Group created.', true);
+              return load();
+            })
+            .catch(function (err) {
+              showMsg(err.message || 'Create failed', false);
+            });
+        });
+
+        load();
+      })();
+    </script>
+  </body>
+</html>
