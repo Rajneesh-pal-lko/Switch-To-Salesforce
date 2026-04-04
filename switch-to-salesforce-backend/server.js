@@ -31,14 +31,6 @@ app.use(
   })
 );
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: env.isProduction ? 300 : 2000,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use(limiter);
-
 function corsAllowed(origin) {
   if (!origin) {
     return true;
@@ -63,7 +55,10 @@ function corsAllowed(origin) {
 app.use(
   cors({
     origin(origin, callback) {
-      callback(null, corsAllowed(origin));
+      if (!origin) {
+        return callback(null, true);
+      }
+      return callback(null, corsAllowed(origin) ? origin : false);
     },
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
@@ -71,6 +66,15 @@ app.use(
     maxAge: 86400,
   })
 );
+
+/** After CORS: rate limits must not run before CORS or many responses omit Access-Control-Allow-Origin. */
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: env.isProduction ? 300 : 2000,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
