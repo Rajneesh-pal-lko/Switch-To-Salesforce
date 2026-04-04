@@ -1,4 +1,5 @@
-# Render Blueprint — set secrets in the Render dashboard (or link repo and add env vars).
+# Render Blueprint — add secrets in the dashboard: MONGODB_URI, JWT_SECRET (required).
+# After first deploy, set SITE_URL to your Render service URL (Settings → copy URL).
 # https://render.com/docs/blueprint-spec
 services:
   - type: web
@@ -12,3 +13,6 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Must match the browser origin of your deployed static site (CORS). No trailing slash.
+      - key: FRONTEND_URL
+        value: https://switch-to-salesforce.vercel.app

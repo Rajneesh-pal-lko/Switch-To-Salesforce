@@ -77,6 +77,16 @@ Build command: `npm install && npm run build`, root / project directory `switch-
 
 The backend allows origins listed in **`FRONTEND_URL`** (comma-separated) and `localhost` for development. After you get your final frontend URL, set `FRONTEND_URL` on the API to that exact origin (including `https://`, no trailing slash).
 
+### Example (this repo)
+
+| Piece | Value |
+|-------|--------|
+| Live frontend | `https://switch-to-salesforce.vercel.app` |
+| **`FRONTEND_URL` on API** | `https://switch-to-salesforce.vercel.app` (no trailing slash) |
+| **`STS_API_ORIGIN` on Vercel** | Your API origin only, e.g. `https://switch-to-salesforce-api.onrender.com` (replace with your real API URL after deploy) |
+
+After the API is live, set **`STS_API_ORIGIN`** on Vercel and **redeploy** the frontend so `js/config.js` is regenerated. Set **`FRONTEND_URL`** on the API host to the Vercel URL above (or add a custom domain when you use one).
+
 ## API surface (high level)
 
 - Posts: `GET/POST/PUT/DELETE` under `/api/posts` (writes require admin JWT)
