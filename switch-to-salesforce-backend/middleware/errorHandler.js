@@ -3,10 +3,13 @@ function errorHandler(err, req, res, next) {
     return next(err);
   }
   const status = err.status || err.statusCode || 500;
-  const message =
+  let message =
     process.env.NODE_ENV === 'production' && status === 500
       ? 'Internal server error'
       : err.message || 'Something went wrong';
+  if (err.exposeMessage) {
+    message = err.exposeMessage;
+  }
 
   if (process.env.NODE_ENV !== 'production') {
     console.error(err);

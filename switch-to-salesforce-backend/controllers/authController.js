@@ -2,16 +2,23 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const env = require('../config/env');
 
 function signToken(user) {
+  if (!env.jwtSecret) {
+    const err = new Error('JWT_SECRET is not set on the server');
+    err.status = 503;
+    err.exposeMessage = 'Login is unavailable until JWT_SECRET is set (e.g. on Render → Environment).';
+    throw err;
+  }
   return jwt.sign(
     {
       sub: user._id.toString(),
       email: user.email,
       role: user.role,
     },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
+    env.jwtSecret,
+    { expiresIn: env.jwtExpiresIn }
   );
 }
 
