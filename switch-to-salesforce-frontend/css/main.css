@@ -11,19 +11,18 @@
     "Segoe UI Emoji";
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
-  /* Sticky sidebar sits below the fixed navbar */
-  --navbar-sticky-offset: 3.5rem;
+  /* Set precisely from JS (navbar offsetHeight); fallback before script runs */
+  --site-header-height: 3.5rem;
+  --sidebar-width: 280px;
   /* Content width: comfortable on laptop; scales up on large / external monitors */
   --layout-max: 1280px;
   --layout-pad-x: 1.25rem;
-  --sidebar-col: minmax(240px, 280px);
 }
 
 @media (min-width: 1360px) {
   :root {
     --layout-max: 1520px;
     --layout-pad-x: 1.75rem;
-    --sidebar-col: minmax(260px, 300px);
   }
 }
 
@@ -31,7 +30,6 @@
   :root {
     --layout-max: 1720px;
     --layout-pad-x: 2.25rem;
-    --sidebar-col: minmax(280px, 320px);
   }
 }
 
@@ -69,6 +67,22 @@ body {
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
+}
+
+/* Public site only — admin uses its own shell (see admin/css/admin.css) */
+body:not(.admin-body) {
+  padding-top: var(--site-header-height);
+  transition: padding-top 0.25s ease;
+}
+
+body:not(.admin-body).nav-header-hidden {
+  padding-top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body:not(.admin-body) {
+    transition: none;
+  }
 }
 
 a {
@@ -109,29 +123,69 @@ img {
   color: #fca5a5;
 }
 
+/* Doc layout: fixed-width sidebar (desktop) is position:fixed in components.css; main offsets here. */
 .layout {
-  display: grid;
-  grid-template-columns: var(--sidebar-col) minmax(0, 1fr);
   width: 100%;
   max-width: none;
   margin: 0;
-  /* Sidebar flush to the viewport left; breathing room only on the main column (right) */
   padding: 0 0 3rem 0;
-  gap: clamp(1rem, 2vw, 2rem);
-  align-items: start;
+}
+
+@media (min-width: 961px) {
+  .layout {
+    display: block;
+  }
+
+  .layout > .main {
+    margin-left: var(--sidebar-width);
+    min-width: 0;
+    padding: 1rem var(--layout-pad-x) 0;
+    max-width: var(--layout-max);
+  }
+
+  /* Home: center readable column in the area to the right of the fixed sidebar */
+  body[data-page="home"] .layout > .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(100% - var(--sidebar-width));
+    max-width: none;
+    margin-left: var(--sidebar-width);
+    margin-right: 0;
+    padding: 1rem var(--layout-pad-x) 0;
+    box-sizing: border-box;
+  }
+
+  body[data-page="home"] .layout > .main > * {
+    width: 100%;
+    max-width: min(52rem, 100%);
+  }
+}
+
+@media (max-width: 960px) {
+  .layout {
+    display: block;
+  }
+
+  .layout > .main {
+    min-width: 0;
+    padding: 1rem var(--layout-pad-x) 0;
+    max-width: none;
+  }
+
+  body[data-page="home"] .layout > .main {
+    display: block;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  body[data-page="home"] .layout > .main > * {
+    max-width: none;
+  }
 }
 
 .main {
   min-width: 0;
-  padding: 1rem var(--layout-pad-x) 0 0;
-  max-width: var(--layout-max);
-}
-
-/* Home only: center the column so the hero and latest posts aren’t glued to the left edge */
-body[data-page="home"] .main {
-  max-width: min(52rem, 100%);
-  justify-self: center;
-  width: 100%;
 }
 
 .page-header {
@@ -160,12 +214,23 @@ body[data-page="home"] .main {
 
 .reading-progress {
   position: fixed;
-  top: 0;
+  top: var(--site-header-height);
   left: 0;
   height: 3px;
   width: 0;
-  z-index: 1000;
+  z-index: 1048;
   background: linear-gradient(90deg, var(--accent), #22d3ee);
+  transition: top 0.25s ease;
+}
+
+body.nav-header-hidden .reading-progress {
+  top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reading-progress {
+    transition: none;
+  }
 }
 
 .prose {
@@ -382,12 +447,23 @@ body[data-page="home"] .main {
 
 .sidebar-overlay {
   position: fixed;
-  top: var(--navbar-sticky-offset, 3.5rem);
+  top: var(--site-header-height);
   right: 0;
   bottom: 0;
   left: 0;
   background: rgba(15, 23, 42, 0.45);
   z-index: 1030;
+  transition: top 0.25s ease;
+}
+
+body.nav-header-hidden .sidebar-overlay {
+  top: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-overlay {
+    transition: none;
+  }
 }
 
 body.sidebar-open {

@@ -39,8 +39,11 @@
 }
 
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 1050;
   display: flex;
   align-items: center;
@@ -48,8 +51,21 @@
   flex-wrap: wrap;
   padding: 0.75rem var(--layout-pad-x, 1.25rem);
   border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 88%, transparent);
-  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(12px);
+  transition: transform 0.25s ease, box-shadow 0.2s ease;
+  will-change: transform;
+}
+
+body.nav-header-hidden .navbar {
+  transform: translateY(-100%);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar {
+    transition: none;
+  }
 }
 
 .navbar__spacer {
@@ -110,19 +126,38 @@
   display: none;
 }
 
-.sidebar {
-  position: sticky;
-  top: var(--navbar-sticky-offset, 3.5rem);
-  align-self: start;
-  border: 1px solid var(--border);
-  border-left: none;
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: var(--bg-elevated);
-  box-shadow: var(--shadow);
-  max-height: calc(100vh - var(--navbar-sticky-offset, 3.5rem) - 0.5rem);
-  overflow: auto;
-  margin-top: 0;
-  width: 100%;
+/* Desktop: fixed width, fixed position, scrolls independently (ChatGPT / docs-style) */
+@media (min-width: 961px) {
+  .sidebar {
+    position: fixed;
+    top: var(--site-header-height);
+    left: 0;
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    height: calc(100vh - var(--site-header-height));
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: 0;
+    border: 1px solid var(--border);
+    border-left: none;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow);
+    z-index: 100;
+    transition: top 0.25s ease, height 0.25s ease;
+  }
+
+  body.nav-header-hidden .sidebar {
+    top: 0;
+    height: 100vh;
+  }
+}
+
+@media (min-width: 961px) and (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
 }
 
 .sidebar__inner {
@@ -625,6 +660,12 @@
   padding: 2.5rem var(--layout-pad-x, 1.25rem) 2rem;
   margin-top: 3rem;
   background: var(--bg-elevated);
+}
+
+@media (min-width: 961px) {
+  .site-footer {
+    padding-left: calc(var(--sidebar-width) + var(--layout-pad-x, 1.25rem));
+  }
 }
 
 .site-footer__grid {

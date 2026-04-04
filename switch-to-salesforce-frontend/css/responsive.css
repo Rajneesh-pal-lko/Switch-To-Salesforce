@@ -1,6 +1,5 @@
 @media (max-width: 960px) {
   .layout {
-    grid-template-columns: 1fr;
     padding: 0 var(--layout-pad-x, 1.25rem) 2rem;
     max-width: var(--layout-max, 1280px);
     margin-inline: auto;
@@ -26,19 +25,36 @@
     display: inline-flex;
   }
 
-  /* Drawer sits below the sticky navbar; overlay + drawer stack above page content, navbar stays on top. */
+  /* Drawer below fixed header; overlay + drawer above content; navbar stays on top (z-index). */
   .sidebar {
     position: fixed;
-    top: var(--navbar-sticky-offset, 3.5rem);
+    top: var(--site-header-height);
     left: 0;
     bottom: 0;
     width: min(320px, 88vw);
+    min-width: 0;
+    max-width: min(320px, 88vw);
     max-height: none;
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     z-index: 1040;
     transform: translateX(-105%);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, top 0.25s ease;
     border-radius: 0;
     border-right: 1px solid var(--border);
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow);
+  }
+
+  body.nav-header-hidden .sidebar {
+    top: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar {
+      transition: transform 0.2s ease;
+    }
   }
 
   .sidebar.is-open {
