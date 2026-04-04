@@ -8,9 +8,13 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 function parseFrontendUrls() {
   return (process.env.FRONTEND_URL || 'http://localhost:5500')
     .split(',')
-    .map((s) => s.trim())
+    .map((s) => s.trim().replace(/\/$/, ''))
     .filter(Boolean);
 }
+
+/** If true, allow any https://*.vercel.app origin (preview deploys). Use with care. */
+const corsAllowVercel =
+  process.env.CORS_ALLOW_VERCEL === 'true' || process.env.CORS_ALLOW_VERCEL === '1';
 
 const port = parseInt(process.env.PORT || '5000', 10);
 
@@ -32,5 +36,6 @@ module.exports = {
   jwtSecret: (process.env.JWT_SECRET || '').trim(),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   frontendUrls: parseFrontendUrls(),
+  corsAllowVercel,
   siteUrl: (process.env.SITE_URL || '').trim(),
 };

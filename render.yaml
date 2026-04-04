@@ -16,3 +16,5 @@ services:
       # Must match the browser origin of your deployed static site (CORS). No trailing slash.
       - key: FRONTEND_URL
         value: https://switch-to-salesforce.vercel.app
+      - key: CORS_ALLOW_VERCEL
+        value: "true"

@@ -39,15 +39,32 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+function corsAllowed(origin) {
+  if (!origin) {
+    return true;
+  }
+  const o = origin.replace(/\/$/, '');
+  if (env.frontendUrls.includes(o)) {
+    return true;
+  }
+  if (/^https?:\/\/localhost(:\d+)?$/i.test(o)) {
+    return true;
+  }
+  if (env.corsAllowVercel && /^https:\/\/[^/]+\.vercel\.app$/i.test(o)) {
+    return true;
+  }
+  return false;
+}
+
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin) return callback(null, true);
-      if (env.frontendUrls.includes(origin)) return callback(null, true);
-      if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
-      callback(null, false);
+      callback(null, corsAllowed(origin));
     },
     credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400,
   })
 );
 
