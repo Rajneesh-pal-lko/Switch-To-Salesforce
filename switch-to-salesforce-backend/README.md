@@ -9,6 +9,8 @@ Independent REST API for **Switch To Salesforce**: **Node.js**, **Express**, **M
 
 ## Setup
 
+**Configuration-only first (no database yet):** see [`CONFIGURATION.md`](./CONFIGURATION.md) and run `npm run config:check` after copying `.env`.
+
 ```bash
 cd switch-to-salesforce-backend
 cp .env.example .env

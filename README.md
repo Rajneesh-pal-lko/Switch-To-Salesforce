@@ -14,7 +14,14 @@ A production-oriented **full-stack blog platform** with a **static frontend** an
 ## Quick start (local)
 
 1. **MongoDB** — local instance or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
-2. **Backend** — see [`switch-to-salesforce-backend/README.md`](./switch-to-salesforce-backend/README.md): copy `.env.example` to `.env`, `npm install`, `npm run seed`, `npm run dev` (API at `http://localhost:5000/api`).
+2. **Backend** — `.env.example` lives **inside** [`switch-to-salesforce-backend/`](./switch-to-salesforce-backend/) (not the repo root). From the repo root, run:
+   ```bash
+   cp switch-to-salesforce-backend/.env.example switch-to-salesforce-backend/.env
+   cd switch-to-salesforce-backend
+   npm install
+   npm run config:check
+   ```
+   Or: `cd switch-to-salesforce-backend` first, then `cp .env.example .env`. See [`switch-to-salesforce-backend/README.md`](./switch-to-salesforce-backend/README.md) and [`switch-to-salesforce-backend/CONFIGURATION.md`](./switch-to-salesforce-backend/CONFIGURATION.md). **One-shot:** from `switch-to-salesforce-backend/`, run `npm run try:all` (creates `.env` if missing, `npm install`, `npm run config:check`). When the DB is ready: `npm run seed`, `npm run dev` (API at `http://localhost:5000/api`).
 3. **Frontend** — see [`switch-to-salesforce-frontend/README.md`](./switch-to-salesforce-frontend/README.md): serve the folder over HTTP (e.g. port 5500) and open the site in a browser.
 
 Set `FRONTEND_URL` on the backend to match your static server origin for CORS. The frontend loads `js/config.js` before `api.js`; locally it can stay empty so the API defaults to `http://localhost:5000`.

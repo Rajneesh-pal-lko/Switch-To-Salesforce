@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
+    "config:check": "node scripts/check-env.js",
+    "try:all": "bash scripts/try-all.sh",
     "seed": "node scripts/seed.js",
     "seed:demo": "node scripts/seed-demo-categories.js"
   },

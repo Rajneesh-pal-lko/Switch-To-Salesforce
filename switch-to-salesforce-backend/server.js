@@ -1,5 +1,5 @@
-require('dotenv').config();
 const path = require('path');
+const env = require('./config/env');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -15,9 +15,9 @@ const commentRoutes = require('./routes/commentRoutes');
 const subscribeRoutes = require('./routes/subscribeRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = env.port;
 
-if (process.env.NODE_ENV === 'production') {
+if (env.isProduction) {
   app.set('trust proxy', 1);
 }
 
@@ -29,21 +29,17 @@ app.use(
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 300 : 2000,
+  max: env.isProduction ? 300 : 2000,
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use(limiter);
 
-const frontendUrls = (process.env.FRONTEND_URL || 'http://localhost:5500')
-  .split(',')
-  .map((s) => s.trim())
-  .filter(Boolean);
 app.use(
   cors({
     origin(origin, callback) {
       if (!origin) return callback(null, true);
-      if (frontendUrls.includes(origin)) return callback(null, true);
+      if (env.frontendUrls.includes(origin)) return callback(null, true);
       if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
       callback(null, false);
     },
