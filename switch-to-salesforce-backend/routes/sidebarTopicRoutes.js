@@ -1,16 +1,16 @@
 const express = require('express');
 const { body, param } = require('express-validator');
 const {
-  listCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} = require('../controllers/categoryController');
+  listTopics,
+  createTopic,
+  updateTopic,
+  deleteTopic,
+} = require('../controllers/sidebarTopicController');
 const { authMiddleware, requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.get('/', listCategories);
+router.get('/', listTopics);
 
 router.post(
   '/',
@@ -18,10 +18,11 @@ router.post(
   requireAdmin,
   [
     body('name').trim().notEmpty().isLength({ max: 200 }),
-    body('slug').optional().trim().isLength({ max: 200 }),
-    body('section').optional().isIn(['tutorials', 'preparation', 'general']),
+    body('groupId').notEmpty(),
+    body('slug').optional().trim(),
+    body('order').optional().isNumeric(),
   ],
-  createCategory
+  createTopic
 );
 
 router.put(
@@ -31,12 +32,13 @@ router.put(
   [
     param('id').isMongoId(),
     body('name').optional().trim().notEmpty(),
+    body('groupId').optional(),
     body('slug').optional().trim(),
-    body('section').optional().isIn(['tutorials', 'preparation', 'general']),
+    body('order').optional().isNumeric(),
   ],
-  updateCategory
+  updateTopic
 );
 
-router.delete('/:id', authMiddleware, requireAdmin, [param('id').isMongoId()], deleteCategory);
+router.delete('/:id', authMiddleware, requireAdmin, [param('id').isMongoId()], deleteTopic);
 
 module.exports = router;

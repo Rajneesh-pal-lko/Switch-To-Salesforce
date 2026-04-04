@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit post — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <nav class="admin-nav">
+        <span class="admin-nav__title">Admin</span>
+        <a href="index.html">Dashboard</a>
+        <a href="sidebar-topics.html">Sidebar</a>
+        <a href="pages.html">Pages</a>
+        <a href="posts.html">Posts</a>
+        <a href="categories.html">Categories</a>
+        <a href="media.html">Media</a>
+        <a href="#" id="logout">Log out</a>
+      </nav>
+      <h1 id="head">Blog post</h1>
+      <div id="msg"></div>
+      <div class="admin-split admin-split--2">
+        <form id="form" class="admin-form admin-card">
+          <input type="hidden" id="post-id" />
+          <label>Title <input name="title" id="f-title" required /></label>
+          <label>Slug <input name="slug" id="f-slug" /></label>
+          <label>Author <input name="author" id="f-author" required /></label>
+          <label>Category <select name="category" id="f-cat" required></select></label>
+          <label>Excerpt <textarea name="excerpt" id="f-excerpt" rows="3"></textarea></label>
+          <label>Tags <input name="tags" id="f-tags" placeholder="comma separated" /></label>
+          <label>Cover image URL <input name="coverImage" id="f-cover" /></label>
+          <label
+            ><input type="checkbox" name="published" id="f-published" checked /> Published</label
+          >
+          <label
+            >Body (Markdown)
+            <textarea name="body" id="f-body" class="markdown-lg" rows="20" required></textarea>
+          </label>
+          <div class="admin-actions">
+            <button type="submit" class="admin-btn">Save</button>
+            <a href="posts.html" class="admin-btn admin-btn--ghost">Back</a>
+          </div>
+        </form>
+        <div class="admin-card">
+          <h2>Preview</h2>
+          <div id="preview" class="preview-pane prose"></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script>
+      (function () {
+        if (!AdminApi.requireAuth()) return;
+        document.getElementById('logout').addEventListener('click', function (e) {
+          e.preventDefault();
+          AdminApi.clearToken();
+          window.location.href = 'login.html';
+        });
+
+        var slugParam = new URLSearchParams(window.location.search).get('slug');
+
+        function renderPreview() {
+          var md = document.getElementById('f-body').value;
+          document.getElementById('preview').innerHTML = marked.parse(md || '');
+        }
+
+        document.getElementById('f-body').addEventListener('input', renderPreview);
+
+        fetch(AdminApi.apiOrigin() + '/api/categories')
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (res) {
+            var cats = res.data || [];
+            document.getElementById('f-cat').innerHTML = cats
+              .map(function (c) {
+                return '<option value="' + c._id + '">' + c.name + '</option>';
+              })
+              .join('');
+            if (slugParam) {
+              document.getElementById('head').textContent = 'Edit post';
+              return AdminApi.api('/api/admin/posts/' + encodeURIComponent(slugParam), {
+                headers: AdminApi.authHeaders(),
+              }).then(function (res) {
+                var p = res.data;
+                document.getElementById('post-id').value = p._id;
+                document.getElementById('f-title').value = p.title || '';
+                document.getElementById('f-slug').value = p.slug || '';
+                document.getElementById('f-author').value = p.author || '';
+                document.getElementById('f-cat').value = p.category && p.category._id ? p.category._id : p.category;
+                document.getElementById('f-excerpt').value = p.excerpt || '';
+                document.getElementById('f-tags').value = (p.tags || []).join(', ');
+                document.getElementById('f-cover').value = p.coverImage || '';
+                document.getElementById('f-published').checked = p.published !== false;
+                document.getElementById('f-body').value = htmlToMarkdownHint(p.content || '');
+                renderPreview();
+              });
+            }
+            document.getElementById('head').textContent = 'New post';
+            renderPreview();
+          })
+          .catch(function (err) {
+            document.getElementById('msg').innerHTML =
+              '<div class="admin-msg admin-msg--error">' + (err.message || 'Load failed') + '</div>';
+          });
+
+        /** Rough strip for editing legacy HTML content as text; prefer Markdown for new posts. */
+        function htmlToMarkdownHint(html) {
+          if (!html || html.indexOf('<') === -1) return html;
+          var d = document.createElement('div');
+          d.innerHTML = html;
+          return d.innerText || d.textContent || html;
+        }
+
+        document.getElementById('form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var id = document.getElementById('post-id').value;
+          var html = marked.parse(document.getElementById('f-body').value || '');
+          var tagsRaw = document.getElementById('f-tags').value || '';
+          var tags = tagsRaw
+            .split(',')
+            .map(function (t) {
+              return t.trim();
+            })
+            .filter(Boolean);
+          var payload = {
+            title: document.getElementById('f-title').value,
+            slug: document.getElementById('f-slug').value || undefined,
+            content: html,
+            excerpt: document.getElementById('f-excerpt').value || '',
+            author: document.getElementById('f-author').value,
+            category: document.getElementById('f-cat').value,
+            tags: tags,
+            coverImage: document.getElementById('f-cover').value || '',
+            published: document.getElementById('f-published').checked,
+          };
+
+          if (id) {
+            AdminApi.api('/api/posts/' + encodeURIComponent(id), {
+              method: 'PUT',
+              headers: AdminApi.authHeaders(),
+              body: JSON.stringify(payload),
+            })
+              .then(function () {
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--ok">Saved.</div>';
+              })
+              .catch(function (err) {
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+              });
+          } else {
+            AdminApi.api('/api/posts', {
+              method: 'POST',
+              headers: AdminApi.authHeaders(),
+              body: JSON.stringify(payload),
+            })
+              .then(function (res) {
+                var p = res.data;
+                document.getElementById('post-id').value = p._id;
+                document.getElementById('f-slug').value = p.slug;
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--ok">Created.</div>';
+                history.replaceState({}, '', 'post-edit.html?slug=' + encodeURIComponent(p.slug));
+              })
+              .catch(function (err) {
+                document.getElementById('msg').innerHTML =
+                  '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+              });
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

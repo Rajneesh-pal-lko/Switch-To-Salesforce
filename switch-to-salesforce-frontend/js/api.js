@@ -1,5 +1,5 @@
 (function () {
-  var API_ORIGIN = window.BLOG_API_ORIGIN || window.STS_API_ORIGIN || 'http://localhost:5000';
+  var API_ORIGIN = window.BLOG_API_ORIGIN || window.STS_API_ORIGIN || 'http://localhost:5050';
   var API_BASE = API_ORIGIN + '/api';
 
   function json(res) {
@@ -56,6 +56,14 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email }),
       }).then(json);
+    },
+
+    getSidebarTree: function () {
+      return fetch(API_ORIGIN + '/api/sidebar-groups/tree').then(json);
+    },
+
+    getCmsPageBySlug: function (slug) {
+      return fetch(API_BASE + '/pages/' + encodeURIComponent(slug)).then(json);
     },
   };
 })();

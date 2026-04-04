@@ -13,6 +13,7 @@ const postSchema = new mongoose.Schema(
     metaTitle: { type: String, default: '', trim: true },
     metaDescription: { type: String, default: '', trim: true },
     readingTimeMinutes: { type: Number, default: 1, min: 1 },
+    published: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

@@ -61,7 +61,7 @@
       if (!href) return;
       var pathPart = href.split('?')[0].split('/').pop();
       if (pathPart !== path) return;
-      if (path === 'category.html') {
+      if (path === 'category.html' || path === 'page.html') {
         var hp = href.indexOf('?');
         var linkSlug = '';
         if (hp !== -1) {
@@ -320,11 +320,13 @@
     bindThemeToggle();
     loadLayout().then(function () {
       populateSidebarFromApi();
+      populateSidebarTutorialsFromApi();
       var page = document.body.getAttribute('data-page');
       if (page === 'blog') initBlogPage();
       if (page === 'category') initCategoryPage();
       if (page === 'home') initHomeFeatured();
       if (page === 'contact') initContactForm();
+      if (page === 'cms-page') initCmsPage();
     });
   });
 
@@ -345,6 +347,123 @@
         );
       })
       .join('');
+  }
+
+  /** Renders tutorial groups + topics from GET /api/sidebar-groups/tree (links to page.html?slug=…). */
+  function populateSidebarTutorialsFromApi() {
+    var root = document.querySelector('[data-sidebar-tutorials]');
+    if (!root || !window.BlogApi || !window.BlogApi.getSidebarTree) return;
+    window.BlogApi
+      .getSidebarTree()
+      .then(function (res) {
+        var groups = (res && res.data) || [];
+        if (!groups.length) {
+          root.innerHTML = '<p class="muted">No tutorial topics yet. Add groups in the admin dashboard.</p>';
+          return;
+        }
+        var html = '';
+        groups.forEach(function (g) {
+          var topics = g.topics || [];
+          var inner =
+            '<ul class="sidebar__tree-nested" aria-label="' +
+            escapeHtml(g.name || 'Topics') +
+            '">' +
+            topics
+              .map(function (t) {
+                return (
+                  '<li><a data-nav-link href="page.html?slug=' +
+                  encodeURIComponent(t.slug) +
+                  '">' +
+                  escapeHtml(t.name) +
+                  '</a></li>'
+                );
+              })
+              .join('') +
+            '</ul>';
+          html +=
+            '<details class="sidebar__subdisclosure" open>' +
+            '<summary class="sidebar__subsummary">' +
+            escapeHtml(g.name || 'Topics') +
+            '</summary>' +
+            '<div class="sidebar__subpanel">' +
+            inner +
+            '</div></details>';
+        });
+        root.innerHTML = html;
+        highlightActiveNav();
+      })
+      .catch(function () {
+        root.innerHTML =
+          '<p class="muted">Couldn’t load tutorial topics. Is the API running?</p>';
+      });
+  }
+
+  function initCmsPage() {
+    var root = document.getElementById('cms-page-root');
+    if (!root || !window.BlogApi || !window.BlogApi.getCmsPageBySlug) return;
+    var params = new URLSearchParams(window.location.search);
+    var slug = params.get('slug');
+    if (!slug) {
+      root.innerHTML = '<p class="muted">Missing page slug.</p>';
+      return;
+    }
+    document.title = 'Loading… — Switch To Salesforce';
+    window.BlogApi
+      .getCmsPageBySlug(slug)
+      .then(function (res) {
+        var page = res && res.data;
+        if (!page) {
+          root.innerHTML = '<p class="muted">Page not found.</p>';
+          return;
+        }
+        document.title = page.title + ' — Switch To Salesforce';
+        var meta = document.querySelector('meta[name="description"]');
+        if (meta) {
+          meta.setAttribute(
+            'content',
+            String(page.content || '')
+              .replace(/<[^>]+>/g, '')
+              .slice(0, 160)
+          );
+        }
+        var cover = page.coverImage ? absoluteUploadUrl(page.coverImage) : '';
+        var author = page.author ? '<p class="article-meta">' + escapeHtml(page.author) + '</p>' : '';
+        var date =
+          page.updatedAt || page.createdAt
+            ? '<time class="article-date">' +
+              escapeHtml(
+                new Date(page.updatedAt || page.createdAt).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })
+              ) +
+              '</time>'
+            : '';
+        root.innerHTML =
+          '<article class="article">' +
+          (cover ? '<div class="article-cover"><img src="' + escapeHtml(cover) + '" alt=""/></div>' : '') +
+          '<header class="article-header"><h1 class="article-title">' +
+          escapeHtml(page.title) +
+          '</h1>' +
+          date +
+          author +
+          '</header>' +
+          '<div class="article-body cms-body">' +
+          page.content +
+          '</div></article>';
+        if (window.Prism) {
+          window.Prism.highlightAllUnder(root);
+        }
+      })
+      .catch(function () {
+        root.innerHTML =
+          '<div class="empty-state empty-state--compact">' +
+          '<p class="empty-state__title">Page not found</p>' +
+          '<p class="empty-state__hint">This topic may not have a page yet, or the API is unavailable.</p>' +
+          '</div>';
+        document.title = 'Page — Switch To Salesforce';
+      });
   }
 
   /** Fills Tutorials / Preparation / All categories from GET /api/categories (uses each category’s section). */

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Categories — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <nav class="admin-nav">
+        <span class="admin-nav__title">Admin</span>
+        <a href="index.html">Dashboard</a>
+        <a href="sidebar-topics.html">Sidebar</a>
+        <a href="pages.html">Pages</a>
+        <a href="posts.html">Posts</a>
+        <a href="categories.html">Categories</a>
+        <a href="media.html">Media</a>
+        <a href="#" id="logout">Log out</a>
+      </nav>
+      <h1>Categories</h1>
+      <div id="msg"></div>
+      <div class="admin-card">
+        <h2>Add category</h2>
+        <form id="add-form" class="admin-form">
+          <label>Name <input name="name" required /></label>
+          <label>Slug <input name="slug" placeholder="optional" /></label>
+          <label
+            >Section
+            <select name="section">
+              <option value="general">general</option>
+              <option value="tutorials">tutorials</option>
+              <option value="preparation">preparation</option>
+            </select>
+          </label>
+          <button type="submit" class="admin-btn">Add</button>
+        </form>
+      </div>
+      <div class="admin-card" id="list"><p class="muted">Loading…</p></div>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script>
+      (function () {
+        if (!AdminApi.requireAuth()) return;
+        document.getElementById('logout').addEventListener('click', function (e) {
+          e.preventDefault();
+          AdminApi.clearToken();
+          window.location.href = 'login.html';
+        });
+
+        function load() {
+          return fetch(AdminApi.apiOrigin() + '/api/categories')
+            .then(function (r) {
+              return r.json();
+            })
+            .then(function (res) {
+              var rows = res.data || [];
+              document.getElementById('list').innerHTML =
+                '<table class="admin-table"><thead><tr><th>Name</th><th>Slug</th><th>Section</th><th></th></tr></thead><tbody>' +
+                rows
+                  .map(function (c) {
+                    return (
+                      '<tr data-id="' +
+                      c._id +
+                      '"><td><input value="' +
+                      (c.name || '').replace(/"/g, '&quot;') +
+                      '" data-f="name" /></td><td><input value="' +
+                      (c.slug || '').replace(/"/g, '&quot;') +
+                      '" data-f="slug" /></td><td><select data-f="section">' +
+                      ['tutorials', 'preparation', 'general']
+                        .map(function (s) {
+                          return (
+                            '<option value="' +
+                            s +
+                            '"' +
+                            (c.section === s ? ' selected' : '') +
+                            '>' +
+                            s +
+                            '</option>'
+                          );
+                        })
+                        .join('') +
+                      '</select></td><td><button type="button" class="admin-btn save-row">Save</button> ' +
+                      '<button type="button" class="admin-btn admin-btn--danger del-row">Delete</button></td></tr>'
+                    );
+                  })
+                  .join('') +
+                '</tbody></table>';
+
+              document.querySelectorAll('.save-row').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                  var tr = btn.closest('tr');
+                  var id = tr.getAttribute('data-id');
+                  var payload = {
+                    name: tr.querySelector('[data-f=name]').value,
+                    slug: tr.querySelector('[data-f=slug]').value,
+                    section: tr.querySelector('[data-f=section]').value,
+                  };
+                  AdminApi.api('/api/categories/' + id, {
+                    method: 'PUT',
+                    headers: AdminApi.authHeaders(),
+                    body: JSON.stringify(payload),
+                  })
+                    .then(function () {
+                      document.getElementById('msg').innerHTML =
+                        '<div class="admin-msg admin-msg--ok">Saved.</div>';
+                    })
+                    .catch(function (err) {
+                      document.getElementById('msg').innerHTML =
+                        '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+                    });
+                });
+              });
+              document.querySelectorAll('.del-row').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                  var tr = btn.closest('tr');
+                  var id = tr.getAttribute('data-id');
+                  if (!confirm('Delete category?')) return;
+                  AdminApi.api('/api/categories/' + id, {
+                    method: 'DELETE',
+                    headers: AdminApi.authHeaders(),
+                  })
+                    .then(load)
+                    .catch(function (err) {
+                      document.getElementById('msg').innerHTML =
+                        '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+                    });
+                });
+              });
+            });
+        }
+
+        document.getElementById('add-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var fd = new FormData(e.target);
+          var body = {
+            name: fd.get('name'),
+            section: fd.get('section'),
+          };
+          var sl = fd.get('slug');
+          if (sl && String(sl).trim()) body.slug = String(sl).trim();
+          AdminApi.api('/api/categories', {
+            method: 'POST',
+            headers: AdminApi.authHeaders(),
+            body: JSON.stringify(body),
+          })
+            .then(function () {
+              e.target.reset();
+              document.getElementById('msg').innerHTML =
+                '<div class="admin-msg admin-msg--ok">Added.</div>';
+              return load();
+            })
+            .catch(function (err) {
+              document.getElementById('msg').innerHTML =
+                '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+            });
+        });
+
+        load();
+      })();
+    </script>
+  </body>
+</html>

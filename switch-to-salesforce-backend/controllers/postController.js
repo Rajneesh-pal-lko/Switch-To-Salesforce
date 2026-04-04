@@ -72,6 +72,9 @@ async function listPosts(req, res, next) {
     const category = req.query.category;
     const q = req.query.q;
     const filter = {};
+    if (!req.adminList) {
+      filter.published = { $ne: false };
+    }
     if (category) {
       const cat = await Category.findOne({ slug: String(category).toLowerCase() });
       if (cat) filter.category = cat._id;
@@ -113,6 +116,9 @@ async function getPostBySlug(req, res, next) {
     if (!post) {
       return res.status(404).json({ success: false, message: 'Post not found' });
     }
+    if (post.published === false && !req.adminPreview) {
+      return res.status(404).json({ success: false, message: 'Post not found' });
+    }
     const relatedPosts = await Post.find({
       _id: { $ne: post._id },
       category: post.category._id || post.category,
@@ -146,6 +152,7 @@ async function createPost(req, res, next) {
       metaTitle,
       metaDescription,
       coverImage,
+      published,
     } = req.body;
 
     if (req.file) {
@@ -179,6 +186,7 @@ async function createPost(req, res, next) {
       metaTitle: metaTitle || '',
       metaDescription: metaDescription || '',
       readingTimeMinutes,
+      published: published === false || published === 'false' ? false : true,
     });
 
     const populated = await Post.findById(post._id).populate('category', 'name slug').lean();
@@ -213,6 +221,7 @@ async function updatePost(req, res, next) {
       tags,
       metaTitle,
       metaDescription,
+      published,
     } = req.body;
 
     if (title != null) post.title = title.trim();
@@ -234,6 +243,9 @@ async function updatePost(req, res, next) {
     }
     if (metaTitle != null) post.metaTitle = metaTitle;
     if (metaDescription != null) post.metaDescription = metaDescription;
+    if (published !== undefined) {
+      post.published = published === true || published === 'true';
+    }
 
     if (req.file) {
       post.coverImage = `/uploads/${req.file.filename}`;
@@ -277,7 +289,10 @@ async function sitemap(req, res, next) {
       process.env.SITE_URL ||
       `${req.protocol}://${req.get('host')}`
     ).replace(/\/$/, '');
-    const posts = await Post.find().select('slug updatedAt').sort({ updatedAt: -1 }).lean();
+    const posts = await Post.find({ published: { $ne: false } })
+      .select('slug updatedAt')
+      .sort({ updatedAt: -1 })
+      .lean();
     const urls = [
       { loc: `${publicSite}/`, changefreq: 'daily', priority: '1.0' },
       ...posts.map((p) => ({

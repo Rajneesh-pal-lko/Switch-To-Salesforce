@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Media — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <nav class="admin-nav">
+        <span class="admin-nav__title">Admin</span>
+        <a href="index.html">Dashboard</a>
+        <a href="sidebar-topics.html">Sidebar</a>
+        <a href="pages.html">Pages</a>
+        <a href="posts.html">Posts</a>
+        <a href="categories.html">Categories</a>
+        <a href="media.html">Media</a>
+        <a href="#" id="logout">Log out</a>
+      </nav>
+      <h1>Upload image</h1>
+      <p class="muted">Files are stored under <code>/uploads</code> on the API server. Use the returned URL in posts or pages.</p>
+      <div id="msg"></div>
+      <div class="admin-card">
+        <form id="up" class="admin-form">
+          <label>Image <input type="file" name="file" accept="image/*" required /></label>
+          <button type="submit" class="admin-btn">Upload</button>
+        </form>
+        <div id="result"></div>
+      </div>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script>
+      (function () {
+        if (!AdminApi.requireAuth()) return;
+        document.getElementById('logout').addEventListener('click', function (e) {
+          e.preventDefault();
+          AdminApi.clearToken();
+          window.location.href = 'login.html';
+        });
+        document.getElementById('up').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var fd = new FormData();
+          var file = e.target.querySelector('[name=file]').files[0];
+          if (!file) return;
+          fd.append('file', file);
+          fetch(AdminApi.apiOrigin() + '/api/admin/media', {
+            method: 'POST',
+            headers: { Authorization: 'Bearer ' + AdminApi.getToken() },
+            body: fd,
+          })
+            .then(function (r) {
+              return r.json().then(function (j) {
+                if (!r.ok) throw new Error(j.message || 'Upload failed');
+                return j;
+              });
+            })
+            .then(function (data) {
+              document.getElementById('msg').innerHTML =
+                '<div class="admin-msg admin-msg--ok">Uploaded.</div>';
+              document.getElementById('result').innerHTML =
+                '<p><strong>URL:</strong> <code id="copy-url">' +
+                (data.url || '') +
+                '</code> <button type="button" class="admin-btn admin-btn--ghost" id="copy-btn">Copy</button></p>' +
+                (data.absoluteUrl
+                  ? '<p><strong>Absolute:</strong> <code>' + data.absoluteUrl + '</code></p>'
+                  : '');
+              document.getElementById('copy-btn').addEventListener('click', function () {
+                var u = document.getElementById('copy-url').textContent;
+                navigator.clipboard.writeText(u);
+              });
+            })
+            .catch(function (err) {
+              document.getElementById('msg').innerHTML =
+                '<div class="admin-msg admin-msg--error">' + err.message + '</div>';
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

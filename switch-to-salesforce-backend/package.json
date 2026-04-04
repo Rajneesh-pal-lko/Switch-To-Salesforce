@@ -9,7 +9,8 @@
     "config:check": "node scripts/check-env.js",
     "try:all": "bash scripts/try-all.sh",
     "seed": "node scripts/seed.js",
-    "seed:demo": "node scripts/seed-demo-categories.js"
+    "seed:demo": "node scripts/seed-demo-categories.js",
+    "seed:cms": "node scripts/seed-cms-demo.js"
   },
   "engines": {
     "node": ">=18"

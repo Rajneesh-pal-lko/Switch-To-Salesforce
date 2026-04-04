@@ -36,6 +36,13 @@ const upload = multer({
   },
 });
 
+function uploadCoverIfMultipart(req, res, next) {
+  if (req.is('multipart/form-data')) {
+    return upload.single('coverImage')(req, res, next);
+  }
+  next();
+}
+
 const router = express.Router();
 
 router.get(
@@ -55,7 +62,7 @@ router.post(
   '/',
   authMiddleware,
   requireAdmin,
-  upload.single('coverImage'),
+  uploadCoverIfMultipart,
   [
     body('title').trim().notEmpty().isLength({ max: 300 }),
     body('content').isString().notEmpty(),
@@ -66,6 +73,7 @@ router.post(
     body('tags').optional(),
     body('metaTitle').optional().trim().isLength({ max: 200 }),
     body('metaDescription').optional().trim().isLength({ max: 500 }),
+    body('published').optional().isBoolean(),
   ],
   createPost
 );
@@ -74,7 +82,7 @@ router.put(
   '/:id',
   authMiddleware,
   requireAdmin,
-  upload.single('coverImage'),
+  uploadCoverIfMultipart,
   [
     param('id').isMongoId(),
     body('title').optional().trim().notEmpty(),
@@ -86,6 +94,7 @@ router.put(
     body('tags').optional(),
     body('metaTitle').optional().trim(),
     body('metaDescription').optional().trim(),
+    body('published').optional().isBoolean(),
   ],
   updatePost
 );

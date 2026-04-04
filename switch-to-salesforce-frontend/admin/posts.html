@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blog posts — Admin</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-layout">
+      <nav class="admin-nav">
+        <span class="admin-nav__title">Admin</span>
+        <a href="index.html">Dashboard</a>
+        <a href="sidebar-topics.html">Sidebar</a>
+        <a href="pages.html">Pages</a>
+        <a href="posts.html">Posts</a>
+        <a href="categories.html">Categories</a>
+        <a href="media.html">Media</a>
+        <a href="#" id="logout">Log out</a>
+      </nav>
+      <h1>Blog posts</h1>
+      <p><a class="admin-btn" href="post-edit.html">New post</a></p>
+      <div id="msg"></div>
+      <div class="admin-card" id="list"><p class="muted">Loading…</p></div>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script>
+      (function () {
+        if (!AdminApi.requireAuth()) return;
+        document.getElementById('logout').addEventListener('click', function (e) {
+          e.preventDefault();
+          AdminApi.clearToken();
+          window.location.href = 'login.html';
+        });
+        AdminApi.api('/api/admin/posts?limit=100', { headers: AdminApi.authHeaders() })
+          .then(function (res) {
+            var rows = res.data || [];
+            if (!rows.length) {
+              document.getElementById('list').innerHTML = '<p class="muted">No posts yet.</p>';
+              return;
+            }
+            document.getElementById('list').innerHTML =
+              '<table class="admin-table"><thead><tr><th>Title</th><th>Slug</th><th>Published</th><th></th></tr></thead><tbody>' +
+              rows
+                .map(function (p) {
+                  return (
+                    '<tr><td>' +
+                    (p.title || '') +
+                    '</td><td><code>' +
+                    (p.slug || '') +
+                    '</code></td><td>' +
+                    (p.published === false ? 'No' : 'Yes') +
+                    '</td><td><a href="post-edit.html?slug=' +
+                    encodeURIComponent(p.slug) +
+                    '">Edit</a></td></tr>'
+                  );
+                })
+                .join('') +
+              '</tbody></table>';
+          })
+          .catch(function (err) {
+            document.getElementById('list').innerHTML =
+              '<p class="muted">' + (err.message || 'Could not load posts.') + '</p>';
+          });
+      })();
+    </script>
+  </body>
+</html>

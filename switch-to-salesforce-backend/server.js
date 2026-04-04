@@ -13,6 +13,10 @@ const postRoutes = require('./routes/postRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const subscribeRoutes = require('./routes/subscribeRoutes');
+const sidebarGroupRoutes = require('./routes/sidebarGroupRoutes');
+const sidebarTopicRoutes = require('./routes/sidebarTopicRoutes');
+const pageRoutes = require('./routes/pageRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 const PORT = env.port;
@@ -54,16 +58,29 @@ const uploadsPath = path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadsPath));
 
 app.get('/health', (_req, res) => {
-  res.json({ ok: true, service: 'switch-to-salesforce-backend' });
+  res.json({
+    ok: true,
+    service: 'switch-to-salesforce-backend',
+    database: env.skipDatabase ? 'skipped' : 'connected',
+  });
 });
 
-app.get('/sitemap.xml', postController.sitemap);
+app.get('/sitemap.xml', (req, res, next) => {
+  if (env.skipDatabase) {
+    return res.status(503).type('text/plain').send('Sitemap unavailable while database is skipped');
+  }
+  return postController.sitemap(req, res, next);
+});
 
+app.use('/api/admin', adminRoutes);
 app.use('/api', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/subscribe', subscribeRoutes);
+app.use('/api/sidebar-groups', sidebarGroupRoutes);
+app.use('/api/sidebar-topics', sidebarTopicRoutes);
+app.use('/api/pages', pageRoutes);
 
 app.use((err, _req, res, next) => {
   if (err && err.name === 'MulterError') {
@@ -78,13 +95,24 @@ app.use((_req, res) => {
 
 app.use(errorHandler);
 
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Switch To Salesforce API listening on http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Database connection failed:', err);
-    process.exit(1);
+function listen() {
+  app.listen(PORT, () => {
+    console.log(`Switch To Salesforce API listening on http://localhost:${PORT}`);
+    if (env.skipDatabase) {
+      console.log('Database: skipped (SKIP_DB or empty MONGODB_URI) — API routes that need data will error until you connect MongoDB.');
+    }
   });
+}
+
+if (env.skipDatabase) {
+  listen();
+} else {
+  connectDB()
+    .then(() => {
+      listen();
+    })
+    .catch((err) => {
+      console.error('Database connection failed:', err);
+      process.exit(1);
+    });
+}

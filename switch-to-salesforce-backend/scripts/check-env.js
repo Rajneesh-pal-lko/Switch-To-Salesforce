@@ -49,8 +49,14 @@ line('JWT_EXPIRES_IN', true, env.jwtExpiresIn);
 if (env.mongodbUri) {
   line('MONGODB_URI', true, 'set (database connection string present)');
 } else {
-  line('MONGODB_URI', false, 'not set — add when you are ready to connect the database');
+  line('MONGODB_URI', false, 'not set');
 }
+
+line(
+  'SKIP_DB / run without MongoDB',
+  true,
+  env.skipDatabase ? 'yes — server can start; use GET /health to test' : 'no — MongoDB will connect on startup'
+);
 
 console.log('');
 console.log('Next steps');
@@ -58,8 +64,11 @@ console.log('----------');
 if (!env.jwtSecret || env.jwtSecret.length < 16) {
   console.log('- Set a strong JWT_SECRET in .env');
 }
-if (!env.mongodbUri) {
-  console.log('- When ready: set MONGODB_URI (local MongoDB or Atlas), then npm run dev');
+if (env.skipDatabase) {
+  console.log('- Start API without DB: npm run dev  →  curl http://localhost:' + env.port + '/health');
+  console.log('- When you want data: remove SKIP_DB, set MONGODB_URI, remove empty URI if needed');
+} else if (!env.mongodbUri) {
+  console.log('- Set MONGODB_URI or SKIP_DB=true, then npm run dev');
 } else {
   console.log('- Start API: npm run dev');
 }

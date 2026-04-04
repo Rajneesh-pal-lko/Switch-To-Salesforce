@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin login — Switch To Salesforce</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <body class="admin-body">
+    <div class="admin-login">
+      <h1>Switch To Salesforce — Admin</h1>
+      <p class="muted">Sign in with your admin account.</p>
+      <div id="msg"></div>
+      <form id="login-form" class="admin-form">
+        <label>Email <input type="email" name="email" required autocomplete="username" /></label>
+        <label>Password <input type="password" name="password" required autocomplete="current-password" /></label>
+        <div class="admin-actions">
+          <button type="submit" class="admin-btn">Sign in</button>
+        </div>
+      </form>
+    </div>
+    <script src="../js/config.js"></script>
+    <script src="js/admin-core.js"></script>
+    <script>
+      (function () {
+        if (AdminApi.getToken()) {
+          window.location.href = 'index.html';
+          return;
+        }
+        document.getElementById('login-form').addEventListener('submit', function (e) {
+          e.preventDefault();
+          var msg = document.getElementById('msg');
+          msg.innerHTML = '';
+          var fd = new FormData(e.target);
+          var body = { email: fd.get('email'), password: fd.get('password') };
+          fetch(AdminApi.apiOrigin() + '/api/admin/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+          })
+            .then(function (r) {
+              return r.json().then(function (j) {
+                if (!r.ok) throw new Error(j.message || 'Login failed');
+                return j;
+              });
+            })
+            .then(function (data) {
+              if (data.token) AdminApi.setToken(data.token);
+              window.location.href = 'index.html';
+            })
+            .catch(function (err) {
+              msg.innerHTML =
+                '<div class="admin-msg admin-msg--error">' + (err.message || 'Login failed') + '</div>';
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

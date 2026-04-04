@@ -12,4 +12,4 @@ window.STS_API_ORIGIN = ${JSON.stringify(origin)};
 `;
 
 fs.writeFileSync(outPath, body, "utf8");
-console.log("config.js:", origin || "(empty → localhost:5000 in api.js for dev builds)");
+console.log("config.js:", origin || "(empty → localhost:5050 in api.js for dev builds)");

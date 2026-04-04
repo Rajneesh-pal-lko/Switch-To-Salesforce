@@ -14,30 +14,10 @@
         </div>
       </details>
 
-      <details class="sidebar__disclosure">
+      <details class="sidebar__disclosure" open>
         <summary class="sidebar__summary">Tutorials</summary>
-        <div class="sidebar__nested-wrap sidebar__nested-wrap--tutorials">
-          <!-- Inner details: each subject toggles only its own list; closing one does not close “Tutorials” -->
-          <details class="sidebar__subdisclosure" open>
-            <summary class="sidebar__subsummary">Admin</summary>
-            <div class="sidebar__subpanel">
-              <ul class="sidebar__tree-nested" aria-label="Admin tutorials">
-                <li><a data-nav-link href="category.html?slug=validation-rules">Validation rules</a></li>
-                <li><a data-nav-link href="category.html?slug=permissions">Permissions</a></li>
-                <li><a data-nav-link href="category.html?slug=permission-sets">Permission sets</a></li>
-              </ul>
-            </div>
-          </details>
-          <details class="sidebar__subdisclosure" open>
-            <summary class="sidebar__subsummary">Developer</summary>
-            <div class="sidebar__subpanel">
-              <ul class="sidebar__tree-nested" aria-label="Developer tutorials">
-                <li><a data-nav-link href="category.html?slug=apex-development">Apex</a></li>
-                <li><a data-nav-link href="category.html?slug=lightning-web-components">Lightning Web Components</a></li>
-                <li><a data-nav-link href="category.html?slug=rest-integration">REST &amp; integrations</a></li>
-              </ul>
-            </div>
-          </details>
+        <div class="sidebar__nested-wrap sidebar__nested-wrap--tutorials" data-sidebar-tutorials>
+          <p class="muted">Loading…</p>
         </div>
       </details>
 

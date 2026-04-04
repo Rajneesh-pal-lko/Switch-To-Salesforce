@@ -14,13 +14,21 @@ function parseFrontendUrls() {
 
 const port = parseInt(process.env.PORT || '5000', 10);
 
+const mongodbUri = (process.env.MONGODB_URI || '').trim();
+/** Start HTTP server without connecting MongoDB (local smoke test). Set SKIP_DB=true or leave MONGODB_URI empty. */
+const skipDatabase =
+  process.env.SKIP_DB === 'true' ||
+  process.env.SKIP_DB === '1' ||
+  !mongodbUri;
+
 module.exports = {
   port,
   nodeEnv: process.env.NODE_ENV || 'development',
   get isProduction() {
     return (process.env.NODE_ENV || 'development') === 'production';
   },
-  mongodbUri: (process.env.MONGODB_URI || '').trim(),
+  mongodbUri,
+  skipDatabase,
   jwtSecret: (process.env.JWT_SECRET || '').trim(),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   frontendUrls: parseFrontendUrls(),
