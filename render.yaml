@@ -3,7 +3,7 @@
 # https://render.com/docs/blueprint-spec
 services:
   - type: web
-    name: switch-to-salesforce-api
+    name: switch-to-salesforce
     runtime: node
     plan: free
     rootDir: switch-to-salesforce-backend

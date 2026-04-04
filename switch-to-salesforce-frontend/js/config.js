@@ -10,7 +10,7 @@
   }
   var h = typeof location !== 'undefined' ? location.hostname : '';
   var onVercel = h.indexOf('vercel.app') !== -1;
-  /** Must match your Render Web Service URL (see render.yaml name: switch-to-salesforce-api). */
-  var renderApi = 'https://switch-to-salesforce-api.onrender.com';
+  /** Public Render URL (Dashboard → your Web Service → copy URL, no path). */
+  var renderApi = 'https://switch-to-salesforce.onrender.com';
   window.STS_API_ORIGIN = onVercel ? renderApi : 'http://localhost:5050';
 })();
