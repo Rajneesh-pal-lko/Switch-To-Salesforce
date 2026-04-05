@@ -58,25 +58,18 @@ Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SITE_URL` for productio
 
 ### Giscus comments (`components/Comments.tsx`)
 
-Giscus uses GitHub Discussions. Until all four `NEXT_PUBLIC_GISCUS_*` variables are set, the blog shows a “not configured” notice.
+Giscus uses GitHub Discussions. **`.env.example` lists the four `NEXT_PUBLIC_GISCUS_*` values** for `Rajneesh-pal-lko/Switch-To-Salesforce` (default **Announcements** category). Copy them to **`.env.local`** for local dev (or run `cp .env.example .env.local` and adjust `NEXT_PUBLIC_SITE_URL`).
 
-1. **Enable Discussions** on the repository: **Settings → General → Features → Discussions**.
-2. Open **[giscus.app](https://giscus.app)** and sign in with GitHub.
-3. Enter the repository (e.g. `Rajneesh-pal-lko/Switch-To-Salesforce`), enable the Giscus GitHub App on that repo if prompted.
-4. Choose **Discussion category** (e.g. Announcements, or a category you create for blog comments).
-5. Set **Page ↔ discussion mapping** to **pathname** (matches this app’s `mapping="pathname"`).
-6. Copy **repository**, **repository ID**, **category**, and **category ID** from the generated embed into `.env.local` (and into **Vercel → Project → Environment Variables** for production):
+For **Vercel**: **Project → Settings → Environment Variables** — add the same four keys (and `NEXT_PUBLIC_SITE_URL` = your production URL, no trailing slash). Redeploy after saving.
 
-| Variable | Source on giscus.app |
-|----------|----------------------|
-| `NEXT_PUBLIC_GISCUS_REPO` | `data-repo` (`owner/repo`) |
-| `NEXT_PUBLIC_GISCUS_REPO_ID` | `data-repo-id` |
-| `NEXT_PUBLIC_GISCUS_CATEGORY` | `data-category` (name) |
-| `NEXT_PUBLIC_GISCUS_CATEGORY_ID` | `data-category-id` |
+To use another category later, change category name/ID via [giscus.app](https://giscus.app) or the GitHub Discussions API.
 
-7. Restart `npm run dev` locally; redeploy on Vercel after changing env vars.
-
-`.env.example` includes the public **repo** and **repo ID** for this monorepo; you still must fill **category** and **category ID** after Discussions are enabled and you complete the giscus.app wizard.
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_GISCUS_REPO` | `owner/repo` |
+| `NEXT_PUBLIC_GISCUS_REPO_ID` | GitHub numeric repository id |
+| `NEXT_PUBLIC_GISCUS_CATEGORY` | Discussion category name |
+| `NEXT_PUBLIC_GISCUS_CATEGORY_ID` | GitHub category `node_id` (`DIC_…`) |
 
 ## Phase 3+ (planned)
 
