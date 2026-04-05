@@ -58,7 +58,10 @@ Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SITE_URL` for productio
 
 ### Giscus comments (`components/Comments.tsx`)
 
-Giscus uses GitHub Discussions. **`.env.example` lists the four `NEXT_PUBLIC_GISCUS_*` values** for `Rajneesh-pal-lko/Switch-To-Salesforce` (default **Announcements** category). Copy them to **`.env.local`** for local dev (or run `cp .env.example .env.local` and adjust `NEXT_PUBLIC_SITE_URL`).
+Giscus uses GitHub Discussions. You need **both** of the following:
+
+1. **Install the [Giscus GitHub App](https://github.com/apps/giscus)** on your repository ([install / configure](https://github.com/apps/giscus/installations/new), pick **Only select repositories** → `Switch-To-Salesforce` → **Install**). Without this, the UI shows *“giscus is not installed on this repository”* even when env vars are correct.
+2. **Environment variables** — **`.env.example` lists the four `NEXT_PUBLIC_GISCUS_*` values** for `Rajneesh-pal-lko/Switch-To-Salesforce` (default **Announcements** category). Copy them to **`.env.local`** for local dev (or run `cp .env.example .env.local` and adjust `NEXT_PUBLIC_SITE_URL`).
 
 For **Vercel**: **Project → Settings → Environment Variables** — add the same four keys (and `NEXT_PUBLIC_SITE_URL` = your production URL, no trailing slash). Redeploy after saving.
 
