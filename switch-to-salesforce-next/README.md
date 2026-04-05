@@ -54,7 +54,29 @@ Frontmatter:
 
 ## Environment
 
-Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SITE_URL` for production OG URLs. Add Giscus variables when ready.
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SITE_URL` for production OG URLs.
+
+### Giscus comments (`components/Comments.tsx`)
+
+Giscus uses GitHub Discussions. Until all four `NEXT_PUBLIC_GISCUS_*` variables are set, the blog shows a “not configured” notice.
+
+1. **Enable Discussions** on the repository: **Settings → General → Features → Discussions**.
+2. Open **[giscus.app](https://giscus.app)** and sign in with GitHub.
+3. Enter the repository (e.g. `Rajneesh-pal-lko/Switch-To-Salesforce`), enable the Giscus GitHub App on that repo if prompted.
+4. Choose **Discussion category** (e.g. Announcements, or a category you create for blog comments).
+5. Set **Page ↔ discussion mapping** to **pathname** (matches this app’s `mapping="pathname"`).
+6. Copy **repository**, **repository ID**, **category**, and **category ID** from the generated embed into `.env.local` (and into **Vercel → Project → Environment Variables** for production):
+
+| Variable | Source on giscus.app |
+|----------|----------------------|
+| `NEXT_PUBLIC_GISCUS_REPO` | `data-repo` (`owner/repo`) |
+| `NEXT_PUBLIC_GISCUS_REPO_ID` | `data-repo-id` |
+| `NEXT_PUBLIC_GISCUS_CATEGORY` | `data-category` (name) |
+| `NEXT_PUBLIC_GISCUS_CATEGORY_ID` | `data-category-id` |
+
+7. Restart `npm run dev` locally; redeploy on Vercel after changing env vars.
+
+`.env.example` includes the public **repo** and **repo ID** for this monorepo; you still must fill **category** and **category ID** after Discussions are enabled and you complete the giscus.app wizard.
 
 ## Phase 3+ (planned)
 
