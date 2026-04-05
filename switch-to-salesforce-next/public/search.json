@@ -1,10 +1,3 @@
 {
-  "posts": [
-    {
-      "slug": "close-parent-case-batch-apex",
-      "title": "Batch Apex Interview Question: Close Parent Case Only When Child Cases & Tasks Are Closed",
-      "excerpt": "Step-by-step explanation of a real Salesforce interview question using Batch Apex with complete solution and test class.",
-      "category": ""
-    }
-  ]
+  "posts": []
 }
