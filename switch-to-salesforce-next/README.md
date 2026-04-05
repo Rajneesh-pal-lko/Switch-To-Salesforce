@@ -76,6 +76,17 @@ To use another category later, change category name/ID via [giscus.app](https://
 
 **Auth:** Giscus only supports **GitHub** sign-in (comments live in GitHub Discussions). Emoji reactions on posts are enabled (`reactionsEnabled`). There is no Google-only or anonymous mode in Giscus—switching to another provider (e.g. Disqus, Hyvor, Cusdis) would be a separate integration.
 
+### Footer contact (email & WhatsApp)
+
+Optional env vars add a **Contact** column in `SiteFooter`:
+
+| Variable | Example | Notes |
+|----------|---------|--------|
+| `NEXT_PUBLIC_CONTACT_EMAIL` | `you@example.com` | `mailto:` link; prefilled subject “Switch to Salesforce”. |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | `919876543210` | **Digits only**, country code first (no `+` or spaces). Builds `https://wa.me/…`. |
+
+Visitors do **not** create an account on your site—they use their own email client or WhatsApp. Your email/number appear in the page source (and WhatsApp link reveals the number); use a **business email or WhatsApp Business number** if you want separation from personal accounts.
+
 ## Phase 3+ (planned)
 
 - `cmdk` search UI consuming `public/search.json`
