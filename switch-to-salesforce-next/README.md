@@ -74,6 +74,8 @@ To use another category later, change category name/ID via [giscus.app](https://
 | `NEXT_PUBLIC_GISCUS_CATEGORY` | Discussion category name |
 | `NEXT_PUBLIC_GISCUS_CATEGORY_ID` | GitHub category `node_id` (`DIC_…`) |
 
+**Auth:** Giscus only supports **GitHub** sign-in (comments live in GitHub Discussions). Emoji reactions on posts are enabled (`reactionsEnabled`). There is no Google-only or anonymous mode in Giscus—switching to another provider (e.g. Disqus, Hyvor, Cusdis) would be a separate integration.
+
 ## Phase 3+ (planned)
 
 - `cmdk` search UI consuming `public/search.json`
