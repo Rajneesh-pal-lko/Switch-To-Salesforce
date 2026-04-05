@@ -5,12 +5,6 @@
       "title": "Batch Apex Interview Question: Close Parent Case Only When Child Cases & Tasks Are Closed",
       "excerpt": "Step-by-step explanation of a real Salesforce interview question using Batch Apex with complete solution and test class.",
       "category": ""
-    },
-    {
-      "slug": "welcome",
-      "title": "Welcome to the Switch to Salesforce blog",
-      "excerpt": "How we use MDX, Shiki, and Giscus — with categories, tags, and a sample Apex-style block.",
-      "category": "Getting started"
     }
   ]
 }
