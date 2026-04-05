@@ -1,0 +1,227 @@
+---
+title: "Batch Apex Interview Question: Close Parent Case Only When Child Cases & Tasks Are Closed"
+description: "Step-by-step explanation of a real Salesforce interview question using Batch Apex with complete solution and test class."
+date: "2026-04-06"
+tags: ["Salesforce", "Apex", "Batch Apex", "Interview Preparation"]
+---
+
+## 🚀 Salesforce Interview Question of the Day
+
+This question is inspired by @Mtripathi347
+https://www.youtube.com/shorts/JAJv8RfYPSc
+
+---
+
+## 🧠 Problem Statement
+
+Write a Batch Apex class that performs the following:
+
+* Check whether all child Cases of a Parent Case are closed
+* If all child cases are closed → check Tasks on the Parent Case
+* If all Tasks are closed → Close the Parent Case
+* If any Task is open → Keep Parent Case open
+
+---
+
+## 🧩 Solution Approach
+
+We solve this in 5 steps:
+
+---
+
+### Step 1: Fetch Open Cases
+
+```apex
+SELECT Id 
+FROM Case
+WHERE Status != 'Closed'
+```
+
+---
+
+### Step 2: Find Parent Cases with Open Child Cases
+
+```apex
+SELECT ParentId 
+FROM Case 
+WHERE ParentId IN :cases 
+AND Status != 'Closed' 
+GROUP BY ParentId
+```
+
+---
+
+### Step 3: Find Parent Cases with Open Tasks
+
+```apex
+SELECT WhatId 
+FROM Task 
+WHERE WhatId IN :cases 
+AND Status != 'Completed' 
+GROUP BY WhatId
+```
+
+---
+
+### Step 4: Combine Exclusions
+
+```apex
+Set<Id> casesToExclude = new Set<Id>();
+```
+
+---
+
+### Step 5: Close Eligible Cases
+
+```apex
+if(!casesToExclude.contains(openCase.Id)){
+    openCase.Status = 'Closed';
+}
+```
+
+---
+
+## Final Batch Apex Class
+
+```apex
+public class CloseParentCaseBatch implements Database.Batchable<SObject> {
+
+    public Database.QueryLocator start(Database.BatchableContext bc){
+        return Database.getQueryLocator(
+            [SELECT Id from Case WHERE Status != 'Closed']
+        );
+    }
+    
+    public void execute(Database.BatchableContext bc, List<Case> cases){
+        
+        List<Case> casesToUpdate = new List<Case>();
+        
+        List<AggregateResult> arForOpenChildCase = [
+            Select ParentId 
+            from Case 
+            Where ParentId In :cases 
+            AND Status != 'Closed' 
+            Group By ParentId
+        ];
+        
+        List<AggregateResult> arForOpenChildTask = [
+            Select WhatId 
+            from Task 
+            WHERE WhatId In :cases 
+            AND Status != 'Completed' 
+            GROUP By WhatId
+        ];
+        
+        Set<Id> casesToExeclude = new Set<Id>();
+        
+        for(AggregateResult ar: arForOpenChildCase){
+            casesToExeclude.add((Id) ar.get('ParentId'));
+        }
+        
+        for(AggregateResult ar: arForOpenChildTask){
+            casesToExeclude.add((Id) ar.get('WhatId'));
+        }
+        
+        for(Case openCase: cases){
+            if(!casesToExeclude.contains(openCase.id)){
+                openCase.status = 'Closed';
+                casesToUpdate.add(openCase);
+            }
+        }
+        
+        update casesToUpdate;
+    }
+    
+    public void finish(Database.BatchableContext bc){
+        System.debug('Batch Completed');
+    }
+}
+```
+
+---
+
+## Test Class
+
+```apex
+@isTest
+private class CloseParentCaseBatchTest {
+
+    @testSetup
+    static void setupData() {
+        List<Case> parents = new List<Case>();
+        for(Integer i = 1; i <= 50; i++) {
+            parents.add(new Case(Subject = 'Scenario ' + i, Status = 'New'));
+        }
+        insert parents;
+
+        List<Case> children = new List<Case>();
+        List<Task> tasks = new List<Task>();
+
+        for(Integer i = 1; i <= 50; i++) {
+            Id pId = parents[i-1].Id;
+
+            if(i <= 10) {
+                if(i >= 2 && i <= 5) {
+                    children.add(new Case(ParentId = pId, Status = 'Closed'));
+                } else if (i > 5) {
+                    tasks.add(new Task(WhatId = pId, Status = 'Completed', Subject = 'Done'));
+                }
+            } else if(i <= 30) {
+                children.add(new Case(ParentId = pId, Status = 'New')); 
+            } else {
+                tasks.add(new Task(WhatId = pId, Status = 'Not Started', Subject = 'Open Task'));
+            }
+        }
+        
+        if(!children.isEmpty()) insert children;
+        if(!tasks.isEmpty()) insert tasks;
+    }
+
+    @isTest
+    static void testAllFiftyScenarios() {
+        Test.startTest();
+            CloseParentCaseBatch batch = new CloseParentCaseBatch();
+            Database.executeBatch(batch, 100);
+        Test.stopTest();
+
+        Set<String> successSubjects = new Set<String>();
+        for(Integer i=1; i<=10; i++) { successSubjects.add('Scenario ' + i); }
+        
+        Integer closedCount = [
+            SELECT count() 
+            FROM Case 
+            WHERE Subject IN :successSubjects 
+            AND Status = 'Closed'
+        ];
+        System.assertEquals(10, closedCount);
+
+        Set<String> blockedSubjects = new Set<String>();
+        for(Integer i=11; i<=50; i++) { blockedSubjects.add('Scenario ' + i); }
+
+        Integer openCount = [
+            SELECT count() 
+            FROM Case 
+            WHERE Subject IN :blockedSubjects 
+            AND Status != 'Closed'
+        ];
+        System.assertEquals(40, openCount);
+    }
+}
+```
+
+---
+
+## Key Takeaways
+
+* Use AggregateResult for efficient filtering
+* Avoid SOQL inside loops
+* Design for bulk processing
+* Use Set-based exclusion logic
+* Cover all scenarios in test classes
+
+---
+
+## Final Note
+
+Do not change formatting.
+Ensure the file is created and committed properly.
