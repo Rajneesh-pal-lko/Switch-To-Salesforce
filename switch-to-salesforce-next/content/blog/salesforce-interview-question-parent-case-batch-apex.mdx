@@ -1,0 +1,140 @@
+---
+title: "Salesforce Interview Question: Batch Apex Scenario for Closing Parent Cases"
+description: "A practical 3–5 years experience interview scenario covering Batch Apex, relationship subqueries, assumptions, and edge cases."
+date: "2026-04-06"
+category: "Interview Preparation"
+tags:
+  - Salesforce
+  - Apex
+  - Batch Apex
+  - Interview Preparation
+---
+
+## Salesforce Interview Question of the Day
+
+### Batch Apex Scenario — Closing Parent Cases (3–5 Years Experience)
+
+Some Salesforce interview questions look simple at first, but once you think through the details, you realize they test much more than syntax.
+
+This is one of those questions.
+
+At a glance it is about closing a Case. But the interviewer is actually evaluating your understanding of Batch Apex, SOQL relationship queries, and how you think about edge cases.
+
+---
+
+## The Question
+
+Write a Batch Apex class that:
+
+1. Checks whether all child Cases of a Parent Case are closed.
+2. If yes, checks whether all Tasks on the Parent Case are closed.
+3. If both conditions are true, closes the Parent Case.
+
+If any child case or task is still open, the parent case should remain open.
+
+---
+
+## A Small Thing to Think About First
+
+Before jumping into code, think about one scenario:
+
+What if a Parent Case has no child cases at all?
+
+Your logic could interpret that as "all child cases are closed" and move on to checking tasks. If tasks are also closed, the parent case would be closed.
+
+That may be valid, but in a real implementation it is something you should confirm with the business.
+
+Even mentioning this assumption during an interview shows that you are thinking about system behavior, not just code.
+
+---
+
+## Batch Apex Implementation
+
+```apex
+public class CloseParentCaseBatch implements Database.Batchable<SObject> {
+
+    public Database.QueryLocator start(Database.BatchableContext bc) {
+        return Database.getQueryLocator([
+            SELECT Id,
+                (SELECT Id FROM Cases WHERE IsClosed = false LIMIT 1),
+                (SELECT Id FROM Tasks WHERE IsClosed = false LIMIT 1)
+            FROM Case
+            WHERE IsClosed = false
+        ]);
+    }
+
+    public void execute(Database.BatchableContext bc, List<Case> scope) {
+
+        List<Case> casesToClose = new List<Case>();
+
+        for (Case c : scope) {
+            if (c.Cases.isEmpty() && c.Tasks.isEmpty()) {
+                c.Status = 'Closed';
+                casesToClose.add(c);
+            }
+        }
+
+        if (!casesToClose.isEmpty()) {
+            Database.update(casesToClose, false);
+        }
+    }
+
+    public void finish(Database.BatchableContext bc) {
+        System.debug('CloseParentCaseBatch completed.');
+    }
+}
+```
+
+To run the batch:
+
+```apex
+Database.executeBatch(new CloseParentCaseBatch(), 200);
+```
+
+---
+
+## Why Use `LIMIT 1` in the Subqueries?
+
+In this scenario, you only care whether an open child case or task exists, not about fetching all of them.
+
+Using `LIMIT 1` lets Salesforce stop when the first matching open record is found, which keeps the query efficient.
+
+---
+
+## Why Use `Database.update(list, false)`?
+
+A normal `update` is all-or-nothing.
+
+If one record fails due to a validation rule or another error, the whole transaction can roll back.
+
+Using `Database.update(list, false)` allows partial success, so valid records can still be updated while failed records are isolated.
+
+---
+
+## Edge Cases Worth Mentioning
+
+### 1) Multi-Level Case Hierarchy
+
+If cases are structured like:
+
+`Grandparent -> Parent -> Child`
+
+Closing child and parent in the same batch run may not close the grandparent in that same pass. Many teams handle this by scheduling the batch to run periodically.
+
+### 2) Hardcoded Status Value
+
+The sample sets `Status = 'Closed'`.
+
+In real orgs, statuses are configurable, so this value is often driven by Custom Metadata or another configuration source.
+
+---
+
+## Final Thoughts
+
+In Salesforce interviews, writing the code is usually the easy part.
+
+What stands out is when you explain assumptions, think through edge cases, and justify design choices clearly.
+
+That shows experience beyond syntax.
+
+Part of an ongoing series exploring real Salesforce developer interview scenarios for developers with 3–5 years of experience.

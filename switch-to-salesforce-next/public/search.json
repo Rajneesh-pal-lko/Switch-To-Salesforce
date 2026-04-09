@@ -1,3 +1,10 @@
 {
-  "posts": []
+  "posts": [
+    {
+      "slug": "salesforce-interview-question-parent-case-batch-apex",
+      "title": "Salesforce Interview Question: Batch Apex Scenario for Closing Parent Cases",
+      "excerpt": "A practical 3–5 years experience interview scenario covering Batch Apex, relationship subqueries, assumptions, and edge cases.",
+      "category": "Interview Preparation"
+    }
+  ]
 }
