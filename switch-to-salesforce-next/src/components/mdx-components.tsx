@@ -39,14 +39,20 @@ export function CodeBlock({
   children: React.ReactNode;
 }) {
   return (
-    <div className="my-6 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-950 text-neutral-100 dark:border-neutral-800">
+    <div
+      className={cn(
+        "not-prose my-6 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-950 text-neutral-100 dark:border-neutral-800"
+      )}
+    >
       {language ? (
         <div className="border-b border-neutral-800 px-3 py-1.5 font-mono text-xs font-medium text-neutral-400">
           {language}
         </div>
       ) : null}
-      <pre className="overflow-x-auto p-4 text-sm leading-relaxed">
-        <code>{children}</code>
+      <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-neutral-100">
+        <code className="block min-w-0 whitespace-pre bg-transparent p-0 font-mono text-[13px] leading-relaxed text-neutral-100">
+          {children}
+        </code>
       </pre>
     </div>
   );

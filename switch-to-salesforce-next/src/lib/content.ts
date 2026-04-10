@@ -67,18 +67,41 @@ export function getTableOfContents(content: string): TocItem[] {
     return [];
   }
   const out: TocItem[] = [];
-  visit(tree, "heading", (node: Heading) => {
-    if (node.depth !== 2 && node.depth !== 3) return;
-    const title = toString(node).trim();
-    if (!title) return;
-    out.push({
-      id: slugger.slug(title),
-      title,
-      level: node.depth as 2 | 3,
-    });
+
+  /** One preorder walk so markdown `##` and JSX `<h2>` / `<h3>` stay in document order. */
+  visit(tree, (node) => {
+    if (node.type === "heading") {
+      const h = node as Heading;
+      if (h.depth !== 2 && h.depth !== 3) return;
+      const title = toString(h).trim();
+      if (!title) return;
+      out.push({
+        id: slugger.slug(title),
+        title,
+        level: h.depth as 2 | 3,
+      });
+      return;
+    }
+    if (node.type === "mdxJsxFlowElement" || node.type === "mdxJsxTextElement") {
+      const n = node as MdxJsxHeading;
+      if (n.name !== "h2" && n.name !== "h3") return;
+      const title = toString(node as Parameters<typeof toString>[0]).trim();
+      if (!title) return;
+      out.push({
+        id: slugger.slug(title),
+        title,
+        level: n.name === "h2" ? 2 : 3,
+      });
+    }
   });
+
   return out;
 }
+
+type MdxJsxHeading = {
+  type: "mdxJsxFlowElement" | "mdxJsxTextElement";
+  name: string;
+};
 
 export function getPostSlugs(): string[] {
   if (!blogDirExists()) return [];
