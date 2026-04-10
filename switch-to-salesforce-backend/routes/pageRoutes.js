@@ -30,7 +30,7 @@ router.post(
     body('excerpt').optional().isString().isLength({ max: 2000 }),
     body('status').optional().isIn(['draft', 'published']),
     body('order').optional().isNumeric(),
-    body('contentFormat').optional().isIn(['rich', 'html']),
+    body('contentFormat').optional().isIn(['rich', 'html', 'mdx']),
   ],
   createPage
 );
@@ -52,7 +52,7 @@ router.put(
     body('excerpt').optional().isString().isLength({ max: 2000 }),
     body('status').optional().isIn(['draft', 'published']),
     body('order').optional().isNumeric(),
-    body('contentFormat').optional().isIn(['rich', 'html']),
+    body('contentFormat').optional().isIn(['rich', 'html', 'mdx']),
   ],
   updatePage
 );

@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const slugify = require('slugify');
 const PageContent = require('../models/PageContent');
 const { sanitizeArticleBody } = require('../utils/sanitizeContent');
+const { renderMdxToHtml } = require('../utils/renderMdxToHtml.cjs');
 const SidebarTopic = require('../models/SidebarTopic');
 const Category = require('../models/Category');
 
@@ -91,7 +92,19 @@ async function getPageBySlug(req, res, next) {
     if (isDraft) {
       return res.status(404).json({ success: false, message: 'Page not found' });
     }
-    res.json({ success: true, data: page });
+    const data = { ...page };
+    if (page.contentFormat === 'mdx') {
+      try {
+        data.content = await renderMdxToHtml(page.content);
+      } catch (e) {
+        console.error('MDX render failed for slug', req.params.slug, e);
+        return res.status(500).json({
+          success: false,
+          message: 'This page could not be rendered.',
+        });
+      }
+    }
+    res.json({ success: true, data });
   } catch (err) {
     next(err);
   }
@@ -141,11 +154,18 @@ async function createPage(req, res, next) {
     slug = await getUnique(slug);
 
     let st = status === 'draft' ? 'draft' : 'published';
-    const fmt = contentFormat === 'html' ? 'html' : 'rich';
+    const fmt =
+      contentFormat === 'html' ? 'html' : contentFormat === 'mdx' ? 'mdx' : 'rich';
+    let body;
+    try {
+      body = sanitizeArticleBody(content, fmt);
+    } catch (e) {
+      return res.status(400).json({ success: false, message: e.message || 'Invalid content' });
+    }
     const doc = await PageContent.create({
       title: title.trim(),
       slug,
-      content: sanitizeArticleBody(content, fmt),
+      content: body,
       topicId,
       category: catId,
       tags: parseTagsField(tags),
@@ -196,15 +216,19 @@ async function updatePage(req, res, next) {
     } = req.body;
 
     if (title != null) doc.title = String(title).trim();
-    const fmt =
-      contentFormat === 'html' ? 'html' : contentFormat === 'rich' ? 'rich' : doc.contentFormat || 'rich';
+    let fmt = doc.contentFormat || 'rich';
+    if (contentFormat === 'html') fmt = 'html';
+    else if (contentFormat === 'mdx') fmt = 'mdx';
+    else if (contentFormat === 'rich') fmt = 'rich';
     if (contentFormat != null) {
       doc.contentFormat = fmt;
     }
     if (content != null) {
-      doc.content = sanitizeArticleBody(content, doc.contentFormat || 'rich');
-    } else if (contentFormat != null) {
-      doc.content = sanitizeArticleBody(doc.content, doc.contentFormat || 'rich');
+      try {
+        doc.content = sanitizeArticleBody(content, doc.contentFormat || 'rich');
+      } catch (e) {
+        return res.status(400).json({ success: false, message: e.message || 'Invalid content' });
+      }
     }
     if (author != null) doc.author = String(author).trim();
     if (tags != null) doc.tags = parseTagsField(tags);

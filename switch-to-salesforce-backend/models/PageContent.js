@@ -17,10 +17,10 @@ const pageContentSchema = new mongoose.Schema(
       default: 'published',
     },
     order: { type: Number, default: 0 },
-    /** rich = TinyMCE subset; html = broader layout HTML (paste / .html upload) */
+    /** rich = TinyMCE subset; html = layout HTML; mdx = MDX source (compiled to HTML for public API) */
     contentFormat: {
       type: String,
-      enum: ['rich', 'html'],
+      enum: ['rich', 'html', 'mdx'],
       default: 'rich',
     },
   },

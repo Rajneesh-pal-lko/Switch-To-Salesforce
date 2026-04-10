@@ -38,10 +38,14 @@
                 ><input type="radio" name="content-editor-mode" value="html" /> HTML source — paste markup or upload a
                 .html file</label
               >
+              <label class="admin-radio"
+                ><input type="radio" name="content-editor-mode" value="mdx" /> MDX — paste source or upload a .mdx
+                file</label
+              >
             </fieldset>
             <label class="admin-file-row"
-              >Upload HTML file
-              <input type="file" id="html-file-input" accept=".html,.htm,text/html" />
+              >Upload HTML or MDX file
+              <input type="file" id="html-file-input" accept=".html,.htm,.mdx,text/html" />
             </label>
             <label>Content <textarea name="content" id="field-content" class="markdown-lg" rows="16"></textarea></label>
             <div class="admin-actions">
@@ -69,19 +73,23 @@
 
         function getEditorMode() {
           var r = document.querySelector('input[name="content-editor-mode"]:checked');
-          return r && r.value === 'html' ? 'html' : 'rich';
+          if (!r) return 'rich';
+          if (r.value === 'html') return 'html';
+          if (r.value === 'mdx') return 'mdx';
+          return 'rich';
         }
 
         function applyEditorMode(mode) {
           var ta = document.getElementById('field-content');
           if (!ta) return;
           var ed = window.tinymce && tinymce.get('field-content');
-          if (ed && mode === 'html') {
+          var isPlain = mode === 'html' || mode === 'mdx';
+          if (ed && isPlain) {
             if (window.StsTinyMce) ta.value = StsTinyMce.getContent('field-content');
             else ta.value = ed.getContent();
             ed.remove();
           }
-          if (mode === 'html') {
+          if (isPlain) {
             ta.classList.add('admin-html-mode');
             ta.style.minHeight = '480px';
           } else {
@@ -102,9 +110,18 @@
         document.getElementById('html-file-input').addEventListener('change', function (e) {
           var f = e.target.files && e.target.files[0];
           if (!f) return;
+          var name = (f.name && String(f.name).toLowerCase()) || '';
+          var isMdx = name.endsWith('.mdx');
           var reader = new FileReader();
           reader.onload = function () {
             var text = String(reader.result || '');
+            if (isMdx) {
+              document.getElementById('field-content').value = text;
+              var mdxRadio = document.querySelector('input[name="content-editor-mode"][value="mdx"]');
+              if (mdxRadio) mdxRadio.checked = true;
+              applyEditorMode('mdx');
+              return;
+            }
             var m = text.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
             document.getElementById('field-content').value = m ? m[1].trim() : text;
             var htmlRadio = document.querySelector('input[name="content-editor-mode"][value="html"]');
@@ -157,7 +174,8 @@
                 document.getElementById('field-content').value = p.content || '';
                 document.getElementById('field-status').value = p.status === 'draft' ? 'draft' : 'published';
                 document.getElementById('field-order').value = p.order != null ? p.order : 0;
-                var mode = p.contentFormat === 'html' ? 'html' : 'rich';
+                var mode =
+                  p.contentFormat === 'html' ? 'html' : p.contentFormat === 'mdx' ? 'mdx' : 'rich';
                 var mr = document.querySelector('input[name="content-editor-mode"][value="' + mode + '"]');
                 if (mr) mr.checked = true;
               });
@@ -178,7 +196,7 @@
           var pageId = fd.get('id');
           var mode = getEditorMode();
           var body =
-            mode === 'html'
+            mode === 'html' || mode === 'mdx'
               ? document.getElementById('field-content').value
               : window.StsTinyMce
                 ? StsTinyMce.getContent('field-content')
@@ -187,7 +205,7 @@
             title: fd.get('title'),
             slug: fd.get('slug') || undefined,
             content: body,
-            contentFormat: mode === 'html' ? 'html' : 'rich',
+            contentFormat: mode === 'html' ? 'html' : mode === 'mdx' ? 'mdx' : 'rich',
             topicId: fd.get('topicId'),
             excerpt: fd.get('excerpt') || '',
             author: fd.get('author') || '',

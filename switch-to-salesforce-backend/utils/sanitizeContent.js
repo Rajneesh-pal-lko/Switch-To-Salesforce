@@ -144,9 +144,21 @@ function sanitizeLayoutHtml(input) {
   return sanitizeHtml(inner, LAYOUT_HTML);
 }
 
+const MAX_MDX_CHARS = 1_500_000;
+
+function sanitizeMdxSource(input) {
+  if (input == null) return '';
+  const s = String(input);
+  if (s.length > MAX_MDX_CHARS) {
+    throw new Error('MDX content exceeds maximum size');
+  }
+  return s;
+}
+
 function sanitizeArticleBody(content, contentFormat) {
   const raw = content != null ? String(content) : '';
   if (contentFormat === 'html') return sanitizeLayoutHtml(raw);
+  if (contentFormat === 'mdx') return sanitizeMdxSource(raw);
   return sanitizeRichHtml(raw);
 }
 
@@ -154,7 +166,9 @@ module.exports = {
   sanitizeRichHtml,
   sanitizeLayoutHtml,
   sanitizeArticleBody,
+  sanitizeMdxSource,
   stripHtmlDocumentWrapper,
   RICH_HTML,
   LAYOUT_HTML,
+  MAX_MDX_CHARS,
 };
