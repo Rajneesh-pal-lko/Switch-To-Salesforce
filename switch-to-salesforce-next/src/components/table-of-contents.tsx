@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import * as React from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { TocItem } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
@@ -8,54 +9,49 @@ type TableOfContentsProps = {
   items: TocItem[];
 };
 
-/** Aligns with sticky header (`h-14` + offset). */
-const TOP_MARGIN_PX = 96;
+/** Sticky site header + offset so the heading isn’t hidden under the bar. */
+const HEADER_OFFSET_PX = 96;
 
 /**
- * Highlights the current section using IntersectionObserver on each heading id.
+ * Highlights the section whose heading is nearest above the offset line, and
+ * supports smooth scroll on click (more reliable than hash-only with MDX ids).
  */
 export function TableOfContents({ items }: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string | null>(
-    items[0]?.id ?? null
+    () => items[0]?.id ?? null
   );
-  const visibleRef = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
+  const pickActive = useCallback(() => {
     if (items.length === 0) return;
-
-    const visible = visibleRef.current;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const id = entry.target.id;
-          if (!id) continue;
-          if (entry.isIntersecting) visible.add(id);
-          else visible.delete(id);
-        }
-        let last: string | null = null;
-        for (const item of items) {
-          if (visible.has(item.id)) last = item.id;
-        }
-        setActiveId((prev) => last ?? prev ?? items[0]?.id ?? null);
-      },
-      {
-        root: null,
-        rootMargin: `-${TOP_MARGIN_PX}px 0px -55% 0px`,
-        threshold: [0, 1],
-      }
-    );
-
+    let current: string | null = null;
     for (const item of items) {
       const el = document.getElementById(item.id);
-      if (el) observer.observe(el);
+      if (!el) continue;
+      const top = el.getBoundingClientRect().top;
+      if (top <= HEADER_OFFSET_PX) current = item.id;
+      else break;
     }
-
-    return () => {
-      visible.clear();
-      observer.disconnect();
-    };
+    setActiveId(current ?? items[0]?.id ?? null);
   }, [items]);
+
+  useEffect(() => {
+    pickActive();
+    window.addEventListener("scroll", pickActive, { passive: true });
+    window.addEventListener("resize", pickActive);
+    return () => {
+      window.removeEventListener("scroll", pickActive);
+      window.removeEventListener("resize", pickActive);
+    };
+  }, [pickActive]);
+
+  const onClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    history.replaceState(null, "", `#${id}`);
+    setActiveId(id);
+  };
 
   if (items.length === 0) return null;
 
@@ -75,6 +71,7 @@ export function TableOfContents({ items }: TableOfContentsProps) {
           >
             <a
               href={`#${item.id}`}
+              onClick={(e) => onClick(e, item.id)}
               className={cn(
                 "block border-l-2 border-transparent py-1 pl-3 text-neutral-600 transition hover:text-indigo-600 dark:text-neutral-400 dark:hover:text-indigo-400",
                 activeId === item.id &&

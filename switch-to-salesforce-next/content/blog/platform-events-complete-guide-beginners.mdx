@@ -112,7 +112,8 @@ tags:
 
 <div className="pe-code-slot">
 
-<CodeBlock language="apex">{`// Step 1: Create the event instance with your data
+```apex
+// Step 1: Create the event instance with your data
 Order_Notification__e event = new Order_Notification__e(
     Order_Id__c = 'ORD-12345',
     Status__c   = 'Shipped',
@@ -129,7 +130,8 @@ if (result.isSuccess()) {
     for (Database.Error err : result.getErrors()) {
         System.debug('Publish failed: ' + err.getMessage());
     }
-}`}</CodeBlock>
+}
+```
 
 </div>
 
@@ -149,7 +151,8 @@ if (result.isSuccess()) {
 
 <div className="pe-code-slot">
 
-<CodeBlock language="apex">{`trigger OrderNotificationTrigger on Order_Notification__e (after insert) {
+```apex
+trigger OrderNotificationTrigger on Order_Notification__e (after insert) {
     for (Order_Notification__e event : Trigger.new) {
         System.debug('Order received: ' + event.Order_Id__c);
         System.debug('Status: '        + event.Status__c);
@@ -158,7 +161,8 @@ if (result.isSuccess()) {
         // Add your downstream business logic here
         // e.g. create a Task, update a record, call a service
     }
-}`}</CodeBlock>
+}
+```
 
 </div>
 
@@ -178,7 +182,8 @@ if (result.isSuccess()) {
 
 <div className="pe-code-slot">
 
-<CodeBlock language="javascript">{`// orderListener.js
+```javascript
+// orderListener.js
 import { LightningElement }        from 'lwc';
 import { subscribe, unsubscribe } from 'lightning/empApi';
 
@@ -202,7 +207,8 @@ export default class OrderListener extends LightningElement {
             console.log('Unsubscribed successfully');
         });
     }
-}`}</CodeBlock>
+}
+```
 
 </div>
 

@@ -1,5 +1,18 @@
 import type { MDXComponents } from "mdx/types";
+import * as React from "react";
 import { cn } from "@/lib/utils";
+
+function collectText(node: React.ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number")
+    return String(node);
+  if (Array.isArray(node)) return node.map(collectText).join("");
+  if (React.isValidElement(node)) {
+    const ch = (node.props as { children?: React.ReactNode }).children;
+    if (ch != null) return collectText(ch);
+  }
+  return "";
+}
 
 export type CalloutType = "info" | "warning" | "error";
 
@@ -33,11 +46,16 @@ export function Callout({
 /** Manual code snippets in MDX (fenced blocks use Shiki via rehype-pretty-code). */
 export function CodeBlock({
   language,
+  code,
   children,
 }: {
   language?: string;
-  children: React.ReactNode;
+  /** Prefer `code` — RSC MDX often does not pass template-literal children through. */
+  code?: string;
+  children?: React.ReactNode;
 }) {
+  const text =
+    typeof code === "string" && code.length > 0 ? code : collectText(children);
   return (
     <div
       className={cn(
@@ -51,7 +69,7 @@ export function CodeBlock({
       ) : null}
       <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-neutral-100">
         <code className="block min-w-0 whitespace-pre bg-transparent p-0 font-mono text-[13px] leading-relaxed text-neutral-100">
-          {children}
+          {text}
         </code>
       </pre>
     </div>
