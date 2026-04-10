@@ -1,0 +1,388 @@
+---
+title: "Platform Events in Salesforce — A Complete Guide for Beginners"
+description: "Real-time messaging, event-driven architecture, Apex + LWC, ReplayId, and 10 interview practice questions — beginner friendly."
+date: "2026-04-11"
+category: "Learning"
+tags:
+  - Salesforce
+  - Platform Events
+  - Apex
+  - LWC
+  - Interview Preparation
+---
+
+<div className="pe-html-guide not-prose">
+
+<div className="blog">
+
+  <div className="hero">
+    <div className="hero-tag">Salesforce Interview Series — Platform Events</div>
+    <h1>Platform Events in Salesforce — A Complete Guide for Beginners</h1>
+    <p className="subtitle">Real-time messaging, event-driven architecture, and everything you need to know before your next Salesforce interview — explained simply with actual code.</p>
+    <div className="meta">
+      <span className="meta-pill">Beginner friendly</span>
+      <span className="meta-pill">Apex + LWC code</span>
+      <span className="meta-pill">10 practice questions</span>
+      <span className="meta-pill">8 min read</span>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Why This Matters</div>
+    <h2>Before we start — why should you care about Platform Events?</h2>
+    <p>If you&apos;re preparing for a Salesforce Developer interview, Platform Events is one of those topics that separates candidates who just know the basics from those who actually understand how modern Salesforce architecture works.</p>
+    <p>It shows up in job descriptions, interview rounds, and real projects — especially anything involving integrations, real-time updates, or connecting Salesforce with external systems. By the end of this guide, you&apos;ll be able to explain it clearly, write working code, and answer the tricky follow-up questions interviewers love to throw at you.</p>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">The Problem First</div>
+    <h2>What problem does Platform Events actually solve?</h2>
+    <p>To understand Platform Events, you first need to understand the problem with traditional integrations.</p>
+    <p>In a typical REST or SOAP integration, System A calls System B directly and waits for a response. This is called a <strong>tightly coupled</strong> architecture. It works — until it doesn&apos;t. If System B is slow, System A is slow. If System B is down, System A fails. One broken link breaks the entire chain.</p>
+    <p>Now imagine you&apos;re building an order management system where Salesforce needs to notify a warehouse system, a shipping partner, and an internal dashboard — all at the same time. With tight coupling, you&apos;d have to call all three sequentially, handle each failure separately, and hope nothing goes wrong mid-transaction.</p>
+    <p>Platform Events solves all of this elegantly.</p>
+
+    <div className="analogy-box">
+      <div className="analogy-title">Think of it like a food delivery app</div>
+      <p>When you order food on Swiggy, you place the order and move on with your evening. You don&apos;t stand at the door waiting. Swiggy (the Event Bus) holds the order. The restaurant gets notified independently. The delivery person gets notified independently. Three things happen — none of them blocked by the others. That&apos;s exactly the publish-subscribe model Platform Events uses.</p>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Core Concept</div>
+    <h2>So what exactly are Platform Events?</h2>
+    <p>Platform Events are Salesforce&apos;s enterprise messaging framework built on <strong>Event-Driven Architecture (EDA)</strong>. They allow systems — inside and outside Salesforce — to communicate asynchronously in real-time through a publish-subscribe model.</p>
+    <p>There are three players in every Platform Event flow:</p>
+
+    <div className="flow-wrap">
+      <div className="flow-row">
+        <div className="flow-box green">Publisher<br /><span className="flow-sub">Apex / Flow / External App</span></div>
+        <div className="flow-arrow">→</div>
+        <div className="flow-box blue">Salesforce Event Bus<br /><span className="flow-sub">Holds events for 72 hours</span></div>
+        <div className="flow-arrow">→</div>
+        <div className="flow-box amber">Subscriber(s)<br /><span className="flow-sub">Apex Trigger / LWC / Flow / External</span></div>
+      </div>
+    </div>
+
+    <p>The publisher fires the event and immediately moves on — this is the &quot;fire and forget&quot; model. The Event Bus holds the message. One or many subscribers can react to it independently, at their own pace. None of them are directly connected to each other.</p>
+
+    <p>In Salesforce, Platform Event objects are defined just like custom objects — except they use the <code>__e</code> suffix instead of <code>__c</code>. For example: <code>Order_Notification__e</code>.</p>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Senior-Level Concept</div>
+    <h2>Publish Behavior — the concept most beginners miss</h2>
+    <p>When you create a Platform Event in Salesforce Setup, you have to choose its Publish Behavior. This single setting has a huge impact on how your event interacts with database transactions — and it&apos;s one of the first things a senior interviewer will ask about.</p>
+
+    <div className="pb-grid">
+      <div className="pb-card green">
+        <div className="pb-badge">Publish After Commit</div>
+        <div className="pb-title">Fires only on transaction success</div>
+        <div className="pb-desc">The event is only published if the entire Salesforce database transaction completes successfully. If the transaction rolls back, the event is never fired.</div>
+        <div className="pb-use">Use for: business processes — order fulfillment, notifications, downstream workflows</div>
+      </div>
+      <div className="pb-card blue">
+        <div className="pb-badge">Publish Immediately</div>
+        <div className="pb-title">Fires the moment Apex executes</div>
+        <div className="pb-desc">The event fires as soon as the Apex line runs — even if the database transaction later rolls back. The event cannot be &quot;recalled.&quot;</div>
+        <div className="pb-use">Use for: error logging and auditing — where you want a record even if something fails</div>
+      </div>
+    </div>
+
+    <div className="tip-box">
+      <div className="box-label">Interview line</div>
+      <p>&quot;Choosing the wrong Publish Behavior is the difference between data integrity and data corruption. I always match the behavior to the business context — Publish After Commit for processes, Publish Immediately for logging.&quot;</p>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Code — Publishing</div>
+    <h2>How to publish a Platform Event in Apex</h2>
+    <p>Publishing a Platform Event in Apex is straightforward. The key rule: always use <code>EventBus.publish()</code> — never use <code>insert</code> directly. Using <code>EventBus.publish()</code> gives you proper error handling and respects the Publish Behavior setting you configured in Setup.</p>
+
+<div className="pe-code-slot">
+
+<CodeBlock language="apex">{`// Step 1: Create the event instance with your data
+Order_Notification__e event = new Order_Notification__e(
+    Order_Id__c = 'ORD-12345',
+    Status__c   = 'Shipped',
+    Message__c  = 'Your order is on the way!'
+);
+
+// Step 2: Publish using EventBus — not insert
+Database.SaveResult result = EventBus.publish(event);
+
+// Step 3: Always check the result
+if (result.isSuccess()) {
+    System.debug('Event published successfully!');
+} else {
+    for (Database.Error err : result.getErrors()) {
+        System.debug('Publish failed: ' + err.getMessage());
+    }
+}`}</CodeBlock>
+
+</div>
+
+    <div className="warn-box">
+      <div className="box-label">Common mistake</div>
+      <p>Never publish events inside a for loop. Always collect events in a List and publish them in bulk using <code>EventBus.publish(eventList)</code> — this keeps you within governor limits.</p>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Code — Subscribing via Apex</div>
+    <h2>How to subscribe using an Apex Trigger</h2>
+    <p>Subscribing to a Platform Event via Apex means writing a trigger on the event object. But Platform Event triggers are different from standard object triggers in two important ways.</p>
+    <p>First — they only support <code>after insert</code>. No before insert, no update, no delete. Second — the trigger runs asynchronously in its own separate transaction. This means it runs completely outside the publisher&apos;s transaction context, which has important implications we&apos;ll cover in a moment.</p>
+
+<div className="pe-code-slot">
+
+<CodeBlock language="apex">{`trigger OrderNotificationTrigger on Order_Notification__e (after insert) {
+    for (Order_Notification__e event : Trigger.new) {
+        System.debug('Order received: ' + event.Order_Id__c);
+        System.debug('Status: '        + event.Status__c);
+        System.debug('Message: '       + event.Message__c);
+
+        // Add your downstream business logic here
+        // e.g. create a Task, update a record, call a service
+    }
+}`}</CodeBlock>
+
+</div>
+
+    <div className="info-box">
+      <div className="box-label">Good to know</div>
+      <p>If your trigger processing fails and you want Salesforce to automatically retry, you can throw an <code>EventBus.RetryableException</code>. Salesforce will retry delivery up to 9 times before giving up.</p>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Code — Subscribing via LWC</div>
+    <h2>How to subscribe using a Lightning Web Component</h2>
+    <p>This is where Platform Events get really powerful for UI development. Using the <code>lightning/empApi</code> module (Enterprise Messaging Platform API), an LWC can listen for events and update the UI in real-time — without the user ever refreshing the page.</p>
+    <p>Think of a live order tracking dashboard, a real-time notification bell, or a support queue that updates as new tickets come in. All of this is powered by Platform Events + empApi.</p>
+
+<div className="pe-code-slot">
+
+<CodeBlock language="javascript">{`// orderListener.js
+import { LightningElement }        from 'lwc';
+import { subscribe, unsubscribe } from 'lightning/empApi';
+
+export default class OrderListener extends LightningElement {
+    subscription = {};
+    channelName  = '/event/Order_Notification__e';
+
+    connectedCallback() {
+        subscribe(this.channelName, -1, (event) => {
+            const payload = event.data.payload;
+            console.log('Order ID :', payload.Order_Id__c);
+            console.log('Status   :', payload.Status__c);
+            // Update your component's reactive properties here
+        }).then(response => {
+            this.subscription = response; // Save for unsubscribe
+        });
+    }
+
+    disconnectedCallback() {
+        unsubscribe(this.subscription, () => {
+            console.log('Unsubscribed successfully');
+        });
+    }
+}`}</CodeBlock>
+
+</div>
+
+    <div className="warn-box">
+      <div className="box-label">Critical mistake to avoid</div>
+      <p>Always call <code>unsubscribe()</code> in <code>disconnectedCallback()</code>. Forgetting this causes memory leaks and can push your org toward the concurrent CometD subscriber limit — a production issue that&apos;s very hard to debug.</p>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Deep Dive</div>
+    <h2>ReplayId — what makes Platform Events fault-tolerant</h2>
+    <p>Every event published to the Event Bus gets a unique, sequential number called a <strong>ReplayId</strong>. Think of it like a ticket number in a queue. Subscribers can use this number to replay events they missed — for example, if a subscriber was offline or experienced an error.</p>
+    <p>This is what makes Platform Events fault-tolerant. A subscriber doesn&apos;t need to be online at the exact moment an event fires. As long as it comes back within 72 hours, it can pick up right where it left off.</p>
+
+    <table className="replay-table">
+      <tbody>
+      <tr><th>ReplayId value</th><th>What the subscriber does</th><th>When to use it</th></tr>
+      <tr><td><code>-1</code></td><td>Subscribes to new events only (from now)</td><td>Normal real-time subscriptions</td></tr>
+      <tr><td><code>-2</code></td><td>Replays all events from the last 72 hours</td><td>After a system outage or deployment</td></tr>
+      <tr><td>Specific ID</td><td>Replays all events after that specific event</td><td>Resuming from a known checkpoint</td></tr>
+      </tbody>
+    </table>
+
+    <div className="tip-box">
+      <div className="box-label">Interview line</div>
+      <p>&quot;ReplayId is what makes Platform Events fault-tolerant — if a subscriber goes offline, it can resume from exactly the right checkpoint rather than missing events or reprocessing everything from scratch.&quot;</p>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Watch Out</div>
+    <h2>The Automated Process User — a trap most beginners walk into</h2>
+    <p>This is one of the most important real-world gotchas with Platform Events, and very few beginners know about it. When a Platform Event trigger fires, it doesn&apos;t run as the user who published the event. It runs under a special system user called the <strong>Automated Process</strong> user.</p>
+    <p>This causes two real problems in production:</p>
+    <p><strong>Problem 1:</strong> If you write <code>UserInfo.getUserId()</code> inside your trigger to capture who triggered the event, you&apos;ll get the Automated Process user&apos;s ID — not the actual user&apos;s ID.</p>
+    <p><strong>Problem 2:</strong> The Automated Process user often doesn&apos;t have access to records protected by org-wide defaults or sharing rules. So your SOQL queries inside the trigger might return zero results — even when the records clearly exist — simply because the running user has no visibility to them.</p>
+
+    <div className="warn-box">
+      <div className="box-label">What to do</div>
+      <p>If you need the actual user&apos;s identity, publish it as a field on the event itself before sending it. And always test your Platform Event triggers with sharing scenarios — not just in System Administrator context.</p>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="section">
+    <div className="section-label">Decision Guide</div>
+    <h2>When to use Platform Events — and when not to</h2>
+    <p>Platform Events are powerful, but they&apos;re not the right tool for every problem. Knowing when to use them — and when a simpler solution works — is itself a sign of senior-level thinking.</p>
+
+    <div className="use-grid">
+      <div className="use-card yes">
+        <div className="use-title">Use Platform Events when...</div>
+        <ul>
+          <li>You need real-time notifications across systems</li>
+          <li>You want to decouple a publisher from multiple subscribers</li>
+          <li>You&apos;re integrating Salesforce with external apps asynchronously</li>
+          <li>You need live UI updates in LWC without page refresh</li>
+          <li>You want fault-tolerant event replay using ReplayId</li>
+        </ul>
+      </div>
+      <div className="use-card no">
+        <div className="use-title">Avoid Platform Events when...</div>
+        <ul>
+          <li>You need a synchronous response (e.g. payment verification)</li>
+          <li>It&apos;s simple single-org automation — use Flow instead</li>
+          <li>Your daily event volume exceeds org limits</li>
+          <li>You need two-way communication — events are one-directional</li>
+          <li>You need permanent storage — 72 hrs and events are gone</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="oneliner">
+    <p>&quot;Platform Events transform Salesforce from a monolithic database into a scalable, event-driven integration hub — where every system communicates through events, not direct dependencies.&quot;</p>
+    <div className="ol-attr">— The one line worth memorizing before your interview</div>
+  </div>
+
+  <hr className="divider" />
+
+  <div className="interview-section">
+    <div className="int-header">
+      <div className="int-tag">Interview Practice</div>
+    </div>
+    <h2>10 questions to test yourself</h2>
+    <p className="int-sub">You&apos;ve read the guide — now close it and try to answer these from memory. These are real questions that come up in Salesforce interviews for developers with 0–2 years of experience. No answers provided. That&apos;s intentional.</p>
+
+    <div className="q-list">
+
+      <div className="q-item">
+        <div className="q-num">1</div>
+        <div>
+          <div className="q-text">What are Platform Events and what architecture pattern do they follow?</div>
+          <div className="q-level"><span className="level-badge core">Core</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">2</div>
+        <div>
+          <div className="q-text">What is the difference between tightly coupled and loosely coupled integration? How do Platform Events help?</div>
+          <div className="q-level"><span className="level-badge core">Core</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">3</div>
+        <div>
+          <div className="q-text">What is the Salesforce Event Bus and how long does it retain events?</div>
+          <div className="q-level"><span className="level-badge core">Core</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">4</div>
+        <div>
+          <div className="q-text">What are the two Publish Behaviors in Platform Events? Give a real-world use case for each.</div>
+          <div className="q-level"><span className="level-badge senior">Senior</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">5</div>
+        <div>
+          <div className="q-text">Write Apex code to publish a Platform Event. Why do we use <code>EventBus.publish()</code> instead of <code>insert</code>?</div>
+          <div className="q-level"><span className="level-badge core">Core</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">6</div>
+        <div>
+          <div className="q-text">Write an Apex Trigger to subscribe to a Platform Event. What trigger context is supported and why?</div>
+          <div className="q-level"><span className="level-badge core">Core</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">7</div>
+        <div>
+          <div className="q-text">Write an LWC that subscribes to a Platform Event. What module do you use and what does unsubscribe do?</div>
+          <div className="q-level"><span className="level-badge core">Core</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">8</div>
+        <div>
+          <div className="q-text">What is ReplayId? Explain what values -1, -2, and a specific ID mean for a subscriber.</div>
+          <div className="q-level"><span className="level-badge senior">Senior</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">9</div>
+        <div>
+          <div className="q-text">What is the Automated Process User? What are the two real problems it causes in Platform Event triggers?</div>
+          <div className="q-level"><span className="level-badge senior">Senior</span></div>
+        </div>
+      </div>
+
+      <div className="q-item">
+        <div className="q-num">10</div>
+        <div>
+          <div className="q-text">Give two scenarios where you would NOT use Platform Events and explain why a different approach is better.</div>
+          <div className="q-level"><span className="level-badge senior">Senior</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+</div>

@@ -1,6 +1,12 @@
 {
   "posts": [
     {
+      "slug": "platform-events-complete-guide-beginners",
+      "title": "Platform Events in Salesforce — A Complete Guide for Beginners",
+      "excerpt": "Real-time messaging, event-driven architecture, Apex + LWC, ReplayId, and 10 interview practice questions — beginner friendly.",
+      "category": "Learning"
+    },
+    {
       "slug": "salesforce-interview-question-parent-case-batch-apex",
       "title": "Salesforce Interview Question: Batch Apex Scenario for Closing Parent Cases",
       "excerpt": "A practical 3–5 years experience interview scenario covering Batch Apex, relationship subqueries, assumptions, and edge cases.",

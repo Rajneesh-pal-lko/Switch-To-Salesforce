@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { getSiteUrl } from "@/lib/site";
 import "./globals.css";
+import "../styles/platform-events-guide.css";
 
 const inter = Inter({
   subsets: ["latin"],
