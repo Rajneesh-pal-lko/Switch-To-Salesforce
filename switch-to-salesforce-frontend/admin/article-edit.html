@@ -29,6 +29,20 @@
             <label>Featured image URL <input name="coverImage" id="field-cover" placeholder="/uploads/..." /></label>
             <label>Status <select name="status" id="field-status"><option value="published">Published</option><option value="draft">Draft</option></select></label>
             <label>Order <input name="order" id="field-order" type="number" value="0" /></label>
+            <fieldset class="admin-fieldset">
+              <legend>Content editor</legend>
+              <label class="admin-radio"
+                ><input type="radio" name="content-editor-mode" value="rich" checked /> Visual (Word-style)</label
+              >
+              <label class="admin-radio"
+                ><input type="radio" name="content-editor-mode" value="html" /> HTML source — paste markup or upload a
+                .html file</label
+              >
+            </fieldset>
+            <label class="admin-file-row"
+              >Upload HTML file
+              <input type="file" id="html-file-input" accept=".html,.htm,text/html" />
+            </label>
             <label>Content <textarea name="content" id="field-content" class="markdown-lg" rows="16"></textarea></label>
             <div class="admin-actions">
               <button type="submit" class="admin-btn">Save</button>
@@ -52,6 +66,54 @@
 
         var params = new URLSearchParams(window.location.search);
         var id = params.get('id');
+
+        function getEditorMode() {
+          var r = document.querySelector('input[name="content-editor-mode"]:checked');
+          return r && r.value === 'html' ? 'html' : 'rich';
+        }
+
+        function applyEditorMode(mode) {
+          var ta = document.getElementById('field-content');
+          if (!ta) return;
+          var ed = window.tinymce && tinymce.get('field-content');
+          if (ed && mode === 'html') {
+            if (window.StsTinyMce) ta.value = StsTinyMce.getContent('field-content');
+            else ta.value = ed.getContent();
+            ed.remove();
+          }
+          if (mode === 'html') {
+            ta.classList.add('admin-html-mode');
+            ta.style.minHeight = '480px';
+          } else {
+            ta.classList.remove('admin-html-mode');
+            ta.style.minHeight = '';
+            if (window.StsTinyMce && (!window.tinymce || !tinymce.get('field-content'))) {
+              StsTinyMce.init({ fieldId: 'field-content' });
+            }
+          }
+        }
+
+        document.querySelectorAll('input[name="content-editor-mode"]').forEach(function (el) {
+          el.addEventListener('change', function () {
+            applyEditorMode(getEditorMode());
+          });
+        });
+
+        document.getElementById('html-file-input').addEventListener('change', function (e) {
+          var f = e.target.files && e.target.files[0];
+          if (!f) return;
+          var reader = new FileReader();
+          reader.onload = function () {
+            var text = String(reader.result || '');
+            var m = text.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+            document.getElementById('field-content').value = m ? m[1].trim() : text;
+            var htmlRadio = document.querySelector('input[name="content-editor-mode"][value="html"]');
+            if (htmlRadio) htmlRadio.checked = true;
+            applyEditorMode('html');
+          };
+          reader.readAsText(f);
+          e.target.value = '';
+        });
 
         Promise.all([
           AdminData.listTopics().then(function (topics) {
@@ -95,14 +157,15 @@
                 document.getElementById('field-content').value = p.content || '';
                 document.getElementById('field-status').value = p.status === 'draft' ? 'draft' : 'published';
                 document.getElementById('field-order').value = p.order != null ? p.order : 0;
+                var mode = p.contentFormat === 'html' ? 'html' : 'rich';
+                var mr = document.querySelector('input[name="content-editor-mode"][value="' + mode + '"]');
+                if (mr) mr.checked = true;
               });
             }
             document.getElementById('page-title').textContent = 'New article';
           })
           .then(function () {
-            if (window.StsTinyMce) {
-              StsTinyMce.init({ fieldId: 'field-content' });
-            }
+            applyEditorMode(getEditorMode());
           })
           .catch(function (err) {
             document.getElementById('msg').innerHTML =
@@ -113,10 +176,18 @@
           e.preventDefault();
           var fd = new FormData(e.target);
           var pageId = fd.get('id');
+          var mode = getEditorMode();
+          var body =
+            mode === 'html'
+              ? document.getElementById('field-content').value
+              : window.StsTinyMce
+                ? StsTinyMce.getContent('field-content')
+                : fd.get('content');
           var payload = {
             title: fd.get('title'),
             slug: fd.get('slug') || undefined,
-            content: window.StsTinyMce ? StsTinyMce.getContent('field-content') : fd.get('content'),
+            content: body,
+            contentFormat: mode === 'html' ? 'html' : 'rich',
             topicId: fd.get('topicId'),
             excerpt: fd.get('excerpt') || '',
             author: fd.get('author') || '',

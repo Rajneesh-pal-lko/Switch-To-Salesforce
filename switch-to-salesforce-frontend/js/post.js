@@ -198,9 +198,10 @@
           ' min read</span>' +
           '</div>' +
           '</header>' +
-          '<article id="article-body" class="article-body prose">' +
+          '<article id="article-body" class="article-body">' +
+          '<div class="article-html-guide not-prose"><div class="blog">' +
           post.content +
-          '</article>' +
+          '</div></div></article>' +
           tags +
           '<section id="related-posts" class="related-section"></section>' +
           '<section class="comments-section">' +

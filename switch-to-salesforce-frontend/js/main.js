@@ -508,9 +508,9 @@
           date +
           author +
           '</header>' +
-          '<div class="article-body cms-body">' +
+          '<div class="article-html-guide not-prose"><div class="blog cms-body">' +
           page.content +
-          '</div></article>';
+          '</div></div></article>';
         if (window.Prism) {
           window.Prism.highlightAllUnder(root);
         }

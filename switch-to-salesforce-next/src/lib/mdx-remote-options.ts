@@ -15,11 +15,10 @@ export const mdxRemoteOptions = {
       [
         rehypePrettyCode,
         {
-          theme: {
-            light: "github-light",
-            dark: "one-dark-pro",
-          },
-          keepBackground: true,
+          /* Single dark theme: dual light/dark Shiki themes + always-dark pre in globals
+             produced pale tokens on dark bg when `html` was not `.dark` (SSR / system). */
+          theme: "github-dark",
+          keepBackground: false,
         },
       ],
       rehypeHeadingIds,

@@ -142,14 +142,16 @@ export default async function BlogPostPage({ params }: Props) {
                   </div>
                 )}
               </header>
-              <div className="prose prose-neutral max-w-none dark:prose-invert prose-headings:scroll-mt-24 prose-pre:bg-transparent prose-pre:p-0 prose-figure:my-6">
-                <MDXRemote
-                  source={content}
-                  options={
-                    mdxRemoteOptions as NonNullable<MDXRemoteProps["options"]>
-                  }
-                  components={mdxComponents}
-                />
+              <div className="article-html-guide not-prose max-w-none">
+                <div className="blog">
+                  <MDXRemote
+                    source={content}
+                    options={
+                      mdxRemoteOptions as NonNullable<MDXRemoteProps["options"]>
+                    }
+                    components={mdxComponents}
+                  />
+                </div>
               </div>
               <PostNavigation prev={prev} next={next} />
               {author && (

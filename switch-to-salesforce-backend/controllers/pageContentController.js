@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const slugify = require('slugify');
 const PageContent = require('../models/PageContent');
-const { sanitizeRichHtml } = require('../utils/sanitizeContent');
+const { sanitizeArticleBody } = require('../utils/sanitizeContent');
 const SidebarTopic = require('../models/SidebarTopic');
 const Category = require('../models/Category');
 
@@ -115,6 +115,7 @@ async function createPage(req, res, next) {
       excerpt,
       status,
       order,
+      contentFormat,
     } = req.body;
 
     const topic = await SidebarTopic.findById(topicId);
@@ -140,10 +141,11 @@ async function createPage(req, res, next) {
     slug = await getUnique(slug);
 
     let st = status === 'draft' ? 'draft' : 'published';
+    const fmt = contentFormat === 'html' ? 'html' : 'rich';
     const doc = await PageContent.create({
       title: title.trim(),
       slug,
-      content: sanitizeRichHtml(content),
+      content: sanitizeArticleBody(content, fmt),
       topicId,
       category: catId,
       tags: parseTagsField(tags),
@@ -152,6 +154,7 @@ async function createPage(req, res, next) {
       excerpt: excerpt != null ? String(excerpt).trim() : '',
       status: st,
       order: order != null ? Number(order) || 0 : 0,
+      contentFormat: fmt,
     });
 
     const populated = await PageContent.findById(doc._id)
@@ -178,10 +181,31 @@ async function updatePage(req, res, next) {
       return res.status(404).json({ success: false, message: 'Page not found' });
     }
 
-    const { title, slug, content, topicId, category, tags, author, excerpt, status, order } = req.body;
+    const {
+      title,
+      slug,
+      content,
+      topicId,
+      category,
+      tags,
+      author,
+      excerpt,
+      status,
+      order,
+      contentFormat,
+    } = req.body;
 
     if (title != null) doc.title = String(title).trim();
-    if (content != null) doc.content = sanitizeRichHtml(content);
+    const fmt =
+      contentFormat === 'html' ? 'html' : contentFormat === 'rich' ? 'rich' : doc.contentFormat || 'rich';
+    if (contentFormat != null) {
+      doc.contentFormat = fmt;
+    }
+    if (content != null) {
+      doc.content = sanitizeArticleBody(content, doc.contentFormat || 'rich');
+    } else if (contentFormat != null) {
+      doc.content = sanitizeArticleBody(doc.content, doc.contentFormat || 'rich');
+    }
     if (author != null) doc.author = String(author).trim();
     if (tags != null) doc.tags = parseTagsField(tags);
     if (excerpt != null) doc.excerpt = String(excerpt).trim();

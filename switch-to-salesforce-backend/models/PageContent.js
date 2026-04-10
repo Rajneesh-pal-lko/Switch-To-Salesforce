@@ -17,6 +17,12 @@ const pageContentSchema = new mongoose.Schema(
       default: 'published',
     },
     order: { type: Number, default: 0 },
+    /** rich = TinyMCE subset; html = broader layout HTML (paste / .html upload) */
+    contentFormat: {
+      type: String,
+      enum: ['rich', 'html'],
+      default: 'rich',
+    },
   },
   { timestamps: true }
 );

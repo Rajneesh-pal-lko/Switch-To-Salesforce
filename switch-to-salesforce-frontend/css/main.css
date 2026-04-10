@@ -1,9 +1,10 @@
 :root {
-  --bg: #f8fafc;
+  /* Aligned with Next.js article-guide palette */
+  --bg: #ffffff;
   --bg-elevated: #ffffff;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --border: #e2e8f0;
+  --text: #171717;
+  --text-muted: #525252;
+  --border: #e5e5e5;
   --accent: #4f46e5;
   --accent-hover: #4338ca;
   --radius: 12px;
@@ -40,11 +41,11 @@
 }
 
 [data-theme="dark"] {
-  --bg: #0b1220;
-  --bg-elevated: #0f172a;
-  --text: #e2e8f0;
-  --text-muted: #94a3b8;
-  --border: #1e293b;
+  --bg: #0a0a0a;
+  --bg-elevated: #171717;
+  --text: #fafafa;
+  --text-muted: #a3a3a3;
+  --border: #404040;
   --accent: #818cf8;
   --accent-hover: #a5b4fc;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 40px rgba(0, 0, 0, 0.35);

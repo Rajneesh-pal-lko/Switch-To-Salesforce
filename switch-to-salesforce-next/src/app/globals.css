@@ -24,7 +24,10 @@
 }
 
 [data-rehype-pretty-code-figure] pre {
-  @apply overflow-x-auto rounded-xl border border-neutral-200 bg-neutral-950 px-4 py-3 text-sm leading-relaxed dark:border-neutral-800;
+  /* Match github-dark panel; single Shiki theme so token colors always align. */
+  @apply overflow-x-auto rounded-xl border border-neutral-700 bg-[#0d1117] px-4 py-3 text-sm leading-relaxed;
+  @apply dark:border-neutral-800;
+  color: #e6edf3;
 }
 
 [data-rehype-pretty-code-title] {
