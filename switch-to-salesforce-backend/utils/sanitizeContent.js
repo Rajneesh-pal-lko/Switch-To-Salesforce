@@ -81,6 +81,17 @@ const LAYOUT_TAG_NAMES = [
   'figure',
   'figcaption',
   'style',
+  /* Diagrams: hub/spoke lines are often drawn with inline SVG; previously stripped entirely */
+  'svg',
+  'g',
+  'line',
+  'path',
+  'circle',
+  'defs',
+  'title',
+  'desc',
+  'text',
+  'tspan',
 ];
 
 /**
@@ -162,6 +173,19 @@ const LAYOUT_ALLOWED_STYLES = {
     'grid-row': [/^[\w\s/+-]+$/],
     'column-gap': [/^\d+(\.\d+)?(px|em|rem)$/],
     'row-gap': [/^\d+(\.\d+)?(px|em|rem)$/],
+    transform: [
+      /^none$/i,
+      /^(rotate|translate|translate3d|translateX|translateY|scale|matrix)\([^)]+\)$/,
+    ],
+    'transform-origin': [/^[\w\s%.,\-+]+$/],
+    fill: [/^none$/i, /^currentColor$/i, /^#[0-9a-f]{3,8}$/i, /^rgb\(/i, /^url\(#[\w-]+\)$/],
+    stroke: [/^none$/i, /^currentColor$/i, /^#[0-9a-f]{3,8}$/i, /^rgb\(/i],
+    'stroke-width': [/^\d+(\.\d+)?(px)?$/],
+    'stroke-dasharray': [/^[0-9\s.,]+$/],
+    'stroke-linecap': [/^(butt|round|square)$/i],
+    'stroke-linejoin': [/^(miter|round|bevel)$/i],
+    'dominant-baseline': [/^(auto|middle|central|hanging|alphabetic)$/i],
+    'text-anchor': [/^(start|middle|end)$/i],
   },
 };
 
@@ -172,6 +196,43 @@ const LAYOUT_ALLOWED_ATTRIBUTES = (() => {
   const td = ['colspan', 'rowspan', 'class', 'style'];
   const th = ['colspan', 'rowspan', 'scope', 'class', 'style'];
   const styleTag = ['type', 'media'];
+  base.svg = [
+    'class',
+    'id',
+    'style',
+    'viewBox',
+    'viewbox',
+    'xmlns',
+    'width',
+    'height',
+    'role',
+    'aria-hidden',
+    'preserveAspectRatio',
+    'fill',
+    'stroke',
+  ];
+  base.g = ['class', 'id', 'style', 'transform'];
+  base.line = [
+    'class',
+    'id',
+    'style',
+    'x1',
+    'y1',
+    'x2',
+    'y2',
+    'stroke',
+    'stroke-width',
+    'stroke-dasharray',
+    'stroke-linecap',
+    'transform',
+  ];
+  base.path = ['class', 'id', 'style', 'd', 'fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'fill-rule'];
+  base.circle = ['class', 'id', 'style', 'cx', 'cy', 'r', 'fill', 'stroke', 'stroke-width'];
+  base.text = ['class', 'id', 'style', 'x', 'y', 'fill', 'font-size', 'text-anchor', 'dominant-baseline'];
+  base.tspan = ['class', 'id', 'style', 'x', 'y'];
+  base.defs = ['class', 'id'];
+  base.title = ['class', 'id'];
+  base.desc = ['class', 'id'];
   for (const t of LAYOUT_TAG_NAMES) {
     if (!base[t]) {
       if (t === 'img') base[t] = img;

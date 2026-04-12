@@ -5,6 +5,9 @@
  * Deploy: commit + push; Vercel serves /css/cms-html-shared.css for every CMS page.
  *
  * Workflow: paste new article HTML in chat; assistant extends this file if needed; you paste body HTML only in admin.
+ *
+ * Hub-and-spoke diagrams: use .hub-wheel with .hub-spokes > six .hub-spoke.hl-* plus .hub-center and .hub-node-slot.hns-0…5
+ * (see “Hub-and-spoke diagrams” in this file). Inline <svg><line> spokes are allowed by the backend sanitizer and need viewBox.
  */
 
 html.cms-html-embed .article-html-guide .blog {
@@ -296,6 +299,238 @@ html.cms-html-embed body {
   color: var(--color-text-secondary);
   line-height: 1.6;
   margin-top: 0.5rem;
+}
+
+/* Hub-and-spoke diagrams (CSS spokes; also ensure inline SVG lines are visible) */
+.article-html-guide .blog .diagram-wrap svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.article-html-guide .blog .hub-wheel {
+  position: relative;
+  width: min(100%, 400px);
+  aspect-ratio: 1;
+  min-height: 300px;
+  margin: 0.75rem auto 0;
+  overflow: visible;
+}
+
+.article-html-guide .blog .hub-spokes {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.article-html-guide .blog .hub-spoke {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  width: 0;
+  height: 38%;
+  margin-left: -1px;
+  transform-origin: bottom center;
+  border-left: 2px dashed;
+  z-index: 0;
+}
+
+.article-html-guide .blog .hub-spokes .hub-spoke:nth-child(1) {
+  transform: rotate(0deg);
+}
+
+.article-html-guide .blog .hub-spokes .hub-spoke:nth-child(2) {
+  transform: rotate(60deg);
+}
+
+.article-html-guide .blog .hub-spokes .hub-spoke:nth-child(3) {
+  transform: rotate(120deg);
+}
+
+.article-html-guide .blog .hub-spokes .hub-spoke:nth-child(4) {
+  transform: rotate(180deg);
+}
+
+.article-html-guide .blog .hub-spokes .hub-spoke:nth-child(5) {
+  transform: rotate(240deg);
+}
+
+.article-html-guide .blog .hub-spokes .hub-spoke:nth-child(6) {
+  transform: rotate(300deg);
+}
+
+.article-html-guide .blog .hub-spoke.hl-blue {
+  border-color: #85b7eb;
+}
+
+.article-html-guide .blog .hub-spoke.hl-green {
+  border-color: #5dcaa5;
+}
+
+.article-html-guide .blog .hub-spoke.hl-amber {
+  border-color: #ef9f27;
+}
+
+.article-html-guide .blog .hub-spoke.hl-purple {
+  border-color: #b5aef0;
+}
+
+.article-html-guide .blog .hub-spoke.hl-pink {
+  border-color: #e8a0c8;
+}
+
+.article-html-guide .blog .hub-spoke.hl-yellow {
+  border-color: #e8d44a;
+}
+
+.article-html-guide .blog .hub-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 2;
+  width: 108px;
+  height: 108px;
+  margin-left: -54px;
+  margin-top: -54px;
+  border-radius: 50%;
+  background: #e6f1fb;
+  border: 2px solid #85b7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #0c447c;
+  padding: 8px;
+  line-height: 1.25;
+  box-sizing: border-box;
+}
+
+.article-html-guide .blog .hub-nodes {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.article-html-guide .blog .hub-node-slot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: auto;
+}
+
+.article-html-guide .blog .hub-node-slot .sys-pill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+
+.article-html-guide .blog .hub-node-slot.hns-0 {
+  transform: rotate(-90deg) translateY(-132px);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-0 .sys-pill {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-1 {
+  transform: rotate(-30deg) translateY(-132px);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-1 .sys-pill {
+  transform: translate(-50%, -50%) rotate(30deg);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-2 {
+  transform: rotate(30deg) translateY(-132px);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-2 .sys-pill {
+  transform: translate(-50%, -50%) rotate(-30deg);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-3 {
+  transform: rotate(90deg) translateY(-132px);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-3 .sys-pill {
+  transform: translate(-50%, -50%) rotate(-90deg);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-4 {
+  transform: rotate(150deg) translateY(-132px);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-4 .sys-pill {
+  transform: translate(-50%, -50%) rotate(-150deg);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-5 {
+  transform: rotate(-150deg) translateY(-132px);
+}
+
+.article-html-guide .blog .hub-node-slot.hns-5 .sys-pill {
+  transform: translate(-50%, -50%) rotate(150deg);
+}
+
+.article-html-guide .blog .hub-caption {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-top: 0.75rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 420px) {
+  .article-html-guide .blog .hub-node-slot.hns-0 {
+    transform: rotate(-90deg) translateY(-108px);
+  }
+
+  .article-html-guide .blog .hub-node-slot.hns-1 {
+    transform: rotate(-30deg) translateY(-108px);
+  }
+
+  .article-html-guide .blog .hub-node-slot.hns-2 {
+    transform: rotate(30deg) translateY(-108px);
+  }
+
+  .article-html-guide .blog .hub-node-slot.hns-3 {
+    transform: rotate(90deg) translateY(-108px);
+  }
+
+  .article-html-guide .blog .hub-node-slot.hns-4 {
+    transform: rotate(150deg) translateY(-108px);
+  }
+
+  .article-html-guide .blog .hub-node-slot.hns-5 {
+    transform: rotate(-150deg) translateY(-108px);
+  }
+
+  .article-html-guide .blog .hub-spoke {
+    height: 34%;
+  }
+}
+
+.article-html-guide .blog .sn-pink {
+  background: #fde8f0;
+  color: #6b2d4a;
+  border: 0.5px solid #e8a0c8;
+}
+
+.article-html-guide .blog .sn-yellow {
+  background: #fff9e6;
+  color: #5c4d00;
+  border: 0.5px solid #e8d44a;
 }
 
 /* Decision grid */
