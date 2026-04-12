@@ -80,21 +80,106 @@ const LAYOUT_TAG_NAMES = [
   'caption',
   'figure',
   'figcaption',
+  'style',
 ];
 
-/** class + optional id (validated) for layout-oriented HTML articles */
+/**
+ * Inline style allow-list (sanitize-html uses PostCSS on style="...").
+ * Keys are CSS properties; values are regexes that must match the full value.
+ */
+const LAYOUT_ALLOWED_STYLES = {
+  '*': {
+    color: [/^#[0-9a-f]{3,8}$/i, /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i, /^rgba\(/i, /^hsl\(/i, /^hsla\(/i, /^inherit$/i, /^currentColor$/i],
+    'background-color': [
+      /^#[0-9a-f]{3,8}$/i,
+      /^rgb\(/i,
+      /^rgba\(/i,
+      /^hsl\(/i,
+      /^hsla\(/i,
+      /^transparent$/i,
+      /^inherit$/i,
+    ],
+    background: [/^#[0-9a-f]{3,8}$/i, /^rgb\(/i, /^rgba\(/i, /^hsl\(/i, /^transparent$/i, /^none$/i],
+    'background-image': [/^url\(\s*["']?https?:\/\/[^"')]+\s*["']?\s*\)$/i, /^none$/i],
+    'font-size': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'font-weight': [/^\d{3}$/, /^bold$/i, /^normal$/i, /^lighter$/i, /^bolder$/i],
+    'font-family': [/^[\w\s\-'",.]+$/],
+    'line-height': [/^\d+(\.\d+)?$/, /^\d+(\.\d+)?(px|em|rem)$/],
+    'text-align': [/^(left|right|center|justify)$/i],
+    'text-decoration': [/^(none|underline|line-through|overline)$/i],
+    'vertical-align': [/^(top|middle|bottom|baseline|sub|super)$/i],
+    margin: [/^[\d.\s\-pxem%]+$/],
+    'margin-top': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'margin-right': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'margin-bottom': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'margin-left': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    padding: [/^[\d.\s\-pxem%]+$/],
+    'padding-top': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'padding-right': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'padding-bottom': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'padding-left': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    width: [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'max-width': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'min-width': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    height: [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'max-height': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    'min-height': [/^\d+(\.\d+)?(px|em|rem|%)$/],
+    border: [/^[^;]{0,240}$/],
+    'border-top': [/^[^;]{0,200}$/],
+    'border-right': [/^[^;]{0,200}$/],
+    'border-bottom': [/^[^;]{0,200}$/],
+    'border-left': [/^[^;]{0,200}$/],
+    'border-radius': [/^[\d.\spxem%]+$/],
+    'border-collapse': [/^(collapse|separate)$/i],
+    display: [/^(block|inline|inline-block|flex|inline-flex|grid|none|table|table-row|table-cell)$/i],
+    'flex-direction': [/^(row|column|row-reverse|column-reverse)$/i],
+    'justify-content': [/^(flex-start|flex-end|center|space-between|space-around|space-evenly)$/i],
+    'align-items': [/^(flex-start|flex-end|center|stretch|baseline)$/i],
+    'align-self': [/^(auto|flex-start|flex-end|center|stretch|baseline)$/i],
+    flex: [/^[\d\s]+$/],
+    'flex-wrap': [/^(nowrap|wrap|wrap-reverse)$/i],
+    gap: [/^\d+(\.\d+)?(px|em|rem)$/],
+    overflow: [/^(visible|hidden|auto|scroll)$/i],
+    'overflow-x': [/^(visible|hidden|auto|scroll)$/i],
+    'overflow-y': [/^(visible|hidden|auto|scroll)$/i],
+    position: [/^(static|relative|absolute|fixed|sticky)$/i],
+    top: [/^\d+(\.\d+)?(px|em|rem|%)$/, /^auto$/i],
+    right: [/^\d+(\.\d+)?(px|em|rem|%)$/, /^auto$/i],
+    bottom: [/^\d+(\.\d+)?(px|em|rem|%)$/, /^auto$/i],
+    left: [/^\d+(\.\d+)?(px|em|rem|%)$/, /^auto$/i],
+    'z-index': [/^-?\d+$/],
+    opacity: [/^0?\.\d+$/, /^1$/, /^0$/],
+    'box-shadow': [/^[^;]{0,400}$/],
+    'letter-spacing': [/^\d+(\.\d+)?(px|em)$/],
+    'list-style': [/^[^;]{0,120}$/],
+    'list-style-type': [/^(disc|circle|square|decimal|lower-alpha|upper-alpha|none)$/i],
+    'white-space': [/^(normal|nowrap|pre|pre-wrap|pre-line)$/i],
+    float: [/^(left|right|none)$/i],
+    clear: [/^(left|right|both|none)$/i],
+    'grid-template-columns': [/^[\w\s\d%.,()+-]+$/],
+    'grid-template-rows': [/^[\w\s\d%.,()+-]+$/],
+    'grid-column': [/^[\w\s/+-]+$/],
+    'grid-row': [/^[\w\s/+-]+$/],
+    'column-gap': [/^\d+(\.\d+)?(px|em|rem)$/],
+    'row-gap': [/^\d+(\.\d+)?(px|em|rem)$/],
+  },
+};
+
+/** class + optional id + inline style (filtered) for layout-oriented HTML articles */
 const LAYOUT_ALLOWED_ATTRIBUTES = (() => {
-  const base = { a: ['href', 'target', 'rel', 'title', 'class', 'id'] };
-  const img = ['src', 'alt', 'title', 'width', 'height', 'loading', 'class'];
-  const td = ['colspan', 'rowspan', 'class'];
-  const th = ['colspan', 'rowspan', 'scope', 'class'];
+  const base = { a: ['href', 'target', 'rel', 'title', 'class', 'id', 'style'] };
+  const img = ['src', 'alt', 'title', 'width', 'height', 'loading', 'class', 'style'];
+  const td = ['colspan', 'rowspan', 'class', 'style'];
+  const th = ['colspan', 'rowspan', 'scope', 'class', 'style'];
+  const styleTag = ['type', 'media'];
   for (const t of LAYOUT_TAG_NAMES) {
     if (!base[t]) {
       if (t === 'img') base[t] = img;
       else if (t === 'td') base[t] = td;
       else if (t === 'th') base[t] = th;
-      else if (t === 'pre' || t === 'code') base[t] = ['class'];
-      else base[t] = ['class', 'id'];
+      else if (t === 'pre' || t === 'code') base[t] = ['class', 'style'];
+      else if (t === 'style') base[t] = styleTag;
+      else base[t] = ['class', 'id', 'style'];
     }
   }
   return base;
@@ -102,6 +187,9 @@ const LAYOUT_ALLOWED_ATTRIBUTES = (() => {
 
 const LAYOUT_HTML = {
   allowedTags: LAYOUT_TAG_NAMES,
+  allowVulnerableTags: true,
+  parseStyleAttributes: true,
+  allowedStyles: LAYOUT_ALLOWED_STYLES,
   allowedAttributes: LAYOUT_ALLOWED_ATTRIBUTES,
   allowedSchemes: ['http', 'https', 'mailto'],
   allowedSchemesByTag: {
@@ -127,21 +215,49 @@ function sanitizeRichHtml(input) {
   return sanitizeHtml(s, RICH_HTML);
 }
 
-/** If pasted/uploaded full HTML document, keep inner body only */
+/**
+ * Full HTML uploads often put CSS in <head><style>. We keep <body> markup but prepend
+ * those styles so they are not lost before sanitization.
+ */
 function stripHtmlDocumentWrapper(input) {
   const s = String(input).trim();
-  const m = s.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-  return m ? m[1].trim() : s;
+  let headStyles = '';
+  const headMatch = s.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
+  if (headMatch) {
+    const head = headMatch[1];
+    const styleBlocks = [...head.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)];
+    headStyles = styleBlocks.map((m) => m[1].trim()).filter(Boolean).join('\n');
+  }
+  const bodyMatch = s.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+  let body = bodyMatch ? bodyMatch[1].trim() : s;
+  if (headStyles) {
+    body = `<style>\n${headStyles}\n</style>\n${body}`;
+  }
+  return body;
+}
+
+/** Strip risky patterns from embedded <style> content (after sanitize-html keeps the tag). */
+function sanitizeEmbeddedStyleCss(css) {
+  return String(css)
+    .replace(/@import[\s\S]*?;/gi, '/* @import removed */')
+    .replace(/expression\s*\(/gi, '/*expression*/(')
+    .replace(/javascript:/gi, 'blocked:')
+    .replace(/-moz-binding/gi, 'blocked-binding')
+    .replace(/behavior\s*:/gi, 'blocked:');
 }
 
 /**
  * Broader allow-list for “HTML source” / uploaded .html articles (layout + article-guide classes).
- * Still strips script/style/on* and javascript: URLs.
+ * Preserves <style> blocks and inline style="..." where allowed by allowedStyles.
  */
 function sanitizeLayoutHtml(input) {
   if (input == null) return '';
-  const inner = stripHtmlDocumentWrapper(input);
-  return sanitizeHtml(inner, LAYOUT_HTML);
+  let inner = stripHtmlDocumentWrapper(input);
+  inner = sanitizeHtml(inner, LAYOUT_HTML);
+  inner = inner.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, (full, body) => {
+    return `<style>${sanitizeEmbeddedStyleCss(body)}</style>`;
+  });
+  return inner;
 }
 
 const MAX_MDX_CHARS = 1_500_000;
