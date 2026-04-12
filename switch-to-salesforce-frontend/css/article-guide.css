@@ -23,6 +23,8 @@ html[data-theme="dark"] .pe-html-guide {
   --color-border-tertiary: #404040;
 }
 
+/* CMS HTML uploads: content runs in an iframe (see main.js); only the frame chrome below is site CSS */
+
 @scope (.article-html-guide, .pe-html-guide) {
   * {
     box-sizing: border-box;
@@ -627,6 +629,7 @@ html[data-theme="dark"] .pe-html-guide {
       font-size: 20px;
     }
   }
+
 }
 
 html.dark .article-html-guide .blog > a,
@@ -634,6 +637,30 @@ html.dark .pe-html-guide .blog > a,
 html[data-theme="dark"] .article-html-guide .blog > a,
 html[data-theme="dark"] .pe-html-guide .blog > a {
   color: #93c5fd;
+}
+
+/* CMS HTML article iframe — wrapper only; article HTML/CSS lives inside the iframe document */
+.cms-html-isolate {
+  margin-top: 0.5rem;
+  width: 100%;
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.cms-html-iframe {
+  display: block;
+  width: 100%;
+  min-height: 120px;
+  border: 1px solid var(--color-border-tertiary, #e5e5e5);
+  border-radius: 12px;
+  background: transparent;
+  vertical-align: top;
+}
+
+html.dark .cms-html-iframe,
+html[data-theme="dark"] .cms-html-iframe {
+  border-color: #404040;
 }
 
 /* MDX → HTML: rehype-pretty-code + Shiki (matches Next blog styling) */
