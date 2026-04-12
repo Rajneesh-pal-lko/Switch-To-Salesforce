@@ -31,7 +31,7 @@
     var safe = sanitizeCmsIframeBodyHtml(bodyHtml);
     var origin = window.location.origin;
     var guideCss = origin + '/css/article-guide.css';
-    var compatCss = origin + '/css/article-html-compat.css';
+    var sharedCss = origin + '/css/cms-html-shared.css';
     var themeAttr = theme === 'dark' ? 'data-theme="dark"' : 'data-theme="light"';
     return (
       '<!DOCTYPE html><html lang="en" class="cms-html-embed" ' +
@@ -42,7 +42,7 @@
       guideCss +
       '"/>' +
       '<link rel="stylesheet" href="' +
-      compatCss +
+      sharedCss +
       '"/>' +
       '<style>' +
       'html.cms-html-embed,html.cms-html-embed body{margin:0;padding:0;background:transparent!important}' +
