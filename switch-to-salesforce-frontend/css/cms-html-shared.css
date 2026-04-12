@@ -173,6 +173,145 @@ html.cms-html-embed body {
   margin-top: 0.3rem;
 }
 
+/* ESB flow (step-through diagrams) */
+.article-html-guide .blog .esb-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+}
+
+.article-html-guide .blog .esb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.article-html-guide .blog .esb-node {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.article-html-guide .blog .en-blue {
+  background: #e6f1fb;
+  color: #0c447c;
+  border: 0.5px solid #b5d4f4;
+}
+
+.article-html-guide .blog .en-green {
+  background: #e1f5ee;
+  color: #085041;
+  border: 0.5px solid #9fe1cb;
+}
+
+.article-html-guide .blog .en-amber {
+  background: #faeeda;
+  color: #633806;
+  border: 0.5px solid #fac775;
+}
+
+.article-html-guide .blog .en-purple {
+  background: #eeedfe;
+  color: #3c3489;
+  border: 0.5px solid #cecbf6;
+}
+
+.article-html-guide .blog .en-red {
+  background: #fcebeb;
+  color: #501313;
+  border: 0.5px solid #f7c1c1;
+}
+
+.article-html-guide .blog .esb-arrow {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.article-html-guide .blog .esb-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+/* Three pillars (ESB capabilities grid) */
+.article-html-guide .blog .pillars {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+}
+
+@media (max-width: 520px) {
+  .article-html-guide .blog .pillars {
+    grid-template-columns: 1fr;
+  }
+}
+
+.article-html-guide .blog .pillar {
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border: 0.5px solid;
+}
+
+.article-html-guide .blog .pillar-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.article-html-guide .blog .pillar-body {
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.article-html-guide .blog .pillar.p-blue {
+  background: #e6f1fb;
+  border-color: #b5d4f4;
+}
+
+.article-html-guide .blog .pillar.p-blue .pillar-title {
+  color: #0c447c;
+}
+
+.article-html-guide .blog .pillar.p-blue .pillar-body {
+  color: #185fa5;
+}
+
+.article-html-guide .blog .pillar.p-green {
+  background: #e1f5ee;
+  border-color: #9fe1cb;
+}
+
+.article-html-guide .blog .pillar.p-green .pillar-title {
+  color: #085041;
+}
+
+.article-html-guide .blog .pillar.p-green .pillar-body {
+  color: #0f6e56;
+}
+
+.article-html-guide .blog .pillar.p-amber {
+  background: #faeeda;
+  border-color: #fac775;
+}
+
+.article-html-guide .blog .pillar.p-amber .pillar-title {
+  color: #633806;
+}
+
+.article-html-guide .blog .pillar.p-amber .pillar-body {
+  color: #854f0b;
+}
+
 /* P2P / architecture diagrams */
 .article-html-guide .blog .diagram-wrap {
   margin: 1.5rem 0;
@@ -678,18 +817,23 @@ html.cms-html-embed body {
 }
 
 .article-html-guide .blog .ctable th {
-  background: var(--color-background-tertiary, #f4f4f4);
+  background: var(--color-background-secondary, #f4f4f4);
   color: var(--color-text-primary);
   font-weight: 500;
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid var(--color-border-tertiary, #eee);
+  border-bottom: 0.5px solid var(--color-border-tertiary, #eee);
 }
 
 .article-html-guide .blog .ctable td {
   padding: 12px;
-  border-bottom: 1px solid var(--color-border-tertiary, #eee);
+  border-bottom: 0.5px solid var(--color-border-tertiary, #eee);
   color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.article-html-guide .blog .ctable tr:last-child td {
+  border-bottom: none;
 }
 
 .article-html-guide .blog .ctable .good {
