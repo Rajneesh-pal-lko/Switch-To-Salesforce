@@ -34,7 +34,7 @@
     var compatCss = origin + '/css/article-html-compat.css';
     var themeAttr = theme === 'dark' ? 'data-theme="dark"' : 'data-theme="light"';
     return (
-      '<!DOCTYPE html><html lang="en" ' +
+      '<!DOCTYPE html><html lang="en" class="cms-html-embed" ' +
       themeAttr +
       '><head><meta charset="utf-8"/>' +
       '<meta name="viewport" content="width=device-width, initial-scale=1"/>' +
@@ -44,7 +44,10 @@
       '<link rel="stylesheet" href="' +
       compatCss +
       '"/>' +
-      '<style>html,body{margin:0}.article-html-guide{min-height:100%}</style>' +
+      '<style>' +
+      'html.cms-html-embed,html.cms-html-embed body{margin:0;padding:0;background:transparent!important}' +
+      'html.cms-html-embed .article-html-guide{background:transparent}' +
+      '</style>' +
       '</head><body>' +
       '<div class="article-html-guide not-prose"><div class="blog cms-body">' +
       safe +

@@ -2,6 +2,14 @@
  * CMS HTML articles (iframe): class names used by exported / uploaded HTML often differ
  * from MDX (e.g. hero-title vs .hero h1). Loaded after article-guide.css inside the iframe.
  */
+
+/* No outer “box”: align with parent page; inner components keep their own backgrounds */
+html.cms-html-embed .article-html-guide .blog {
+  padding: 0;
+  margin: 0;
+  max-width: none;
+}
+
 .article-html-guide .blog .wrap {
   max-width: 860px;
   margin: 0 auto;
