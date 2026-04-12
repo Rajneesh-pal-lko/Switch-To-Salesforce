@@ -9,6 +9,7 @@
  * Hub-and-spoke diagrams:
  * - .hub-container + .spoke-node (fixed positions) + optional SVG .hub-spokes-svg (dashed lines)
  * - or .hub-wheel with .hub-spokes > .hub-spoke.hl-* and .hub-node-slot.hns-0…5
+ * - .type-cards + .tcard.tc-blue|tc-green|tc-purple (integration type summaries)
  * Inline <svg><line> spokes are allowed by the backend sanitizer; use viewBox on <svg>.
  */
 
@@ -310,6 +311,110 @@ html.cms-html-embed body {
 
 .article-html-guide .blog .pillar.p-amber .pillar-body {
   color: #854f0b;
+}
+
+/* Type cards (Data / Process / UI integration overview) */
+.article-html-guide .blog .type-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.85rem;
+  margin: 1.25rem 0;
+}
+
+@media (max-width: 560px) {
+  .article-html-guide .blog .type-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.article-html-guide .blog .tcard {
+  padding: 1.1rem 1.2rem;
+  border-radius: 12px;
+  border: 0.5px solid;
+}
+
+.article-html-guide .blog .tcard-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+.article-html-guide .blog .tcard-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  display: inline-block;
+  margin-bottom: 0.6rem;
+}
+
+.article-html-guide .blog .tcard-body {
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.article-html-guide .blog .tcard-example {
+  font-size: 11px;
+  margin-top: 0.6rem;
+  font-style: italic;
+  opacity: 0.85;
+}
+
+.article-html-guide .blog .tcard.tc-blue {
+  background: #e6f1fb;
+  border-color: #b5d4f4;
+}
+
+.article-html-guide .blog .tcard.tc-blue .tcard-title {
+  color: #0c447c;
+}
+
+.article-html-guide .blog .tcard.tc-blue .tcard-body,
+.article-html-guide .blog .tcard.tc-blue .tcard-example {
+  color: #185fa5;
+}
+
+.article-html-guide .blog .tcard.tc-blue .tcard-tag {
+  background: #b5d4f4;
+  color: #0c447c;
+}
+
+.article-html-guide .blog .tcard.tc-green {
+  background: #e1f5ee;
+  border-color: #9fe1cb;
+}
+
+.article-html-guide .blog .tcard.tc-green .tcard-title {
+  color: #085041;
+}
+
+.article-html-guide .blog .tcard.tc-green .tcard-body,
+.article-html-guide .blog .tcard.tc-green .tcard-example {
+  color: #0f6e56;
+}
+
+.article-html-guide .blog .tcard.tc-green .tcard-tag {
+  background: #9fe1cb;
+  color: #085041;
+}
+
+.article-html-guide .blog .tcard.tc-purple {
+  background: #eeedfe;
+  border-color: #cecbf6;
+}
+
+.article-html-guide .blog .tcard.tc-purple .tcard-title {
+  color: #3c3489;
+}
+
+.article-html-guide .blog .tcard.tc-purple .tcard-body,
+.article-html-guide .blog .tcard.tc-purple .tcard-example {
+  color: #534ab7;
+}
+
+.article-html-guide .blog .tcard.tc-purple .tcard-tag {
+  background: #cecbf6;
+  color: #3c3489;
 }
 
 /* P2P / architecture diagrams */
