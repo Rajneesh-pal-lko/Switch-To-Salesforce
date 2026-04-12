@@ -4,137 +4,364 @@
  * Loaded in the HTML-article iframe after css/article-guide.css (see js/main.js buildCmsHtmlSrcdoc).
  * Deploy: commit + push; Vercel serves /css/cms-html-shared.css for every CMS page.
  *
- * Workflow with the assistant:
- * - Paste new article HTML here first; shared rules are checked/extended if needed.
- * - You only paste BODY markup into the admin (no big duplicate <style> blocks when classes match).
- * - New layouts: add selectors under .article-html-guide .blog … below.
+ * Workflow: paste new article HTML in chat; assistant extends this file if needed; you paste body HTML only in admin.
  */
 
-/* No outer “box”: align with parent page; inner components keep their own backgrounds */
 html.cms-html-embed .article-html-guide .blog {
   padding: 0;
   margin: 0;
   max-width: none;
 }
 
-.article-html-guide .blog .wrap {
-  max-width: 860px;
-  margin: 0 auto;
+html.cms-html-embed .article-html-guide .blog * {
+  box-sizing: border-box;
 }
 
-/* Hero block — h1.hero-title, p.hero-sub, .meta-row, .pill */
-.article-html-guide .blog h1.hero-title {
-  font-size: 26px;
-  font-weight: 500;
+html.cms-html-embed body {
+  font-family: var(--font-sans);
   color: var(--color-text-primary);
-  line-height: 1.4;
-  margin-bottom: 12px;
+  background: transparent;
 }
 
-.article-html-guide .blog .hero-sub {
-  font-size: 15px;
-  color: var(--color-text-secondary);
-  line-height: 1.8;
-  margin-bottom: 16px;
+.article-html-guide .blog .wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
 }
 
-.article-html-guide .blog .meta-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
+/* Pills & hero */
 .article-html-guide .blog .pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
   font-size: 12px;
-  color: var(--color-text-secondary);
-  background: var(--color-background-secondary);
-  border: 0.5px solid var(--color-border-tertiary);
-  border-radius: 20px;
-  padding: 3px 12px;
-}
-
-.article-html-guide .blog .pill-blue {
-  background: #e6f1fb;
-  color: #0c447c;
-  border-color: #85b7eb;
+  font-weight: 500;
 }
 
 .article-html-guide .blog .pill-green {
   background: #e1f5ee;
   color: #085041;
-  border-color: #5dcaa5;
+}
+
+.article-html-guide .blog .pill-blue {
+  background: #e6f1fb;
+  color: #0c447c;
 }
 
 .article-html-guide .blog .pill-purple {
   background: #eeedfe;
   color: #3c3489;
-  border-color: #c4b5fd;
+}
+
+.article-html-guide .blog .hero-tag {
+  font-size: 12px;
+  font-weight: 500;
+  color: #085041;
+  background: #e1f5ee;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 1rem;
+}
+
+.article-html-guide .blog h1.hero-title {
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 0.9rem;
+  color: var(--color-text-primary);
+}
+
+.article-html-guide .blog .hero-sub {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.article-html-guide .blog .meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1.75rem;
+}
+
+.article-html-guide .blog hr.divider {
+  border: none;
+  border-top: 0.5px solid var(--color-border-tertiary);
+  margin-bottom: 2rem;
+}
+
+.article-html-guide .blog .section {
+  margin-bottom: 2rem;
+}
+
+.article-html-guide .blog .section-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.article-html-guide .blog h2.section-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.article-html-guide .blog p.body {
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.85rem;
 }
 
 /* Callout boxes */
 .article-html-guide .blog .box {
-  border-radius: var(--border-radius-md);
-  padding: 1rem 1.25rem;
-  margin: 1rem 0;
+  padding: 1.1rem 1.4rem;
+  border-radius: 12px;
+  margin: 1.1rem 0;
+  border: 0.5px solid;
+}
+
+.article-html-guide .blog .box-analogy {
+  background: #e1f5ee;
+  border-color: #9fe1cb;
+  color: #085041;
+}
+
+.article-html-guide .blog .box-tip {
+  background: #faeeda;
+  border-color: #fac775;
+  color: #633806;
+}
+
+.article-html-guide .blog .box-warn {
+  background: #fcebeb;
+  border-color: #f7c1c1;
+  color: #501313;
+}
+
+.article-html-guide .blog .box-info {
+  background: #e6f1fb;
+  border-color: #b5d4f4;
+  color: #0c447c;
 }
 
 .article-html-guide .blog .box .box-label {
   font-size: 11px;
   font-weight: 500;
-  margin-bottom: 6px;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+  opacity: 0.75;
 }
 
-.article-html-guide .blog .box-analogy {
-  background: #e1f5ee;
-  border-left: 3px solid #1d9e75;
-}
-
-.article-html-guide .blog .box-analogy .box-label {
-  color: #0f6e56;
-}
-
-.article-html-guide .blog .box-analogy p {
+.article-html-guide .blog .box p {
   font-size: 14px;
+  line-height: 1.75;
+  margin-top: 0.3rem;
+}
+
+/* P2P / architecture diagrams */
+.article-html-guide .blog .diagram-wrap {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+}
+
+.article-html-guide .blog .diagram-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.article-html-guide .blog .p2p-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  align-items: center;
+  justify-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.article-html-guide .blog .sys-node {
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  width: 100%;
+}
+
+.article-html-guide .blog .sn-blue {
+  background: #e6f1fb;
+  color: #0c447c;
+  border: 0.5px solid #b5d4f4;
+}
+
+.article-html-guide .blog .sn-green {
+  background: #e1f5ee;
   color: #085041;
-  margin: 0;
-  line-height: 1.8;
+  border: 0.5px solid #9fe1cb;
 }
 
-.article-html-guide .blog .box-tip {
+.article-html-guide .blog .sn-amber {
   background: #faeeda;
-  border-left: 3px solid #ef9f27;
-}
-
-.article-html-guide .blog .box-tip .box-label {
   color: #633806;
+  border: 0.5px solid #fac775;
 }
 
-.article-html-guide .blog .box-tip p {
-  font-size: 13px;
-  color: #633806;
-  margin: 0;
-  line-height: 1.7;
+.article-html-guide .blog .sn-purple {
+  background: #eeedfe;
+  color: #3c3489;
+  border: 0.5px solid #cecbf6;
 }
 
-.article-html-guide .blog .box-warn {
+.article-html-guide .blog .sn-red {
   background: #fcebeb;
-  border-left: 3px solid #e24b4a;
+  color: #501313;
+  border: 0.5px solid #f7c1c1;
 }
 
-.article-html-guide .blog .box-warn .box-label {
+.article-html-guide .blog .conn-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.article-html-guide .blog .conn-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.article-html-guide .blog .conn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.article-html-guide .blog .cd-blue {
+  background: #0c447c;
+}
+
+.article-html-guide .blog .cd-red {
+  background: #a32d2d;
+}
+
+.article-html-guide .blog .connections-wrap {
+  margin: 1rem 0;
+}
+
+.article-html-guide .blog .conn-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.article-html-guide .blog .sys-pill {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.article-html-guide .blog .arrow-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.article-html-guide .blog .mesh-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-top: 0.5rem;
+}
+
+/* Decision grid */
+.article-html-guide .blog .decision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.1rem 0;
+}
+
+@media (max-width: 520px) {
+  .article-html-guide .blog .decision-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.article-html-guide .blog .dcard {
+  padding: 1.1rem 1.25rem;
+  border-radius: 12px;
+  border: 0.5px solid;
+}
+
+.article-html-guide .blog .dcard-green {
+  background: #e1f5ee;
+  border-color: #9fe1cb;
+}
+
+.article-html-guide .blog .dcard-red {
+  background: #fcebeb;
+  border-color: #f7c1c1;
+}
+
+.article-html-guide .blog .dcard-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 0.65rem;
+}
+
+.article-html-guide .blog .dcard-green .dcard-title {
+  color: #085041;
+}
+
+.article-html-guide .blog .dcard-red .dcard-title {
   color: #501313;
 }
 
-.article-html-guide .blog .box-warn p {
+.article-html-guide .blog .dcard ul {
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.article-html-guide .blog .dcard-green li {
+  font-size: 13px;
+  color: #085041;
+  line-height: 1.55;
+}
+
+.article-html-guide .blog .dcard-red li {
   font-size: 13px;
   color: #501313;
-  margin: 0;
-  line-height: 1.7;
+  line-height: 1.55;
 }
 
-/* Flow diagram — .flow-node.fn-* */
+/* Flow nodes (older articles) */
 .article-html-guide .blog .flow-node {
   border: 0.5px solid var(--color-border-tertiary);
   border-radius: var(--border-radius-md);
@@ -171,73 +398,98 @@ html.cms-html-embed .article-html-guide .blog {
   border-color: #ef9f27;
 }
 
-/* Interview questions — iq-* */
+/* Oneliner */
+.article-html-guide .blog .oneliner {
+  background: #2c2c2a;
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.article-html-guide .blog .oneliner-label {
+  font-size: 11px;
+  color: #888780;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.article-html-guide .blog .oneliner-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.65;
+}
+
+/* Interview questions */
 .article-html-guide .blog .iq-section {
-  background: var(--color-background-secondary);
-  border-radius: var(--border-radius-lg);
-  border: 0.5px solid var(--color-border-tertiary);
+  background: #eeedfe;
+  border-radius: 16px;
   padding: 1.75rem;
   margin-top: 2.5rem;
+  border: 0.5px solid #cecbf6;
 }
 
 .article-html-guide .blog .iq-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  color: var(--color-text-primary);
-  margin-bottom: 6px;
+  color: #3c3489;
+  margin-bottom: 0.3rem;
 }
 
 .article-html-guide .blog .iq-sub {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  margin-bottom: 1.5rem;
-  line-height: 1.7;
+  font-size: 13px;
+  color: #534ab7;
+  margin-bottom: 1.25rem;
 }
 
 .article-html-guide .blog .iq-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.6rem;
 }
 
 .article-html-guide .blog .iq-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  border: 0.5px solid #cecbf6;
   display: flex;
-  gap: 14px;
   align-items: flex-start;
-  background: var(--color-background-primary);
-  border: 0.5px solid var(--color-border-tertiary);
-  border-radius: var(--border-radius-md);
-  padding: 1rem 1.25rem;
+  gap: 0.85rem;
 }
 
 .article-html-guide .blog .iq-num {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: #eeedfe;
   color: #3c3489;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .article-html-guide .blog .iq-q {
   font-size: 14px;
-  color: var(--color-text-primary);
+  color: #26215c;
   line-height: 1.6;
-  padding-top: 3px;
+  flex: 1;
 }
 
 .article-html-guide .blog .iq-badge {
   display: inline-block;
   padding: 2px 8px;
-  border-radius: 20px;
+  border-radius: 999px;
   font-size: 11px;
   font-weight: 500;
   margin-left: 6px;
+  vertical-align: middle;
 }
 
 .article-html-guide .blog .iq-badge.badge-core {
@@ -252,23 +504,5 @@ html.cms-html-embed .article-html-guide .blog {
 
 .article-html-guide .blog .iq-badge.badge-advanced {
   background: #fcebeb;
-  color: #791f1f;
-}
-
-/* Oneliner */
-.article-html-guide .blog .oneliner-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: #9fe1cb;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.article-html-guide .blog .oneliner-text {
-  font-size: 15px;
-  color: #9fe1cb;
-  font-style: italic;
-  line-height: 1.8;
-  font-family: var(--font-sans);
+  color: #501313;
 }
