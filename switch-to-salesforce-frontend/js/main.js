@@ -23,80 +23,32 @@
     return String(html || '').replace(/<\/(script|iframe|object|embed|body|html)>/gi, '');
   }
 
-  function cmsHtmlIframeDocumentCss(theme) {
-    var dark = theme === 'dark';
-    var bg = dark ? '#171717' : '#fafafa';
-    var fg = dark ? '#e5e5e5' : '#262626';
-    var fgHead = dark ? '#fafafa' : '#171717';
-    var muted = dark ? '#a3a3a3' : '#525252';
-    var border = dark ? '#404040' : '#e5e5e5';
-    var preBg = dark ? '#262626' : '#f5f5f5';
-    var link = dark ? '#93c5fd' : '#2563eb';
-    return (
-      'html,body{margin:0;padding:0;}' +
-      'body{padding:1.25rem 1rem 2rem;max-width:860px;margin:0 auto;font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;' +
-      'color:' +
-      fg +
-      ';background:' +
-      bg +
-      ';}' +
-      'a{color:' +
-      link +
-      ';text-decoration:underline;}' +
-      'img{max-width:100%;height:auto;vertical-align:middle;}' +
-      'pre,code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:0.9em;}' +
-      'pre{overflow:auto;padding:1rem;border-radius:8px;background:' +
-      preBg +
-      ';border:1px solid ' +
-      border +
-      ';color:' +
-      fg +
-      ';}' +
-      'code{padding:0.15em 0.35em;border-radius:4px;background:' +
-      preBg +
-      ';border:1px solid ' +
-      border +
-      ';}' +
-      'pre code{padding:0;border:none;background:transparent;}' +
-      'table{border-collapse:collapse;width:100%;margin:1rem 0;}' +
-      'th,td{border:1px solid ' +
-      border +
-      ';padding:0.5rem 0.75rem;text-align:left;}' +
-      'th{background:' +
-      preBg +
-      ';color:' +
-      fgHead +
-      ';font-weight:600;}' +
-      'blockquote{margin:1rem 0;padding:0.75rem 1rem;border-left:3px solid ' +
-      (dark ? '#737373' : '#a3a3a3') +
-      ';background:' +
-      (dark ? '#262626' : '#f5f5f5') +
-      ';color:' +
-      muted +
-      ';}' +
-      'h1,h2,h3,h4,h5,h6{font-weight:600;line-height:1.25;margin:1.25rem 0 0.5rem;color:' +
-      fgHead +
-      ';}' +
-      'h1{font-size:1.75rem;}h2{font-size:1.35rem;}h3{font-size:1.15rem;}h4{font-size:1.05rem;}' +
-      'p{margin:0 0 0.75rem;}ul,ol{margin:0 0 0.75rem;padding-left:1.25rem;}' +
-      'figure{margin:1rem 0;}figcaption{font-size:0.875rem;color:' +
-      muted +
-      ';}' +
-      '*{box-sizing:border-box;}'
-    );
-  }
-
+  /**
+   * Isolated iframe document: load same article CSS as the site, wrap like MDX articles,
+   * and set data-theme so dark mode variables in article-guide.css apply.
+   */
   function buildCmsHtmlSrcdoc(bodyHtml, theme) {
-    var css = cmsHtmlIframeDocumentCss(theme);
     var safe = sanitizeCmsIframeBodyHtml(bodyHtml);
+    var origin = window.location.origin;
+    var guideCss = origin + '/css/article-guide.css';
+    var compatCss = origin + '/css/article-html-compat.css';
+    var themeAttr = theme === 'dark' ? 'data-theme="dark"' : 'data-theme="light"';
     return (
-      '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/>' +
+      '<!DOCTYPE html><html lang="en" ' +
+      themeAttr +
+      '><head><meta charset="utf-8"/>' +
       '<meta name="viewport" content="width=device-width, initial-scale=1"/>' +
-      '<style>' +
-      css +
-      '</style></head><body>' +
+      '<link rel="stylesheet" href="' +
+      guideCss +
+      '"/>' +
+      '<link rel="stylesheet" href="' +
+      compatCss +
+      '"/>' +
+      '<style>html,body{margin:0}.article-html-guide{min-height:100%}</style>' +
+      '</head><body>' +
+      '<div class="article-html-guide not-prose"><div class="blog cms-body">' +
       safe +
-      '</body></html>'
+      '</div></div></body></html>'
     );
   }
 

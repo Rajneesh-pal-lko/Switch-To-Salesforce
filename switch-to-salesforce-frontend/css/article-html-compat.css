@@ -1,0 +1,259 @@
+/**
+ * CMS HTML articles (iframe): class names used by exported / uploaded HTML often differ
+ * from MDX (e.g. hero-title vs .hero h1). Loaded after article-guide.css inside the iframe.
+ */
+.article-html-guide .blog .wrap {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* Hero block — uploaded HTML uses h1.hero-title, p.hero-sub, .meta-row, .pill */
+.article-html-guide .blog h1.hero-title {
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.article-html-guide .blog .hero-sub {
+  font-size: 15px;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.article-html-guide .blog .meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.article-html-guide .blog .pill {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 20px;
+  padding: 3px 12px;
+}
+
+.article-html-guide .blog .pill-blue {
+  background: #e6f1fb;
+  color: #0c447c;
+  border-color: #85b7eb;
+}
+
+.article-html-guide .blog .pill-green {
+  background: #e1f5ee;
+  color: #085041;
+  border-color: #5dcaa5;
+}
+
+.article-html-guide .blog .pill-purple {
+  background: #eeedfe;
+  color: #3c3489;
+  border-color: #c4b5fd;
+}
+
+/* Callout boxes — .box.box-analogy vs .analogy-box */
+.article-html-guide .blog .box {
+  border-radius: var(--border-radius-md);
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+}
+
+.article-html-guide .blog .box .box-label {
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.article-html-guide .blog .box-analogy {
+  background: #e1f5ee;
+  border-left: 3px solid #1d9e75;
+}
+
+.article-html-guide .blog .box-analogy .box-label {
+  color: #0f6e56;
+}
+
+.article-html-guide .blog .box-analogy p {
+  font-size: 14px;
+  color: #085041;
+  margin: 0;
+  line-height: 1.8;
+}
+
+.article-html-guide .blog .box-tip {
+  background: #faeeda;
+  border-left: 3px solid #ef9f27;
+}
+
+.article-html-guide .blog .box-tip .box-label {
+  color: #633806;
+}
+
+.article-html-guide .blog .box-tip p {
+  font-size: 13px;
+  color: #633806;
+  margin: 0;
+  line-height: 1.7;
+}
+
+.article-html-guide .blog .box-warn {
+  background: #fcebeb;
+  border-left: 3px solid #e24b4a;
+}
+
+.article-html-guide .blog .box-warn .box-label {
+  color: #501313;
+}
+
+.article-html-guide .blog .box-warn p {
+  font-size: 13px;
+  color: #501313;
+  margin: 0;
+  line-height: 1.7;
+}
+
+/* Flow diagram — .flow-node.fn-* vs .flow-box */
+.article-html-guide .blog .flow-node {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-background-secondary);
+}
+
+.article-html-guide .blog .flow-node span {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.article-html-guide .blog .fn-green {
+  background: #e1f5ee;
+  color: #085041;
+  border-color: #5dcaa5;
+}
+
+.article-html-guide .blog .fn-blue {
+  background: #e6f1fb;
+  color: #0c447c;
+  border-color: #85b7eb;
+}
+
+.article-html-guide .blog .fn-amber {
+  background: #faeeda;
+  color: #633806;
+  border-color: #ef9f27;
+}
+
+/* Interview block — iq-* vs interview-section / q-* */
+.article-html-guide .blog .iq-section {
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-lg);
+  border: 0.5px solid var(--color-border-tertiary);
+  padding: 1.75rem;
+  margin-top: 2.5rem;
+}
+
+.article-html-guide .blog .iq-title {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 6px;
+}
+
+.article-html-guide .blog .iq-sub {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.7;
+}
+
+.article-html-guide .blog .iq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.article-html-guide .blog .iq-card {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 1rem 1.25rem;
+}
+
+.article-html-guide .blog .iq-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #eeedfe;
+  color: #3c3489;
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.article-html-guide .blog .iq-q {
+  font-size: 14px;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  padding-top: 3px;
+}
+
+.article-html-guide .blog .iq-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.article-html-guide .blog .iq-badge.badge-core {
+  background: #e1f5ee;
+  color: #085041;
+}
+
+.article-html-guide .blog .iq-badge.badge-senior {
+  background: #faeeda;
+  color: #633806;
+}
+
+.article-html-guide .blog .iq-badge.badge-advanced {
+  background: #fcebeb;
+  color: #791f1f;
+}
+
+/* Oneliner — label + text divs instead of p */
+.article-html-guide .blog .oneliner-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9fe1cb;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.article-html-guide .blog .oneliner-text {
+  font-size: 15px;
+  color: #9fe1cb;
+  font-style: italic;
+  line-height: 1.8;
+  font-family: var(--font-sans);
+}
