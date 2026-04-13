@@ -10,7 +10,8 @@
  * - .hub-container + .spoke-node (fixed positions) + optional SVG .hub-spokes-svg (dashed lines)
  * - or .hub-wheel with .hub-spokes > .hub-spoke.hl-* and .hub-node-slot.hns-0…5
  * - .type-cards + .tcard.tc-blue|tc-green|tc-purple (integration type summaries)
- * - .dir-grid / .dir-card-* (inbound vs outbound), .code-block + .ck/.cs/… (manual Apex samples)
+ * - .dir-grid / .dir-card-* (inbound vs outbound) or .dir-card.dc-* (sync vs async lists)
+ * - .timeline / .tl-* / .tb-* (integration timing visuals), .code-block + .ck/.cs/… (manual Apex)
  * Inline <svg><line> spokes are allowed by the backend sanitizer; use viewBox on <svg>.
  */
 
@@ -542,6 +543,171 @@ html.cms-html-embed body {
 
 .article-html-guide .blog .dir-card-green .dir-ex {
   color: #0f6e56;
+}
+
+/* Sync vs async decision cards (reuse .dir-grid; .dc-* differs from inbound .dir-card-blue) */
+.article-html-guide .blog .dir-card.dc-blue {
+  padding: 1.2rem;
+  background: #e6f1fb;
+  border-color: #b5d4f4;
+}
+
+.article-html-guide .blog .dir-card.dc-green {
+  padding: 1.2rem;
+  background: #e1f5ee;
+  border-color: #9fe1cb;
+}
+
+.article-html-guide .blog .dc-title {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.article-html-guide .blog .dir-card.dc-blue .dc-title {
+  color: #0c447c;
+}
+
+.article-html-guide .blog .dir-card.dc-green .dc-title {
+  color: #085041;
+}
+
+.article-html-guide .blog .dc-body {
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.article-html-guide .blog .dir-card.dc-blue .dc-body {
+  color: #185fa5;
+}
+
+.article-html-guide .blog .dir-card.dc-green .dc-body {
+  color: #0f6e56;
+}
+
+.article-html-guide .blog .dir-card .dc-list {
+  margin-top: 0.6rem;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: disc;
+}
+
+.article-html-guide .blog .dir-card.dc-blue .dc-list li {
+  font-size: 12px;
+  color: #185fa5;
+  line-height: 1.5;
+}
+
+.article-html-guide .blog .dir-card.dc-green .dc-list li {
+  font-size: 12px;
+  color: #0f6e56;
+  line-height: 1.5;
+}
+
+/* Integration timing timeline (sync vs async) */
+.article-html-guide .blog .timeline {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+}
+
+.article-html-guide .blog .tl-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+}
+
+.article-html-guide .blog .tl-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 0.75rem;
+}
+
+.article-html-guide .blog .tl-actor {
+  font-size: 12px;
+  font-weight: 500;
+  width: 90px;
+  flex-shrink: 0;
+  color: var(--color-text-primary);
+}
+
+.article-html-guide .blog .tl-track {
+  flex: 1;
+  position: relative;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+
+.article-html-guide .blog .tl-block {
+  height: 22px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 0 8px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.article-html-guide .blog .tl-wait {
+  height: 22px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  padding: 0 8px;
+  opacity: 0.5;
+  border: 0.5px dashed;
+}
+
+.article-html-guide .blog .tl-gap {
+  flex: 1;
+}
+
+.article-html-guide .blog .tb-blue {
+  background: #e6f1fb;
+  color: #0c447c;
+  border: 0.5px solid #b5d4f4;
+}
+
+.article-html-guide .blog .tb-green {
+  background: #e1f5ee;
+  color: #085041;
+  border: 0.5px solid #9fe1cb;
+}
+
+.article-html-guide .blog .tb-amber {
+  background: #faeeda;
+  color: #633806;
+  border: 0.5px solid #fac775;
+}
+
+.article-html-guide .blog .tb-gray {
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  border: 0.5px dashed var(--color-border-tertiary);
+}
+
+.article-html-guide .blog .tl-note {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  font-style: italic;
 }
 
 /* Manual Apex highlights inside dark .code-block (not Prism/Shiki) */
