@@ -104,10 +104,12 @@ body {
 }
 
 /* ------------------------------------------------------------
-   3. CSS VARIABLES — DARK MODE
+   3. CSS VARIABLES — DARK MODE (OS preference)
+   When the site or iframe sets data-theme="light", that must win over
+   prefers-color-scheme so the article matches the theme toggle.
    ------------------------------------------------------------ */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme='light']) {
     --bg-page: #1a1a18;
     --bg-primary: #232320;
     --bg-secondary: #2c2c2a;
