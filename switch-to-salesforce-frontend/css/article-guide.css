@@ -195,6 +195,13 @@ html[data-theme="dark"] .pe-html-guide {
     margin-bottom: 0;
   }
 
+  /* Callouts inside .section: don't apply theme gray (meant for page body on neutral bg) */
+  .section .box p,
+  .section .box .box-body,
+  .section .box li {
+    color: inherit;
+  }
+
   .analogy-box {
     background: #e1f5ee;
     border-left: 3px solid #1d9e75;

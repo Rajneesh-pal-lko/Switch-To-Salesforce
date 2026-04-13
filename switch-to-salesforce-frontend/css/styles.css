@@ -945,7 +945,15 @@ html[data-theme='dark'] {
 }
 
 /* ------------------------------------------------------------
-   19. LEGACY CMS (optional — older articles used cms-html-shared names)
+   19. CMS HTML — inline code inside tinted callouts (dark theme)
+   ------------------------------------------------------------ */
+html[data-theme='dark'] .article-html-guide .blog .box code {
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+}
+
+/* ------------------------------------------------------------
+   20. LEGACY CMS (optional — older articles used cms-html-shared names)
    ------------------------------------------------------------ */
 .wrap {
   max-width: 760px;
@@ -1007,5 +1015,5 @@ h2.section-title {
 }
 
 /* ------------------------------------------------------------
-   END OF styles.css
+   END OF styles.css (sections 1–20)
    ------------------------------------------------------------ */
