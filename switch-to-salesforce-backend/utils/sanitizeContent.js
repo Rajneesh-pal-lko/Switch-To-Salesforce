@@ -81,6 +81,7 @@ const LAYOUT_TAG_NAMES = [
   'figure',
   'figcaption',
   'style',
+  'link',
   /* Diagrams: hub/spoke lines are often drawn with inline SVG; previously stripped entirely */
   'svg',
   'g',
@@ -233,6 +234,7 @@ const LAYOUT_ALLOWED_ATTRIBUTES = (() => {
   base.defs = ['class', 'id'];
   base.title = ['class', 'id'];
   base.desc = ['class', 'id'];
+  base.link = ['rel', 'href', 'media', 'crossorigin'];
   for (const t of LAYOUT_TAG_NAMES) {
     if (!base[t]) {
       if (t === 'img') base[t] = img;
@@ -266,6 +268,32 @@ const LAYOUT_HTML = {
         attribs.rel = 'noopener noreferrer';
       }
       return { tagName, attribs };
+    },
+    link: (tagName, attribs) => {
+      const rel = String(attribs.rel || '').toLowerCase();
+      if (rel !== 'stylesheet') {
+        return { tagName: false, attribs: {} };
+      }
+      let href = String(attribs.href || '').trim();
+      if (href === 'styles.css' || href === './styles.css') {
+        href = '/css/styles.css';
+      }
+      if (/^https?:\/\//i.test(href)) {
+        try {
+          const u = new URL(href);
+          if (u.pathname === '/css/styles.css' || u.pathname.endsWith('/css/styles.css')) {
+            href = '/css/styles.css';
+          } else {
+            return { tagName: false, attribs: {} };
+          }
+        } catch {
+          return { tagName: false, attribs: {} };
+        }
+      }
+      if (href !== '/css/styles.css') {
+        return { tagName: false, attribs: {} };
+      }
+      return { tagName: 'link', attribs: { rel: 'stylesheet', href: '/css/styles.css' } };
     },
   },
 };

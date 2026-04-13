@@ -20,7 +20,10 @@
   var cmsHtmlIframeState = { bodyHtml: null };
 
   function sanitizeCmsIframeBodyHtml(html) {
-    return String(html || '').replace(/<\/(script|iframe|object|embed|body|html)>/gi, '');
+    var s = String(html || '').replace(/<\/(script|iframe|object|embed|body|html)>/gi, '');
+    /* Stylesheet is loaded in iframe <head>; strip duplicate <link> from body to avoid double fetch */
+    s = s.replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
+    return s;
   }
 
   /**
@@ -32,6 +35,7 @@
     var origin = window.location.origin;
     var guideCss = origin + '/css/article-guide.css';
     var sharedCss = origin + '/css/cms-html-shared.css';
+    var seriesCss = origin + '/css/styles.css';
     var themeAttr = theme === 'dark' ? 'data-theme="dark"' : 'data-theme="light"';
     return (
       '<!DOCTYPE html><html lang="en" class="cms-html-embed" ' +
@@ -43,6 +47,9 @@
       '"/>' +
       '<link rel="stylesheet" href="' +
       sharedCss +
+      '"/>' +
+      '<link rel="stylesheet" href="' +
+      seriesCss +
       '"/>' +
       '<style>' +
       'html.cms-html-embed,html.cms-html-embed body{margin:0;padding:0;background:transparent!important}' +
