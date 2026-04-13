@@ -10,6 +10,7 @@
  * - .hub-container + .spoke-node (fixed positions) + optional SVG .hub-spokes-svg (dashed lines)
  * - or .hub-wheel with .hub-spokes > .hub-spoke.hl-* and .hub-node-slot.hns-0…5
  * - .type-cards + .tcard.tc-blue|tc-green|tc-purple (integration type summaries)
+ * - .dir-grid / .dir-card-* (inbound vs outbound), .code-block + .ck/.cs/… (manual Apex samples)
  * Inline <svg><line> spokes are allowed by the backend sanitizer; use viewBox on <svg>.
  */
 
@@ -172,6 +173,14 @@ html.cms-html-embed body {
   font-size: 14px;
   line-height: 1.75;
   margin-top: 0.3rem;
+}
+
+.article-html-guide .blog .box code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
 }
 
 /* ESB flow (step-through diagrams) */
@@ -415,6 +424,178 @@ html.cms-html-embed body {
 .article-html-guide .blog .tcard.tc-purple .tcard-tag {
   background: #cecbf6;
   color: #3c3489;
+}
+
+/* Inbound / outbound direction cards */
+.article-html-guide .blog .dir-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+
+@media (max-width: 520px) {
+  .article-html-guide .blog .dir-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.article-html-guide .blog .dir-card {
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 0.5px solid;
+}
+
+.article-html-guide .blog .dir-card-blue {
+  background: #e6f1fb;
+  border-color: #b5d4f4;
+}
+
+.article-html-guide .blog .dir-card-green {
+  background: #e1f5ee;
+  border-color: #9fe1cb;
+}
+
+.article-html-guide .blog .dir-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.article-html-guide .blog .dir-card-blue .dir-title {
+  color: #0c447c;
+}
+
+.article-html-guide .blog .dir-card-green .dir-title {
+  color: #085041;
+}
+
+.article-html-guide .blog .dir-flow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0.75rem 0;
+  flex-wrap: wrap;
+}
+
+.article-html-guide .blog .dir-node {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.article-html-guide .blog .dn-blue {
+  background: #b5d4f4;
+  color: #0c447c;
+}
+
+.article-html-guide .blog .dn-sf {
+  background: #0c447c;
+  color: #fff;
+}
+
+.article-html-guide .blog .dn-green {
+  background: #9fe1cb;
+  color: #085041;
+}
+
+.article-html-guide .blog .dn-sfg {
+  background: #085041;
+  color: #fff;
+}
+
+.article-html-guide .blog .dir-arrow {
+  font-size: 16px;
+  color: var(--color-text-secondary);
+}
+
+.article-html-guide .blog .dir-body {
+  font-size: 13px;
+  line-height: 1.65;
+  margin-top: 0.5rem;
+}
+
+.article-html-guide .blog .dir-card-blue .dir-body {
+  color: #185fa5;
+}
+
+.article-html-guide .blog .dir-card-green .dir-body {
+  color: #0f6e56;
+}
+
+.article-html-guide .blog .dir-examples {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.article-html-guide .blog .dir-ex {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.article-html-guide .blog .dir-card-blue .dir-ex {
+  color: #185fa5;
+}
+
+.article-html-guide .blog .dir-card-green .dir-ex {
+  color: #0f6e56;
+}
+
+/* Manual Apex highlights inside dark .code-block (not Prism/Shiki) */
+.article-html-guide .blog .code-block {
+  background: #2c2c2a;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.1rem 0;
+  overflow-x: auto;
+}
+
+.article-html-guide .blog .code-block .code-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #888780;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.article-html-guide .blog .code-block pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: #fff;
+  border: none;
+}
+
+.article-html-guide .blog .code-block .ck {
+  color: #5dcaa5;
+}
+
+.article-html-guide .blog .code-block .cs {
+  color: #fac775;
+}
+
+.article-html-guide .blog .code-block .cc {
+  color: #888780;
+}
+
+.article-html-guide .blog .code-block .cf {
+  color: #85b7eb;
+}
+
+.article-html-guide .blog .code-block .ccl {
+  color: #ed93b1;
+}
+
+.article-html-guide .blog .code-block .cw {
+  color: #fff;
 }
 
 /* P2P / architecture diagrams */
