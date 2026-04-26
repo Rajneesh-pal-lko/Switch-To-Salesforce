@@ -1,0 +1,6 @@
+Act as an expert frontend developer and UX designer. We are building a single-page landing website called "Switch To Salesforce". The target audience is freshers in India (0-1 year experience) trying to break into the Salesforce ecosystem. The core message is: "You don't need more courses. You need real interview practice and feedback."
+
+Tech Stack: Next.js (App Router), Tailwind CSS, Framer Motion (for subtle animations), and Lucide React (for icons).
+Design Rules: Modern, minimal, clean (SaaS/Startup style). Use soft colors (white, light grey, subtle blue/indigo gradients), rounded cards, and generous whitespace.
+Content Rules: No fake testimonials, no fake stats, and absolutely no overhyped marketing copy. Do NOT put any pricing on the website; all pricing discussions will happen privately. The tone must be honest, practical, and straightforward.
+Goal: Convert users to click a WhatsApp CTA button or fill out a simple lead form.

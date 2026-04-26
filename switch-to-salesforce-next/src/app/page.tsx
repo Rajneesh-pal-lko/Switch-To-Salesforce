@@ -1,15 +1,5 @@
-import { HomeHero } from "@/components/home-hero";
-import { HomeLatestPosts } from "@/components/home-latest-posts";
-import { SiteHeader } from "@/components/site-header";
+import { SwitchToSalesforceLanding } from "@/components/switch-to-salesforce-landing";
 
 export default function Home() {
-  return (
-    <>
-      <SiteHeader />
-      <main>
-        <HomeHero />
-        <HomeLatestPosts />
-      </main>
-    </>
-  );
+  return <SwitchToSalesforceLanding />;
 }
