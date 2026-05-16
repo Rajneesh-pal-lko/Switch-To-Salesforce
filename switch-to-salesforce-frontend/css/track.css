@@ -1152,12 +1152,15 @@ details.snav__group[open] .snav__chevron {
   max-width: none;
 }
 
-/* .article-wrap (styles.css) sets background: var(--bg-primary) which creates
-   a card/box effect when rendered inside the SPA reader — make it transparent
-   so the article blends naturally into the page background. */
+/* .article-wrap (styles.css) sets background, max-width, margin: auto and padding
+   that create a centred card with large side gutters inside the SPA reader.
+   Reset everything so the outer .main layout drives spacing — matching mdx articles. */
 .spa-article .article-wrap {
   background: transparent;
   min-height: unset;
+  max-width: none;
+  margin: 0;
+  padding: 0;
 }
 
 /* Breadcrumb */
