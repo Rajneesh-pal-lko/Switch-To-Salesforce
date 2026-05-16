@@ -105,11 +105,11 @@
         '<div class="app-home__badge">Learn Salesforce</div>' +
         '<h1 class="app-home__heading">Start your Salesforce journey</h1>' +
         '<p class="app-home__sub">' +
-          'Pick a learning track from the sidebar.<br>' +
+          'Pick a guide from the sidebar.<br>' +
           'Follow topics and articles in order — beginner to advanced.' +
         '</p>' +
         '<ol class="app-home__steps">' +
-          '<li><span class="app-home__step-num">1</span> Choose a track from the sidebar</li>' +
+          '<li><span class="app-home__step-num">1</span> Choose a guide from the sidebar</li>' +
           '<li><span class="app-home__step-num">2</span> Open a section to see its articles</li>' +
           '<li><span class="app-home__step-num">3</span> Read articles in order</li>' +
         '</ol>' +

@@ -71,7 +71,7 @@
 
     var html =
       '<div class="snav__l0-header">' +
-        '<span class="snav__l0-label">Learning Tracks</span>' +
+        '<span class="snav__l0-label">All Guides</span>' +
       '</div>' +
       '<div class="snav__search-wrap">' +
         '<label class="sr-only" for="snav-search">Search topics or articles</label>' +
@@ -134,7 +134,7 @@
       /* Back header */
       '<div class="snav__l1-header">' +
         '<button class="snav__back-btn" type="button">' +
-          BACK_ARROW + ' All tracks' +
+          BACK_ARROW + ' All Guides' +
         '</button>' +
         '<div class="snav__l1-title">' +
           '<span class="snav__group-icon snav__group-icon--sm" data-ci="' + ci + '">' +
