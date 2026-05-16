@@ -46,8 +46,12 @@ function corsAllowed(origin) {
   if (env.corsAllowVercel && /^https:\/\/[^/]+\.vercel\.app$/i.test(o)) {
     return true;
   }
-  /** Always allow this site (Vercel) even if FRONTEND_URL / CORS_ALLOW_VERCEL missing on Render. */
+  /** Always allow the Vercel deployment even if FRONTEND_URL / CORS_ALLOW_VERCEL missing on Render. */
   if (o === 'https://switch-to-salesforce.vercel.app') {
+    return true;
+  }
+  /** Always allow all switchtosalesforce.com subdomains (learn, blog, www, etc.). */
+  if (/^https:\/\/[^/]+\.switchtosalesforce\.com$/i.test(o)) {
     return true;
   }
   return false;
