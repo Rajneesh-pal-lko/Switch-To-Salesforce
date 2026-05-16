@@ -655,6 +655,24 @@ body.nav-header-hidden .navbar {
   margin: 0;
 }
 
+/* Sticky footer — body acts as a flex column so footer always sits at the
+   bottom of the viewport even when main content is sparse. */
+body:not(.admin-body) {
+  display: flex;
+  flex-direction: column;
+}
+
+/* The layout area (sidebar + main) grows to fill all available space */
+body:not(.admin-body) > .layout {
+  flex: 1 0 auto;
+}
+
+/* Footer never shrinks */
+body:not(.admin-body) > [data-include="footer"],
+body:not(.admin-body) > .site-footer {
+  flex-shrink: 0;
+}
+
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 2.5rem var(--layout-pad-x, 1.25rem) 2rem;
