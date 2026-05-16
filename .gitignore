@@ -3,3 +3,6 @@
 .env
 .env.local
 node_modules/
+
+# Personal site vision / notes (not published as project docs)
+docs/personal-site-brief.md
