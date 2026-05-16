@@ -56,6 +56,7 @@ async function createTopic(req, res, next) {
       groupId,
       order: order != null ? Number(order) : 0,
       description,
+      isPublic: req.body.isPublic != null ? Boolean(req.body.isPublic) : true,
     });
     res.status(201).json({ success: true, data: doc });
   } catch (err) {
@@ -94,6 +95,7 @@ async function updateTopic(req, res, next) {
     if (req.body.description != null) {
       doc.description = String(req.body.description).trim();
     }
+    if (req.body.isPublic != null) doc.isPublic = Boolean(req.body.isPublic);
     await doc.save();
     res.json({ success: true, data: doc });
   } catch (err) {

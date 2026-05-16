@@ -3,6 +3,14 @@
   "outputDirectory": ".",
   "framework": null,
   "installCommand": "npm install",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "switch-to-salesforce.vercel.app" }],
+      "destination": "https://learn.switchtosalesforce.com/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/:group/:topic/:article",

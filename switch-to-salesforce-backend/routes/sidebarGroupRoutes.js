@@ -22,6 +22,7 @@ router.post(
     body('name').trim().notEmpty().isLength({ max: 200 }),
     body('order').optional().isNumeric(),
     body('slug').optional().trim().isLength({ max: 120 }),
+    body('isPublic').optional().isBoolean(),
   ],
   createGroup
 );
@@ -35,6 +36,7 @@ router.put(
     body('name').optional().trim().notEmpty(),
     body('order').optional().isNumeric(),
     body('slug').optional().trim().isLength({ max: 120 }),
+    body('isPublic').optional().isBoolean(),
   ],
   updateGroup
 );

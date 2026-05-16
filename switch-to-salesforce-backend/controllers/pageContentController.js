@@ -39,22 +39,45 @@ function publishedOnlyCondition() {
 
 async function listPages(req, res, next) {
   try {
-    const topicSlug = req.query.topicSlug;
     const parts = [];
-    if (topicSlug && String(topicSlug).trim()) {
-      const ts = String(topicSlug).toLowerCase().trim();
+
+    /* --- topic filter (public + admin) --- */
+    if (req.query.topicSlug && String(req.query.topicSlug).trim()) {
+      const ts = String(req.query.topicSlug).toLowerCase().trim();
       const topic = await SidebarTopic.findOne({ slug: ts });
-      if (!topic) {
-        return res.json({ success: true, data: [] });
-      }
+      if (!topic) return res.json({ success: true, data: [] });
       parts.push({ topicId: topic._id });
     }
-    if (!req.adminFullPageList) {
+
+    /* --- admin-only filters --- */
+    if (req.adminFullPageList) {
+      /* Filter by explicit topic ID */
+      if (req.query.topicId && String(req.query.topicId).trim()) {
+        parts.push({ topicId: req.query.topicId });
+      }
+
+      /* Filter by group ID — find all topics in that group, then filter articles */
+      if (req.query.groupId && String(req.query.groupId).trim()) {
+        const SidebarGroup = require('../models/SidebarGroup');
+        const groupDoc = await SidebarGroup.findById(req.query.groupId).lean();
+        if (!groupDoc) return res.json({ success: true, data: [] });
+        const topicsInGroup = await SidebarTopic.find({ groupId: groupDoc._id }).select('_id').lean();
+        const topicIds = topicsInGroup.map((t) => t._id);
+        parts.push({ topicId: { $in: topicIds } });
+      }
+
+      /* Filter by status (published / draft) */
+      if (req.query.status && ['published', 'draft'].includes(req.query.status)) {
+        parts.push({ status: req.query.status });
+      }
+    } else {
+      /* Public: only published */
       parts.push(publishedOnlyCondition());
     }
+
     const query = parts.length === 0 ? {} : parts.length === 1 ? parts[0] : { $and: parts };
     const items = await PageContent.find(query)
-      .populate('topicId', 'name slug')
+      .populate({ path: 'topicId', select: 'name slug groupId', populate: { path: 'groupId', select: 'name slug' } })
       .populate('category', 'name slug')
       .sort({ order: 1, updatedAt: -1 })
       .lean();

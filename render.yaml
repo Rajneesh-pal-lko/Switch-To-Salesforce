@@ -1,5 +1,7 @@
 # Render Blueprint — add secrets in the dashboard: MONGODB_URI, JWT_SECRET (required).
 # After first deploy, set SITE_URL to your Render service URL (Settings → copy URL).
+# Production branch: set the service's Git branch to `main` in the dashboard.
+# Previews for other branches: enable Pull request previews (Automatic) on the service — see README Deployment.
 # https://render.com/docs/blueprint-spec
 services:
   - type: web

@@ -48,7 +48,7 @@ Create a cluster and a database user. Whitelist `0.0.0.0/0` for testing (tighten
 | `MONGODB_URI` | Atlas connection string |
 | `JWT_SECRET` | Long random string |
 | `FRONTEND_URL` | Your live site, e.g. `https://your-app.vercel.app` (comma-separated if you have more than one origin) |
-| `SITE_URL` | Public API base, e.g. `https://switch-to-salesforce.onrender.com` |
+| `SITE_URL` | Public API base, e.g. `https://switch-to-salesforce-khsv.onrender.com` |
 | `PORT` | Usually set automatically by the host |
 
 4. Run **seed** once locally (or via a one-off job) with the same `MONGODB_URI` to create the admin user — see backend README.
@@ -56,12 +56,16 @@ Create a cluster and a database user. Whitelist `0.0.0.0/0` for testing (tighten
 
 Optional: [`render.yaml`](./render.yaml) in the repo root can be used as a Render Blueprint; you still add secrets in the dashboard.
 
+**Production only from `main`.** In Render **Settings → Build & Deploy**, set the Git **branch** to `main`. Only pushes to `main` update this production service.
+
+**Preview API for work on other branches.** Render does **not** create a separate deploy for every branch push the way Vercel does for the static site. To get a disposable API URL for each line of work, turn on **[pull request previews](https://render.com/docs/service-previews)** on the same service: open the **Previews** tab → under **Pull request previews** choose **Automatic**. Then every **pull request opened against `main`** gets its own temporary `*.onrender.com` URL, and each push to that PR branch updates the preview. A branch with no open PR has no Render preview until you open one. Preview instances receive `IS_PULL_REQUEST=true` from Render if you need different behavior (for example pointing at a test database).
+
 ### 3. Frontend (example: Vercel or Netlify)
 
 **Vercel**
 
 1. Import the repo; set **Root Directory** to `switch-to-salesforce-frontend`.
-2. Add environment variable **`STS_API_ORIGIN`** = your API origin only (no `/api` path), e.g. `https://switch-to-salesforce.onrender.com`.
+2. Add environment variable **`STS_API_ORIGIN`** = your API origin only (no `/api` path), e.g. `https://switch-to-salesforce-khsv.onrender.com`.
 3. **Build command:** `npm run build` — **Install:** `npm install` — **Output:** `.` (current directory). The build runs `scripts/write-api-config.js` and writes `js/config.js` with that URL.
 4. Deploy, then open the site and verify the blog loads data.
 
@@ -83,7 +87,7 @@ The backend allows origins listed in **`FRONTEND_URL`** (comma-separated) and `l
 |-------|--------|
 | Live frontend | `https://switch-to-salesforce.vercel.app` |
 | **`FRONTEND_URL` on API** | `https://switch-to-salesforce.vercel.app` (no trailing slash) |
-| **`STS_API_ORIGIN` on Vercel** | Your API origin only, e.g. `https://switch-to-salesforce.onrender.com` (must match Render’s public URL) |
+| **`STS_API_ORIGIN` on Vercel** | Your API origin only, e.g. `https://switch-to-salesforce-khsv.onrender.com` (must match Render’s public URL) |
 
 After the API is live, set **`STS_API_ORIGIN`** on Vercel and **redeploy** the frontend so `js/config.js` is regenerated. Set **`FRONTEND_URL`** on the API host to the Vercel URL above (or add a custom domain when you use one).
 

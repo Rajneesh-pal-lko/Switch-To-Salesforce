@@ -6,6 +6,8 @@ const sidebarGroupSchema = new mongoose.Schema(
     /** URL segment for routes like /:groupSlug/:topicSlug — generated from name on create */
     slug: { type: String, lowercase: true, trim: true },
     order: { type: Number, default: 0 },
+    /** When false the group is hidden from GET /api/sidebar (public site) but still visible in admin */
+    isPublic: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
