@@ -22,6 +22,7 @@ router.post(
     body('slug').optional().trim(),
     body('order').optional().isNumeric(),
     body('description').optional().isString().isLength({ max: 2000 }),
+    body('isPublic').optional().isBoolean(),
   ],
   createTopic
 );
@@ -37,6 +38,7 @@ router.put(
     body('slug').optional().trim(),
     body('order').optional().isNumeric(),
     body('description').optional().isString().isLength({ max: 2000 }),
+    body('isPublic').optional().isBoolean(),
   ],
   updateTopic
 );

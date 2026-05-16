@@ -27,8 +27,8 @@ async function getPublicSidebar(req, res, next) {
     return res.json({ success: true, data: [] });
   }
   try {
-    const groups = await SidebarGroup.find().sort({ order: 1, name: 1 }).lean();
-    const topics = await SidebarTopic.find().sort({ order: 1, name: 1 }).lean();
+    const groups = await SidebarGroup.find({ isPublic: { $ne: false } }).sort({ order: 1, name: 1 }).lean();
+    const topics = await SidebarTopic.find({ isPublic: { $ne: false } }).sort({ order: 1, name: 1 }).lean();
     const byGroup = {};
     topics.forEach((t) => {
       const gid = String(t.groupId);

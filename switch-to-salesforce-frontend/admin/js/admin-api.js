@@ -80,9 +80,15 @@
       return authJson('/api/sidebar-topics/' + encodeURIComponent(id), { method: 'DELETE' });
     },
 
-    /** GET /api/admin/pages — all PageContent (draft + published) */
-    listArticles: function () {
-      return authJson('/api/admin/pages');
+    /** GET /api/admin/pages — all PageContent (draft + published).
+     *  Optional params: { groupId, topicId, status: 'published'|'draft' } */
+    listArticles: function (params) {
+      var q = new URLSearchParams();
+      if (params && params.groupId) q.set('groupId', params.groupId);
+      if (params && params.topicId) q.set('topicId', params.topicId);
+      if (params && params.status)  q.set('status',  params.status);
+      var qs = q.toString();
+      return authJson('/api/admin/pages' + (qs ? '?' + qs : ''));
     },
 
     getArticleById: function (id) {

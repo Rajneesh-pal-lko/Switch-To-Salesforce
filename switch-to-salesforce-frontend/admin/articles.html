@@ -20,6 +20,37 @@
           <p class="muted">Documentation pages (PageContent) scoped to a topic — separate from blog posts.</p>
           <p><a class="admin-btn" href="article-edit.html">New article</a></p>
           <div id="msg"></div>
+
+          <div class="admin-card">
+            <h2>Filter articles</h2>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+              <label style="flex:1;min-width:160px;">
+                Group
+                <select id="filter-group">
+                  <option value="">— All groups —</option>
+                </select>
+              </label>
+              <label style="flex:1;min-width:160px;">
+                Topic
+                <select id="filter-topic" disabled>
+                  <option value="">— All topics —</option>
+                </select>
+              </label>
+              <label style="flex:1;min-width:130px;">
+                Status
+                <select id="filter-status">
+                  <option value="">— All —</option>
+                  <option value="published">Published</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </label>
+              <div>
+                <button type="button" class="admin-btn" id="btn-apply-filter">Apply</button>
+                <button type="button" class="admin-btn admin-btn--ghost" id="btn-clear-filter" style="margin-left:6px;">Clear</button>
+              </div>
+            </div>
+          </div>
+
           <div class="admin-card" id="list"><p class="muted">Loading…</p></div>
         </main>
       </div>
@@ -33,42 +64,124 @@
         AdminUi.bootstrap({ active: 'articles' });
         if (!window.AdminData) return;
 
-        AdminData.listArticles()
-          .then(function (res) {
-            var rows = res.data || [];
-            if (!rows.length) {
-              document.getElementById('list').innerHTML = '<p class="muted">No articles yet.</p>';
-              return;
-            }
-            document.getElementById('list').innerHTML =
-              '<table class="admin-table"><thead><tr><th>Title</th><th>Slug</th><th>Topic</th><th>Status</th><th>Order</th><th></th></tr></thead><tbody>' +
-              rows
-                .map(function (p) {
-                  var topic = p.topicId && p.topicId.name ? p.topicId.name : '';
-                  var st = p.status === 'draft' ? 'Draft' : 'Published';
-                  return (
-                    '<tr><td>' +
-                    (p.title || '') +
-                    '</td><td><code>' +
-                    (p.slug || '') +
-                    '</code></td><td>' +
-                    topic +
-                    '</td><td>' +
-                    st +
-                    '</td><td>' +
-                    (p.order != null ? p.order : 0) +
-                    '</td><td><a href="article-edit.html?id=' +
-                    encodeURIComponent(p._id) +
-                    '">Edit</a></td></tr>'
-                  );
-                })
-                .join('') +
-              '</tbody></table>';
-          })
-          .catch(function (err) {
-            document.getElementById('list').innerHTML =
-              '<p class="muted">' + (err.message || 'Could not load articles.') + '</p>';
+        var topicsByGroup = {};
+
+        function escapeHtml(s) {
+          return String(s || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+        }
+
+        function showMsg(html, ok) {
+          document.getElementById('msg').innerHTML =
+            '<div class="admin-msg ' + (ok ? 'admin-msg--ok' : 'admin-msg--error') + '">' + html + '</div>';
+        }
+
+        function renderTable(rows) {
+          if (!rows.length) {
+            document.getElementById('list').innerHTML = '<p class="muted">No articles match the current filter.</p>';
+            return;
+          }
+          document.getElementById('list').innerHTML =
+            '<table class="admin-table"><thead><tr>' +
+            '<th>Title</th><th>Slug</th><th>Group</th><th>Topic</th><th>Status</th><th>Order</th><th></th>' +
+            '</tr></thead><tbody>' +
+            rows.map(function (p) {
+              var topic = p.topicId && p.topicId.name ? p.topicId.name : '';
+              var group = p.topicId && p.topicId.groupId && p.topicId.groupId.name ? p.topicId.groupId.name : '';
+              var st = p.status === 'draft'
+                ? '<span style="color:#9a3412;font-weight:600;">Draft</span>'
+                : '<span style="color:#15803d;font-weight:600;">Published</span>';
+              return (
+                '<tr>' +
+                '<td>' + escapeHtml(p.title || '') + '</td>' +
+                '<td><code>' + escapeHtml(p.slug || '') + '</code></td>' +
+                '<td>' + escapeHtml(group) + '</td>' +
+                '<td>' + escapeHtml(topic) + '</td>' +
+                '<td>' + st + '</td>' +
+                '<td>' + (p.order != null ? p.order : 0) + '</td>' +
+                '<td><a href="article-edit.html?id=' + encodeURIComponent(p._id) + '">Edit</a></td>' +
+                '</tr>'
+              );
+            }).join('') +
+            '</tbody></table>' +
+            '<p class="muted" style="padding:8px 0 0;">' + rows.length + ' article' + (rows.length !== 1 ? 's' : '') + '</p>';
+        }
+
+        function loadArticles() {
+          var groupId = document.getElementById('filter-group').value;
+          var topicId = document.getElementById('filter-topic').value;
+          var status  = document.getElementById('filter-status').value;
+          var params = {};
+          if (groupId) params.groupId = groupId;
+          if (topicId) params.topicId = topicId;
+          if (status)  params.status  = status;
+
+          document.getElementById('list').innerHTML = '<p class="muted">Loading…</p>';
+          AdminData.listArticles(params)
+            .then(function (res) { renderTable(res.data || []); })
+            .catch(function (err) {
+              document.getElementById('list').innerHTML =
+                '<p class="muted">' + (err.message || 'Could not load articles.') + '</p>';
+            });
+        }
+
+        function populateTopicSelect(groupId) {
+          var sel = document.getElementById('filter-topic');
+          sel.innerHTML = '<option value="">— All topics —</option>';
+          if (!groupId) {
+            sel.disabled = true;
+            return;
+          }
+          var topics = topicsByGroup[groupId] || [];
+          topics.forEach(function (t) {
+            var opt = document.createElement('option');
+            opt.value = t._id;
+            opt.textContent = t.name;
+            sel.appendChild(opt);
           });
+          sel.disabled = false;
+        }
+
+        /* Load groups + all topics, then build a group→topics map */
+        AdminData.listGroups()
+          .then(function (groups) {
+            var sel = document.getElementById('filter-group');
+            groups.forEach(function (g) {
+              var opt = document.createElement('option');
+              opt.value = g._id;
+              opt.textContent = g.name;
+              sel.appendChild(opt);
+            });
+            return AdminData.listTopics();
+          })
+          .then(function (topics) {
+            topics.forEach(function (t) {
+              var gid = String(t.groupId);
+              if (!topicsByGroup[gid]) topicsByGroup[gid] = [];
+              topicsByGroup[gid].push(t);
+            });
+            loadArticles();
+          })
+          .catch(function (e) {
+            document.getElementById('list').innerHTML =
+              '<p class="muted">' + (e.message || 'Failed to load filters.') + '</p>';
+          });
+
+        document.getElementById('filter-group').addEventListener('change', function () {
+          populateTopicSelect(this.value);
+        });
+
+        document.getElementById('btn-apply-filter').addEventListener('click', loadArticles);
+
+        document.getElementById('btn-clear-filter').addEventListener('click', function () {
+          document.getElementById('filter-group').value = '';
+          document.getElementById('filter-status').value = '';
+          populateTopicSelect('');
+          loadArticles();
+        });
       })();
     </script>
   </body>

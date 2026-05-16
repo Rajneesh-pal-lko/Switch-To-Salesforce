@@ -7,6 +7,8 @@ const sidebarTopicSchema = new mongoose.Schema(
     groupId: { type: mongoose.Schema.Types.ObjectId, ref: 'SidebarGroup', required: true },
     order: { type: Number, default: 0 },
     description: { type: String, default: '', trim: true },
+    /** When false the topic is hidden from GET /api/sidebar (public site) but still visible in admin */
+    isPublic: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

@@ -70,6 +70,7 @@ async function createGroup(req, res, next) {
       name: nameTrim,
       slug,
       order: order != null ? Number(order) : 0,
+      isPublic: req.body.isPublic != null ? Boolean(req.body.isPublic) : true,
     });
     res.status(201).json({ success: true, data: doc });
   } catch (err) {
@@ -95,6 +96,7 @@ async function updateGroup(req, res, next) {
         doc._id
       );
     }
+    if (req.body.isPublic != null) doc.isPublic = Boolean(req.body.isPublic);
     await doc.save();
     res.json({ success: true, data: doc });
   } catch (err) {

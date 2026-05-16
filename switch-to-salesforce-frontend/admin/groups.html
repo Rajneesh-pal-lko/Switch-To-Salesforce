@@ -17,7 +17,7 @@
           <h1 class="admin-topbar__title">Groups</h1>
         </header>
         <main class="admin-content">
-          <p class="muted">Top-level sidebar sections (e.g. Tutorials, Interview preparation).</p>
+          <p class="muted">Top-level sidebar sections. Use <strong>Visibility</strong> to control whether a group appears on the public website.</p>
           <div id="msg"></div>
           <div class="admin-card">
             <h2>Create group</h2>
@@ -25,6 +25,10 @@
               <label>Name <input name="name" required /></label>
               <label>Slug <input name="slug" placeholder="auto from name if empty" /></label>
               <label>Order <input name="order" type="number" value="0" /></label>
+              <label style="flex-direction:row;align-items:center;gap:8px;">
+                <input name="isPublic" type="checkbox" checked style="width:auto;margin:0;" />
+                Visible on website (public)
+              </label>
               <button type="submit" class="admin-btn">Create</button>
             </form>
           </div>
@@ -56,6 +60,12 @@
             .replace(/</g, '&lt;');
         }
 
+        function visibilityBadge(isPublic) {
+          return isPublic !== false
+            ? '<span style="color:#15803d;font-size:.75rem;font-weight:600;">🌐 Public</span>'
+            : '<span style="color:#9a3412;font-size:.75rem;font-weight:600;">🔒 Hidden</span>';
+        }
+
         function load() {
           return AdminData.listGroups()
             .then(function (rows) {
@@ -64,23 +74,29 @@
                 return;
               }
               document.getElementById('list').innerHTML =
-                '<table class="admin-table"><thead><tr><th>Name</th><th>Slug</th><th>Order</th><th></th></tr></thead><tbody>' +
-                rows
-                  .map(function (g) {
-                    return (
-                      '<tr data-id="' +
-                      escapeAttr(g._id) +
-                      '"><td><input class="admin-inline-input" data-k="name" value="' +
-                      escapeAttr(g.name) +
-                      '" /></td><td><input class="admin-inline-input" data-k="slug" value="' +
-                      escapeAttr(g.slug || '') +
-                      '" /></td><td><input class="admin-inline-input" type="number" data-k="order" value="' +
-                      (g.order != null ? g.order : 0) +
-                      '" /></td><td><button type="button" class="admin-btn admin-btn--sm row-save">Save</button> ' +
-                      '<button type="button" class="admin-btn admin-btn--sm admin-btn--danger row-del">Delete</button></td></tr>'
-                    );
-                  })
-                  .join('') +
+                '<table class="admin-table"><thead><tr>' +
+                '<th>Name</th><th>Slug</th><th>Order</th><th>Visibility</th><th></th>' +
+                '</tr></thead><tbody>' +
+                rows.map(function (g) {
+                  var isPublic = g.isPublic !== false;
+                  return (
+                    '<tr data-id="' + escapeAttr(g._id) + '">' +
+                    '<td><input class="admin-inline-input" data-k="name" value="' + escapeAttr(g.name) + '" /></td>' +
+                    '<td><input class="admin-inline-input" data-k="slug" value="' + escapeAttr(g.slug || '') + '" /></td>' +
+                    '<td><input class="admin-inline-input" type="number" data-k="order" value="' + (g.order != null ? g.order : 0) + '" style="width:60px;" /></td>' +
+                    '<td>' +
+                      visibilityBadge(isPublic) + ' ' +
+                      '<button type="button" class="admin-btn admin-btn--sm row-toggle-vis" data-is-public="' + isPublic + '">' +
+                        (isPublic ? 'Set Hidden' : 'Set Public') +
+                      '</button>' +
+                    '</td>' +
+                    '<td>' +
+                      '<button type="button" class="admin-btn admin-btn--sm row-save">Save</button> ' +
+                      '<button type="button" class="admin-btn admin-btn--sm admin-btn--danger row-del">Delete</button>' +
+                    '</td>' +
+                    '</tr>'
+                  );
+                }).join('') +
                 '</tbody></table>';
 
               document.querySelectorAll('.row-save').forEach(function (btn) {
@@ -93,28 +109,30 @@
                     order: Number(tr.querySelector('[data-k=order]').value) || 0,
                   };
                   AdminData.updateGroup(id, payload)
-                    .then(function () {
-                      showMsg('Saved.', true);
-                      return load();
-                    })
-                    .catch(function (e) {
-                      showMsg(e.message || 'Save failed', false);
-                    });
+                    .then(function () { showMsg('Saved.', true); return load(); })
+                    .catch(function (e) { showMsg(e.message || 'Save failed', false); });
                 });
               });
+
+              document.querySelectorAll('.row-toggle-vis').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                  var tr = btn.closest('tr');
+                  var id = tr.getAttribute('data-id');
+                  var currentlyPublic = btn.getAttribute('data-is-public') === 'true';
+                  AdminData.updateGroup(id, { isPublic: !currentlyPublic })
+                    .then(function () { showMsg('Visibility updated.', true); return load(); })
+                    .catch(function (e) { showMsg(e.message || 'Update failed', false); });
+                });
+              });
+
               document.querySelectorAll('.row-del').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                   var tr = btn.closest('tr');
                   var id = tr.getAttribute('data-id');
                   if (!confirm('Delete this group and its topics?')) return;
                   AdminData.deleteGroup(id)
-                    .then(function () {
-                      showMsg('Deleted.', true);
-                      return load();
-                    })
-                    .catch(function (e) {
-                      showMsg(e.message || 'Delete failed', false);
-                    });
+                    .then(function () { showMsg('Deleted.', true); return load(); })
+                    .catch(function (e) { showMsg(e.message || 'Delete failed', false); });
                 });
               });
             })
@@ -130,18 +148,13 @@
           var payload = {
             name: fd.get('name'),
             order: Number(fd.get('order')) || 0,
+            isPublic: fd.get('isPublic') === 'on',
           };
           var sl = fd.get('slug');
           if (sl && String(sl).trim()) payload.slug = String(sl).trim();
           AdminData.createGroup(payload)
-            .then(function () {
-              e.target.reset();
-              showMsg('Group created.', true);
-              return load();
-            })
-            .catch(function (err) {
-              showMsg(err.message || 'Create failed', false);
-            });
+            .then(function () { e.target.reset(); showMsg('Group created.', true); return load(); })
+            .catch(function (err) { showMsg(err.message || 'Create failed', false); });
         });
 
         load();
