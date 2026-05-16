@@ -3,75 +3,117 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="About Switch To Salesforce — a free learning platform for Salesforce admins, developers, and freshers." />
+    <meta name="description" content="About Switch To Salesforce — a free structured learning platform for freshers, admins, and developers preparing for Salesforce interviews." />
     <title>About — Switch To Salesforce</title>
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/track.css" />
   </head>
   <body data-page="about">
     <div data-include="navbar"></div>
     <div class="layout">
       <div data-include="sidebar"></div>
       <main class="main">
-        <header class="page-header">
-          <h1 class="page-title">About Switch To Salesforce</h1>
-          <p class="page-lead">
-            A free learning platform built for anyone starting or growing their Salesforce career.
+
+        <!-- Hero -->
+        <section class="pf-hero">
+          <p class="pf-tag">About the Platform</p>
+          <h1 class="pf-hero__h1">Free structured learning<br>for Salesforce professionals.</h1>
+          <p class="pf-hero__sub">
+            Guides, tutorials, and interview prep — built for freshers, admins, and
+            developers entering or growing within the Salesforce ecosystem.
           </p>
-        </header>
-        <article class="prose">
-          <p>
-            <strong>Switch To Salesforce</strong> is a structured, documentation-style learning platform covering
-            Salesforce development and administration. Whether you are a developer transitioning from another
-            tech stack, an admin looking to level up, a fresher preparing for your first role, or a professional
-            getting ready for Salesforce interviews — this platform is built for you.
+        </section>
+
+        <!-- What you'll find -->
+        <section class="pf-block">
+          <p class="pf-block__label">What you'll find here</p>
+          <div class="pf-grid pf-grid--2">
+            <div class="pf-card">
+              <div class="pf-card__icon">📘</div>
+              <h3 class="pf-card__h">Step-by-step Guides</h3>
+              <p class="pf-card__p">Apex, Lightning Web Components, Flow Builder, and more — explained clearly without buzzwords or fluff.</p>
+            </div>
+            <div class="pf-card">
+              <div class="pf-card__icon">🎯</div>
+              <h3 class="pf-card__h">Interview Preparation</h3>
+              <p class="pf-card__p">Real-world scenarios and structured prep for Salesforce Admin and Developer interviews — designed for freshers.</p>
+            </div>
+            <div class="pf-card">
+              <div class="pf-card__icon">🗺️</div>
+              <h3 class="pf-card__h">Certification Roadmaps</h3>
+              <p class="pf-card__p">Structured learning paths for Salesforce Admin, Developer, and Architect certifications.</p>
+            </div>
+            <div class="pf-card">
+              <div class="pf-card__icon">⚡</div>
+              <h3 class="pf-card__h">Platform Fundamentals</h3>
+              <p class="pf-card__p">Data modelling, security, admin patterns, and platform architecture — practical and clearly explained.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Who it's for -->
+        <section class="pf-block pf-block--alt">
+          <p class="pf-block__label">Who it's for</p>
+          <h2 class="pf-block__h2">Does this sound like you?</h2>
+          <div class="pf-grid pf-grid--3">
+            <div class="pf-pain-card">
+              <div class="pf-pain-card__icon">🚀</div>
+              <h3>Fresher entering Salesforce</h3>
+              <p>Starting your career and looking for a structured path to crack your first Salesforce Admin or Developer role.</p>
+            </div>
+            <div class="pf-pain-card">
+              <div class="pf-pain-card__icon">💻</div>
+              <h3>Developer switching stacks</h3>
+              <p>Coming from Java, .NET, Python, or another stack and transitioning into Salesforce development.</p>
+            </div>
+            <div class="pf-pain-card">
+              <div class="pf-pain-card__icon">⚙️</div>
+              <h3>Admin expanding skills</h3>
+              <p>A Salesforce administrator looking to level up into development, certifications, or architect paths.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- The ecosystem -->
+        <section class="pf-block">
+          <p class="pf-block__label">The Switch To Salesforce ecosystem</p>
+          <div class="pf-eco-grid">
+            <a class="pf-eco-card pf-eco-card--active" href="https://learn.switchtosalesforce.com" target="_blank" rel="noopener">
+              <div class="pf-eco-card__badge">You are here</div>
+              <h3>📚 Learn</h3>
+              <p>Free structured guides, tutorials, and interview preparation paths.</p>
+              <span>learn.switchtosalesforce.com</span>
+            </a>
+            <a class="pf-eco-card" href="https://switchtosalesforce.com/" target="_blank" rel="noopener">
+              <h3>🎯 Mock Interview Prep</h3>
+              <p>1:1 mock interviews, personalised feedback, and a structured roadmap to crack your first role.</p>
+              <span>switchtosalesforce.com</span>
+            </a>
+            <a class="pf-eco-card" href="https://blog.switchtosalesforce.com/" target="_blank" rel="noopener">
+              <h3>📝 Blog</h3>
+              <p>Articles, case studies, and career notes for Salesforce professionals.</p>
+              <span>blog.switchtosalesforce.com</span>
+            </a>
+          </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="pf-cta-block">
+          <h2 class="pf-cta-block__h2">Ready to prepare the right way?</h2>
+          <p class="pf-cta-block__sub">
+            Book a 1:1 mock interview or reach out with any questions about your Salesforce journey.
           </p>
+          <div class="pf-cta-block__btns">
+            <a class="pf-btn pf-btn--wa"
+               href="https://wa.me/918630541649?text=Hi%2C%20I%20want%20to%20book%20my%20first%20Salesforce%20mock%20interview."
+               target="_blank" rel="noopener">💬 Chat on WhatsApp</a>
+            <a class="pf-btn pf-btn--secondary"
+               href="mailto:mentor@switchtosalesforce.com">Send an Email</a>
+          </div>
+        </section>
 
-          <h2>What you will find here</h2>
-          <ul>
-            <li>Step-by-step guides on Apex, Lightning Web Components, Flow Builder, and more</li>
-            <li>Salesforce fundamentals explained clearly — no buzzwords, no fluff</li>
-            <li>Real-world scenarios and interview preparation</li>
-            <li>Admin patterns, data modelling, security, and platform architecture</li>
-            <li>Certification roadmaps and structured learning paths</li>
-          </ul>
-
-          <h2>Who it is for</h2>
-          <ul>
-            <li>Developers transitioning into Salesforce from Java, .NET, Python, or other stacks</li>
-            <li>Salesforce administrators expanding into development</li>
-            <li>Freshers and graduates starting their Salesforce journey</li>
-            <li>Professionals preparing for Salesforce Admin, Developer, and Architect certifications</li>
-            <li>Anyone preparing for a Salesforce interview and wanting structured, practical guidance</li>
-          </ul>
-
-          <h2>Part of the Switch To Salesforce ecosystem</h2>
-          <ul>
-            <li>
-              <strong>📚 This platform</strong> (<a href="https://learn.switchtosalesforce.com" target="_blank" rel="noopener">learn.switchtosalesforce.com</a>) —
-              free guides, tutorials, and structured learning paths.
-            </li>
-            <li>
-              <strong>🎯 Mock Interview Prep</strong> (<a href="https://switchtosalesforce.com/" target="_blank" rel="noopener">switchtosalesforce.com</a>) —
-              1:1 mock interviews, personalised feedback, and a structured prep plan to crack your first Salesforce role.
-            </li>
-            <li>
-              <strong>📝 Blog</strong> (<a href="https://blog.switchtosalesforce.com/" target="_blank" rel="noopener">blog.switchtosalesforce.com</a>) —
-              articles, case studies, and practical career notes for Salesforce professionals.
-            </li>
-          </ul>
-
-          <h2>Get in touch</h2>
-          <p>
-            Have a question, suggestion, or want to book a mock interview session?
-            Reach out directly:
-          </p>
-          <ul>
-            <li>Email: <a href="mailto:mentor@switchtosalesforce.com">mentor@switchtosalesforce.com</a></li>
-            <li>WhatsApp: <a href="https://switchtosalesforce.com/" target="_blank" rel="noopener">Connect via the main site</a></li>
-          </ul>
-        </article>
       </main>
     </div>
     <div data-include="footer"></div>

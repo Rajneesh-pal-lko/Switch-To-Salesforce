@@ -116,8 +116,8 @@
           '</p>' +
           '<div class="hp-hero__actions">' +
             '<button class="hp-btn hp-btn--primary" id="hp-start-btn">Start Preparing →</button>' +
-            '<a class="hp-btn hp-btn--outline" href="https://blog.switchtosalesforce.com/" ' +
-              'target="_blank" rel="noopener">Browse Articles</a>' +
+            '<a class="hp-btn hp-btn--wa" href="https://wa.me/918630541649?text=Hi%2C%20I%20want%20to%20prepare%20for%20a%20Salesforce%20interview." ' +
+              'target="_blank" rel="noopener">💬 Chat on WhatsApp</a>' +
           '</div>' +
         '</section>' +
 

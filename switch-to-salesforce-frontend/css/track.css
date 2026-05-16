@@ -1023,12 +1023,20 @@ details.snav__group[open] .snav__chevron {
   padding: 0 0 4rem;
 }
 
-/* ── Hero ──────────────────────────────────────────────────────────────── */
+/* ── Hero — dark panel matching switchtosalesforce.com bold hero ─────────── */
 
 .hp-hero {
-  padding: 3.5rem 0 3rem;
+  background: linear-gradient(135deg, #080E1C 0%, #0C1729 100%);
+  border-radius: 20px;
+  padding: 3.75rem 3rem 3.5rem;
   margin-bottom: 3rem;
-  border-bottom: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .hp-hero {
+  background: linear-gradient(135deg, #030610 0%, #060D1C 100%);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .hp-badge {
@@ -1038,16 +1046,11 @@ details.snav__group[open] .snav__chevron {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #185FA5;
-  background: rgba(24, 95, 165, 0.09);
+  color: #93C5FD;
+  background: rgba(147, 197, 253, 0.12);
   padding: 5px 13px;
   border-radius: 999px;
   margin-bottom: 1.5rem;
-}
-
-[data-theme="dark"] .hp-badge {
-  color: #60A5D4;
-  background: rgba(24, 95, 165, 0.18);
 }
 
 .hp-hero__title {
@@ -1055,21 +1058,17 @@ details.snav__group[open] .snav__chevron {
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1.1;
-  color: var(--text);
+  color: #F8FAFC;
   margin: 0 0 1.125rem;
 }
 
 .hp-accent {
-  color: #185FA5;
-}
-
-[data-theme="dark"] .hp-accent {
   color: #60A5D4;
 }
 
 .hp-hero__sub {
   font-size: 1.0625rem;
-  color: var(--text-muted);
+  color: rgba(248, 250, 252, 0.62);
   line-height: 1.7;
   max-width: 520px;
   margin: 0 0 2rem;
@@ -1113,21 +1112,30 @@ details.snav__group[open] .snav__chevron {
   transform: translateY(-1px);
 }
 
+/* WhatsApp variant for the hero (outline treatment on dark bg) */
+.hp-btn--wa {
+  background: #25D366;
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(37, 211, 102, 0.32);
+}
+
+.hp-btn--wa:hover {
+  background: #1ebe5e;
+  box-shadow: 0 4px 18px rgba(37, 211, 102, 0.44);
+  transform: translateY(-1px);
+}
+
+/* Outline button on the dark hero background */
 .hp-btn--outline {
   background: transparent;
-  color: var(--text);
-  border: 1.5px solid var(--border);
+  color: rgba(248, 250, 252, 0.85);
+  border: 1.5px solid rgba(248, 250, 252, 0.22);
 }
 
 .hp-btn--outline:hover {
-  border-color: #185FA5;
-  color: #185FA5;
-  background: rgba(24, 95, 165, 0.05);
-}
-
-[data-theme="dark"] .hp-btn--outline:hover {
-  color: #60A5D4;
-  border-color: #60A5D4;
+  border-color: rgba(248, 250, 252, 0.55);
+  color: #fff;
+  background: rgba(248, 250, 252, 0.08);
 }
 
 .hp-btn--sm {
@@ -1488,5 +1496,435 @@ details.snav__group[open] .snav__chevron {
   }
   .spa-prev-next__next {
     text-align: left;
+  }
+}
+
+/* ==========================================================================
+   Page Frame (pf-) — shared design system for about.html & contact.html
+   Visual language inspired by switchtosalesforce.com
+   ========================================================================== */
+
+/* ── Dark hero panel (matches main site's bold full-width hero) ─────────── */
+
+.pf-hero {
+  background: linear-gradient(135deg, #080E1C 0%, #0C1729 100%);
+  border-radius: 20px;
+  padding: 3.75rem 3rem 3.5rem;
+  margin-bottom: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .pf-hero {
+  background: linear-gradient(135deg, #030610 0%, #060D1C 100%);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+.pf-tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #93C5FD;
+  background: rgba(147, 197, 253, 0.12);
+  padding: 5px 14px;
+  border-radius: 999px;
+  margin-bottom: 1.5rem;
+}
+
+.pf-hero__h1 {
+  font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: #F8FAFC;
+  margin: 0 0 1.1rem;
+}
+
+.pf-hero__sub {
+  font-size: 1.0625rem;
+  color: rgba(248, 250, 252, 0.62);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0;
+}
+
+/* ── Section block ───────────────────────────────────────────────────────── */
+
+.pf-block {
+  margin-bottom: 3rem;
+}
+
+.pf-block--alt {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 2.5rem;
+}
+
+.pf-block__label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 1.25rem;
+}
+
+.pf-block__h2 {
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  margin: 0 0 2rem;
+  line-height: 1.2;
+}
+
+/* ── Card grids ──────────────────────────────────────────────────────────── */
+
+.pf-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.pf-grid--2 { grid-template-columns: repeat(2, 1fr); }
+.pf-grid--3 { grid-template-columns: repeat(3, 1fr); }
+
+/* ── Feature card ────────────────────────────────────────────────────────── */
+
+.pf-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.pf-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border-color: #185FA5;
+}
+
+[data-theme="dark"] .pf-card:hover {
+  border-color: rgba(24, 95, 165, 0.5);
+}
+
+.pf-card__icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1;
+}
+
+.pf-card__h {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.pf-card__p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Pain-point card (mirrors "Does this sound like you?" on main site) ───── */
+
+.pf-pain-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.pf-pain-card__icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+  line-height: 1;
+}
+
+.pf-pain-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 0.5rem;
+}
+
+.pf-pain-card p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Ecosystem link cards ────────────────────────────────────────────────── */
+
+.pf-eco-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.pf-eco-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.pf-eco-card:hover {
+  box-shadow: 0 4px 20px rgba(24, 95, 165, 0.12);
+  border-color: #185FA5;
+  transform: translateY(-2px);
+}
+
+.pf-eco-card--active {
+  border-color: #185FA5;
+  background: rgba(24, 95, 165, 0.05);
+}
+
+[data-theme="dark"] .pf-eco-card--active {
+  background: rgba(24, 95, 165, 0.1);
+  border-color: rgba(24, 95, 165, 0.45);
+}
+
+.pf-eco-card__badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #185FA5;
+  background: rgba(24, 95, 165, 0.1);
+  padding: 3px 9px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+[data-theme="dark"] .pf-eco-card__badge {
+  color: #60A5D4;
+  background: rgba(24, 95, 165, 0.2);
+}
+
+.pf-eco-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+}
+
+.pf-eco-card p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+  flex: 1;
+}
+
+.pf-eco-card span {
+  font-size: 0.75rem;
+  color: #185FA5;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .pf-eco-card span {
+  color: #60A5D4;
+}
+
+/* ── Shared page buttons ─────────────────────────────────────────────────── */
+
+.pf-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  font-family: inherit;
+  line-height: 1;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.12s ease;
+}
+
+.pf-btn--wa {
+  background: #25D366;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(37, 211, 102, 0.3);
+}
+
+.pf-btn--wa:hover {
+  background: #1ebe5e;
+  box-shadow: 0 4px 18px rgba(37, 211, 102, 0.42);
+  transform: translateY(-1px);
+}
+
+.pf-btn--primary {
+  background: #185FA5;
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(24, 95, 165, 0.28);
+}
+
+.pf-btn--primary:hover {
+  background: #0C447C;
+  box-shadow: 0 4px 16px rgba(24, 95, 165, 0.38);
+  transform: translateY(-1px);
+}
+
+.pf-btn--secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1.5px solid var(--border);
+}
+
+.pf-btn--secondary:hover {
+  border-color: #185FA5;
+  color: #185FA5;
+  background: rgba(24, 95, 165, 0.05);
+}
+
+[data-theme="dark"] .pf-btn--secondary:hover {
+  color: #60A5D4;
+  border-color: #60A5D4;
+}
+
+/* ── CTA block (dark panel, mirrors main site's final CTA section) ───────── */
+
+.pf-cta-block {
+  background: linear-gradient(135deg, #080E1C 0%, #0C1729 100%);
+  border-radius: 20px;
+  padding: 3.25rem 3rem;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] .pf-cta-block {
+  background: linear-gradient(135deg, #030610 0%, #060D1C 100%);
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+.pf-cta-block__h2 {
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
+  font-weight: 700;
+  color: #F8FAFC;
+  letter-spacing: -0.025em;
+  margin: 0 0 0.75rem;
+  line-height: 1.2;
+}
+
+.pf-cta-block__sub {
+  font-size: 1rem;
+  color: rgba(248, 250, 252, 0.62);
+  margin: 0 0 2rem;
+  line-height: 1.65;
+}
+
+.pf-cta-block__btns {
+  display: flex;
+  gap: 0.875rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Contact cards ───────────────────────────────────────────────────────── */
+
+.pf-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.pf-contact-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.pf-contact-card--wa {
+  border-color: rgba(37, 211, 102, 0.35);
+  background: rgba(37, 211, 102, 0.03);
+}
+
+[data-theme="dark"] .pf-contact-card--wa {
+  border-color: rgba(37, 211, 102, 0.25);
+  background: rgba(37, 211, 102, 0.06);
+}
+
+.pf-contact-card__icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+
+.pf-contact-card h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pf-contact-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin: 0 0 1.5rem;
+  flex: 1;
+}
+
+.pf-badge-rec {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #1ebe5e;
+  background: rgba(37, 211, 102, 0.12);
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .pf-hero {
+    padding: 2.25rem 1.5rem;
+    border-radius: 14px;
+  }
+
+  .pf-grid--2,
+  .pf-grid--3,
+  .pf-eco-grid,
+  .pf-contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pf-cta-block {
+    padding: 2.25rem 1.5rem;
+    border-radius: 14px;
+  }
+
+  .pf-block--alt {
+    padding: 1.75rem 1.25rem;
   }
 }

@@ -3,48 +3,77 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Contact Switch To Salesforce — reach out for mock interviews, questions, or feedback." />
+    <meta name="description" content="Contact Switch To Salesforce — book a mock interview, ask a question, or connect via WhatsApp or email." />
     <title>Contact — Switch To Salesforce</title>
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/track.css" />
   </head>
   <body data-page="contact">
     <div data-include="navbar"></div>
     <div class="layout">
       <div data-include="sidebar"></div>
       <main class="main">
-        <header class="page-header">
-          <h1 class="page-title">Get in Touch</h1>
-          <p class="page-lead">
-            Questions, feedback, or ready to book a mock interview? We are here to help.
-          </p>
-        </header>
-        <article class="prose">
-          <h2>WhatsApp <span class="muted" style="font-weight:400;font-size:0.9em;">(recommended)</span></h2>
-          <p>
-            The fastest way to connect — discuss your preparation goals, ask questions, or book a session.
-          </p>
-          <p>
-            <a class="btn btn--primary" href="https://switchtosalesforce.com/" target="_blank" rel="noopener" style="display:inline-block;">
-              Message on WhatsApp →
-            </a>
-          </p>
 
-          <h2>Email</h2>
-          <p>
-            Prefer email? Write to us at
-            <a href="mailto:mentor@switchtosalesforce.com">mentor@switchtosalesforce.com</a> and share your
-            current preparation level and what you are looking for.
+        <!-- Hero -->
+        <section class="pf-hero">
+          <p class="pf-tag">Get in Touch</p>
+          <h1 class="pf-hero__h1">Questions? Ready to prepare<br>the right way?</h1>
+          <p class="pf-hero__sub">
+            Reach out to discuss your preparation goals, ask questions, or book your
+            first mock interview session.
           </p>
+        </section>
 
-          <h2>Mock Interview Prep</h2>
-          <p>
-            Looking for personalised 1:1 mock interviews, detailed feedback, and a structured roadmap?
-            Visit <a href="https://switchtosalesforce.com/" target="_blank" rel="noopener">switchtosalesforce.com</a> to
-            learn more and get started.
+        <!-- WhatsApp + Email cards -->
+        <section class="pf-block">
+          <p class="pf-block__label">Reach out directly</p>
+          <div class="pf-contact-grid">
+
+            <div class="pf-contact-card pf-contact-card--wa">
+              <div class="pf-contact-card__icon">💬</div>
+              <h2>WhatsApp <span class="pf-badge-rec">Recommended</span></h2>
+              <p>
+                Fastest way to connect — discuss your preparation goals, ask questions,
+                or book a mock interview session directly.
+              </p>
+              <a class="pf-btn pf-btn--wa"
+                 href="https://wa.me/918630541649?text=Hi%2C%20I%20want%20to%20book%20my%20first%20Salesforce%20mock%20interview."
+                 target="_blank" rel="noopener">Message on WhatsApp →</a>
+            </div>
+
+            <div class="pf-contact-card">
+              <div class="pf-contact-card__icon">✉️</div>
+              <h2>Email</h2>
+              <p>
+                Prefer email? Write to us directly and share your current preparation
+                level and what you are looking for.
+              </p>
+              <a class="pf-btn pf-btn--secondary"
+                 href="mailto:mentor@switchtosalesforce.com">mentor@switchtosalesforce.com</a>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Mock Interview CTA -->
+        <section class="pf-cta-block">
+          <h2 class="pf-cta-block__h2">Looking for 1:1 mock interview prep?</h2>
+          <p class="pf-cta-block__sub">
+            Get scenario-based mock interviews, personalised feedback, and a clear
+            roadmap to crack your first Salesforce Admin or Developer role.
           </p>
-        </article>
+          <div class="pf-cta-block__btns">
+            <a class="pf-btn pf-btn--wa"
+               href="https://wa.me/918630541649?text=Hi%2C%20I%20want%20to%20book%20my%20first%20Salesforce%20mock%20interview."
+               target="_blank" rel="noopener">💬 Chat on WhatsApp</a>
+            <a class="pf-btn pf-btn--primary"
+               href="https://switchtosalesforce.com/"
+               target="_blank" rel="noopener">Visit switchtosalesforce.com →</a>
+          </div>
+        </section>
+
       </main>
     </div>
     <div data-include="footer"></div>
