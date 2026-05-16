@@ -1,0 +1,154 @@
+---
+title: "Your First Salesforce Developer Job — The Honest Roadmap"
+description: "What to learn, in what order, and why — so you can walk into an interview with real depth instead of memorised answers."
+date: "2026-05-17"
+category: "Career"
+tags:
+  - Salesforce
+  - Career
+  - Fresher
+  - Roadmap
+  - Interview Preparation
+author:
+  name: "Switch To Salesforce"
+  bio: "Practical Salesforce mentorship for freshers. Real interview prep, no fluff."
+  linkedin: "https://www.linkedin.com/in/rajneesh-pal-lko"
+---
+
+## Nobody Gets Hired for Knowing the Platform
+
+Most people starting out spend months learning Salesforce by clicking around in a free Developer Edition org, watching YouTube videos, and collecting badges on Trailhead. None of that is wasted effort. But if you stop there and go into interviews, you will struggle. Interviewers do not hire you because you can describe a Flow that hardcodes a field value or explain why someone wired an automation to the wrong trigger event. They hire you because you can think — because you understand why something works the way it does, what breaks when you get it wrong, and how you would explain it to a client or a junior colleague.
+
+This roadmap is not a syllabus dump. It is an ordered path — what to learn first, what to layer on top, and how to demonstrate that you have depth. If you follow this honestly, you will be able to answer follow-up questions, not just the first question.
+
+<Callout type="info">
+**Real-Life Analogy:** Knowing how a kitchen is laid out does not make you a chef. You need to know why you salt pasta water, what happens if you add cream to a hot pan too fast, and how to fix a sauce that has broken. Salesforce is the kitchen. The ability to think through consequences is the cooking. Interviewers are testing whether you can cook, not whether you can describe the kitchen.
+</Callout>
+
+---
+
+## Five Phases — In This Order
+
+The order matters. Do not jump to Apex before you understand the data model. Do not jump to integration before you understand security. Each phase builds on the one before it.
+
+### Phase 1 — The Data Model and Object Architecture
+
+Understand Standard vs Custom Objects, relationships (Lookup vs Master-Detail), fields, validation rules, and how data flows through a record. Everything else sits on top of this. If you are shaky on relationships, every other concept will feel unstable.
+
+**Topics:** Objects and Fields · Lookup vs Master-Detail · Schema Builder · Record Types · OWD and Sharing
+
+### Phase 2 — Automation: Declarative First, Then Code
+
+Learn Flows deeply — Record-Triggered, Screen, Schedule, and Autolaunched. Understand what Flows can do and, critically, where they break. Then learn why Apex exists — not as a replacement for Flows, but as the tool for what Flows cannot handle.
+
+**Topics:** Flow Builder · Flow Triggers · Validation Rules · Process Automation · When Not to Use Flow
+
+### Phase 3 — Apex: Logic, Limits, and Bulk Safety
+
+Learn Apex syntax, then governor limits, then how to write bulkified code from day one. A trigger that works for one record and breaks for two hundred is not working code. Write tests that cover positive cases, negative cases, and bulk cases. 75% coverage is the legal minimum — not the goal.
+
+**Topics:** Triggers and Handlers · Governor Limits · Collections and SOQL in Loops · Test Classes · Async Apex
+
+### Phase 4 — Security, Profiles, and Access Control
+
+Most freshers skip this and pay for it in interviews. Understand OWD, Roles, Profiles, Permission Sets, and Sharing Rules — and more importantly, understand how they interact. Know what happens to record access when a Master-Detail parent is deleted. Know the difference between field-level security and record-level security.
+
+**Topics:** OWD and Role Hierarchy · Profiles vs Permission Sets · Sharing Rules · With Sharing / Without Sharing · Field-Level Security
+
+### Phase 5 — Integration Fundamentals
+
+REST vs SOAP, inbound vs outbound, Named Credentials, `@future` vs Queueable for callouts, and why you never make HTTP calls inside a for loop. You do not need to be an integration architect to get a first job. You do need to understand what callouts are and why they have their own set of governor limits.
+
+**Topics:** REST and SOAP Basics · Apex HTTP Callouts · Named Credentials · @future and Queueable · Error Handling
+
+---
+
+## Which Cert First — and Why It Is Not Enough Alone
+
+A certification proves you covered the material. It does not prove you can build anything. Get certified because it opens doors at resume screening. Then back it with projects and the ability to explain what you built and why you made the decisions you made.
+
+| Certification | What It Covers | Priority |
+|---|---|---|
+| **Platform Developer I** | Apex, SOQL, data model, security basics, testing | ✅ Start Here |
+| **Administrator** | Declarative depth, shared language with admins and clients | 🔵 High Value |
+| **Platform App Builder** | Declarative automation, data model design, Flows | 🟡 Useful |
+| **Platform Developer II** | Advanced Apex, design patterns, integration | 🟣 After 12+ months |
+
+<Callout type="warning">
+**Common Mistake:** Collecting certs instead of building things. Three certs with no project experience and no ability to walk through real decisions will lose to one cert plus a genuine project you can discuss in depth. Certs open doors. Projects get you through them.
+</Callout>
+
+---
+
+## Where to Spend Your Time
+
+Not all topics deserve equal time. This shows the relative depth you should build in each area before your first job interview. Security and testing are intentionally high because most freshers ignore both.
+
+| Topic | Target Depth |
+|---|---|
+| Data Model and Objects | 95% |
+| Governor Limits | 90% |
+| Flow Automation | 85% |
+| Security and Access | 85% |
+| Apex and Triggers | 80% |
+| Test Classes | 80% |
+| SOQL and SOSL | 75% |
+| Integration Basics | 60% |
+| LWC | 55% |
+| Deployment and DevOps | 40% |
+
+---
+
+## The One Thing Freshers Always Get Wrong
+
+Most freshers prepare by memorising definitions. They can tell you what a governor limit is. They cannot tell you what happens in production when 200 records are inserted via a data import and a trigger fires once for that entire batch — and the developer has written a SOQL query inside the loop that iterates over `Trigger.new`. The trigger does not fire 200 times. It fires once, receives all 200 records in a single collection, and your loop runs a query on every iteration until it hits the 100 SOQL limit and throws a `System.LimitException`. Interviewers at good companies test this gap specifically — they give you a scenario and ask what breaks and why.
+
+The fix is simple but uncomfortable: stop reading about Salesforce and start building things that can fail. Write a trigger, then insert 200 records and watch it hit the limit. Write a test class that tests bulk behaviour, not just a single record. Failure you cause yourself in a developer org teaches you more than two months of documentation reading.
+
+| What Gets You Hired | What Loses the Interview |
+|---|---|
+| "I built a trigger handler pattern that processes up to 200 records in a single transaction without hitting the 100 SOQL query limit. Here is how I structured the logic and what I tested for." | "Governor limits are Salesforce limits on how many operations you can perform in a single transaction. The SOQL limit is 100 queries." |
+
+<Callout type="info">
+**Use This in Your Interview:** "My focus has been on understanding the why behind each concept — not just what the limit is, but what design decision forces you to respect it and what breaks at scale if you do not."
+</Callout>
+
+---
+
+## How to Split Your Time Each Week
+
+**Spend time on:**
+- Building small projects in a Developer org end to end
+- Writing Apex and then deliberately breaking it to understand limits
+- Answering scenario-based questions out loud to yourself
+- Reading Salesforce documentation directly — not just blog summaries
+- One Trailhead module per concept, then stop — build instead
+
+**Stop wasting time on:**
+- Collecting Trailhead badges without building anything
+- Memorising definitions without understanding consequences
+- Watching YouTube tutorials end to end without doing them yourself
+- Sitting a fourth certification before you have done any real work
+- Comparing yourself to people who already have two years of experience
+
+---
+
+> "A Salesforce developer who understands why something breaks is worth ten who only know what it does."
+
+---
+
+## Interview Questions
+
+Answer these out loud before applying anywhere. No notes.
+
+1. **[Core]** You have a trigger on the Account object. It works fine when one record is updated. A consultant runs a Data Loader import and updates 500 Accounts across multiple batches. Walk through exactly what happens inside your trigger and where it could break.
+
+2. **[Core]** A client says two users in the same role can see each other's Opportunities but should not be able to. The OWD is Private. Where would you look first and why?
+
+3. **[Senior]** You need to make an HTTP callout to an external system after a record is saved. Why can you not do this in a synchronous Apex trigger, and what is the correct approach?
+
+4. **[Senior]** A junior developer wrote a test class with 80% coverage and the deployment passed. Three months later a production bug is reported in the exact code that was tested. What went wrong?
+
+5. **[Advanced]** You are asked to choose between a Flow and an Apex Trigger to auto-populate a field on Opportunity when a custom condition is met. Walk through how you would make that decision.
+
+6. **[Core]** A Master-Detail child record exists on an Account. The Account is deleted. What happens to the child record, and how does this differ from a Lookup relationship?

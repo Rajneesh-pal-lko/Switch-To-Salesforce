@@ -1,6 +1,12 @@
 {
   "posts": [
     {
+      "slug": "your-first-salesforce-developer-job-honest-roadmap",
+      "title": "Your First Salesforce Developer Job — The Honest Roadmap",
+      "excerpt": "What to learn, in what order, and why — so you can walk into an interview with real depth instead of memorised answers.",
+      "category": "Career"
+    },
+    {
       "slug": "platform-events-complete-guide-beginners",
       "title": "Platform Events in Salesforce — A Complete Guide for Beginners",
       "excerpt": "Real-time messaging, event-driven architecture, Apex + LWC, ReplayId, and 10 interview practice questions — beginner friendly.",
