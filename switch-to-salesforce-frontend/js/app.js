@@ -137,49 +137,18 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* CMS HTML iframe (isolated from site CSS, same as post.html)         */
+  /* HTML content sanitiser — strips embedded <style>/<link> tags so    */
+  /* the shared site CSS drives all presentation.                        */
   /* ------------------------------------------------------------------ */
 
-  function buildIframeSrcdoc(html, theme) {
-    var safe = String(html || '')
-      .replace(/<\/(script|iframe|object|embed|body|html)>/gi, '')
-      .replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '');
-    var origin = window.location.origin;
-    var ta = theme === 'dark' ? 'data-theme="dark"' : 'data-theme="light"';
-    return (
-      '<!DOCTYPE html><html lang="en" class="cms-html-embed" ' + ta + '>' +
-      '<head><meta charset="utf-8"/>' +
-      '<meta name="viewport" content="width=device-width,initial-scale=1"/>' +
-      '<link rel="stylesheet" href="' + origin + '/css/article-guide.css"/>' +
-      '<link rel="stylesheet" href="' + origin + '/css/cms-html-shared.css"/>' +
-      '<link rel="stylesheet" href="' + origin + '/css/styles.css"/>' +
-      '<style>' +
-        'html.cms-html-embed,html.cms-html-embed body{margin:0;padding:0;background:transparent!important}' +
-        'html.cms-html-embed .article-html-guide{background:transparent}' +
-      '</style></head><body>' +
-      '<div class="article-html-guide not-prose"><div class="blog cms-body">' + safe + '</div></div>' +
-      '</body></html>'
-    );
-  }
-
-  function wireIframe(iframe) {
-    function resize() {
-      try {
-        var d = iframe.contentDocument;
-        if (!d || !d.body) return;
-        var h = Math.max(d.body.scrollHeight, d.documentElement.scrollHeight);
-        iframe.style.height = Math.max(h, 120) + 'px';
-      } catch (e) {}
-    }
-    iframe.onload = function () {
-      resize();
-      try {
-        iframe.contentDocument.querySelectorAll('img').forEach(function (img) {
-          img.addEventListener('load', resize);
-        });
-      } catch (e) {}
-    };
-    window.addEventListener('resize', resize, { passive: true });
+  function sanitiseHtml(html) {
+    return String(html || '')
+      /* Remove <style>...</style> blocks (article-specific inline CSS) */
+      .replace(/<style[\s\S]*?<\/style>/gi, '')
+      /* Remove any <link rel="stylesheet"> the author may have added */
+      .replace(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi, '')
+      /* Remove dangerous tags (script, iframe, etc.) */
+      .replace(/<\/?(script|iframe|object|embed|body|html)[^>]*>/gi, '');
   }
 
   /* ------------------------------------------------------------------ */
@@ -243,14 +212,13 @@
     var cover  = data.coverImage ? absoluteUrl(data.coverImage) : '';
     var date   = formatDate(data.updatedAt || data.createdAt);
 
-    var bodyHtml = isHtml
-      ? '<div class="cms-html-isolate">' +
-          '<iframe class="cms-html-iframe js-cms-iframe" title="Article content" ' +
-          'sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>' +
-        '</div>'
-      : '<div class="article-html-guide not-prose"><div class="blog cms-body">' +
-          (data.content || '') +
-        '</div></div>';
+    /* All formats render inline — HTML articles have their <style> blocks stripped
+       so the shared site CSS (article-guide.css, cms-html-shared.css) drives presentation. */
+    var bodyContent = isHtml ? sanitiseHtml(data.content || '') : (data.content || '');
+    var bodyHtml =
+      '<div class="article-html-guide not-prose"><div class="blog cms-body">' +
+        bodyContent +
+      '</div></div>';
 
     $article.innerHTML =
       '<article class="article spa-article">' +
@@ -280,14 +248,8 @@
       });
     });
 
-    /* Wire CMS HTML iframe */
-    if (isHtml) {
-      var iframe = $article.querySelector('.js-cms-iframe');
-      if (iframe) {
-        iframe.srcdoc = buildIframeSrcdoc(data.content, getTheme());
-        wireIframe(iframe);
-      }
-    } else if (window.Prism) {
+    /* Syntax highlight code blocks in all formats */
+    if (window.Prism) {
       window.Prism.highlightAllUnder($article);
     }
 
