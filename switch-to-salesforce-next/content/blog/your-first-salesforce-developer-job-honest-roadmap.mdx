@@ -21,8 +21,8 @@ Most people starting out spend months learning Salesforce by clicking around in 
 
 This roadmap is not a syllabus dump. It is an ordered path — what to learn first, what to layer on top, and how to demonstrate that you have depth. If you follow this honestly, you will be able to answer follow-up questions, not just the first question.
 
-<Callout type="info">
-**Real-Life Analogy:** Knowing how a kitchen is laid out does not make you a chef. You need to know why you salt pasta water, what happens if you add cream to a hot pan too fast, and how to fix a sauce that has broken. Salesforce is the kitchen. The ability to think through consequences is the cooking. Interviewers are testing whether you can cook, not whether you can describe the kitchen.
+<Callout variant="analogy">
+  Knowing how a kitchen is laid out does not make you a chef. You need to know why you salt pasta water, what happens if you add cream to a hot pan too fast, and how to fix a sauce that has broken. Salesforce is the kitchen. The ability to think through consequences is the cooking. Interviewers are testing whether you can cook, not whether you can describe the kitchen.
 </Callout>
 
 ---
@@ -31,35 +31,34 @@ This roadmap is not a syllabus dump. It is an ordered path — what to learn fir
 
 The order matters. Do not jump to Apex before you understand the data model. Do not jump to integration before you understand security. Each phase builds on the one before it.
 
-### Phase 1 — The Data Model and Object Architecture
+<Roadmap>
 
-Understand Standard vs Custom Objects, relationships (Lookup vs Master-Detail), fields, validation rules, and how data flows through a record. Everything else sits on top of this. If you are shaky on relationships, every other concept will feel unstable.
+<Phase num={1} title="The Data Model and Object Architecture">
+  <PhaseDesc>Understand Standard vs Custom Objects, relationships (Lookup vs Master-Detail), fields, validation rules, and how data flows through a record. Everything else sits on top of this. If you are shaky on relationships, every other concept will feel unstable.</PhaseDesc>
+  <PhaseTags num={1}>Objects and Fields | Lookup vs Master-Detail | Schema Builder | Record Types | OWD and Sharing</PhaseTags>
+</Phase>
 
-**Topics:** Objects and Fields · Lookup vs Master-Detail · Schema Builder · Record Types · OWD and Sharing
+<Phase num={2} title="Automation — Declarative First, Then Code">
+  <PhaseDesc>Learn Flows deeply — Record-Triggered, Screen, Schedule, and Autolaunched. Understand what Flows can do and, critically, where they break. Then learn why Apex exists — not as a replacement for Flows, but as the tool for what Flows cannot handle.</PhaseDesc>
+  <PhaseTags num={2}>Flow Builder | Flow Triggers | Validation Rules | Process Automation | When Not to Use Flow</PhaseTags>
+</Phase>
 
-### Phase 2 — Automation: Declarative First, Then Code
+<Phase num={3} title="Apex — Logic, Limits, and Bulk Safety">
+  <PhaseDesc>Learn Apex syntax, then governor limits, then how to write bulkified code from day one. A trigger that works for one record and breaks for two hundred is not working code. Write tests that cover positive cases, negative cases, and bulk cases. 75% coverage is the legal minimum — not the goal.</PhaseDesc>
+  <PhaseTags num={3}>Triggers and Handlers | Governor Limits | Collections and SOQL in Loops | Test Classes | Async Apex</PhaseTags>
+</Phase>
 
-Learn Flows deeply — Record-Triggered, Screen, Schedule, and Autolaunched. Understand what Flows can do and, critically, where they break. Then learn why Apex exists — not as a replacement for Flows, but as the tool for what Flows cannot handle.
+<Phase num={4} title="Security, Profiles, and Access Control">
+  <PhaseDesc>Most freshers skip this and pay for it in interviews. Understand OWD, Roles, Profiles, Permission Sets, and Sharing Rules — and more importantly, understand how they interact. Know what happens to record access when a Master-Detail parent is deleted. Know the difference between field-level security and record-level security.</PhaseDesc>
+  <PhaseTags num={4}>OWD and Role Hierarchy | Profiles vs Permission Sets | Sharing Rules | With Sharing / Without Sharing | Field-Level Security</PhaseTags>
+</Phase>
 
-**Topics:** Flow Builder · Flow Triggers · Validation Rules · Process Automation · When Not to Use Flow
+<Phase num={5} title="Integration Fundamentals">
+  <PhaseDesc>REST vs SOAP, inbound vs outbound, Named Credentials, @future vs Queueable for callouts, and why you never make HTTP calls inside a for loop. You do not need to be an integration architect to get a first job. You do need to understand what callouts are and why they have their own set of governor limits.</PhaseDesc>
+  <PhaseTags num={5}>REST and SOAP Basics | Apex HTTP Callouts | Named Credentials | @future and Queueable | Error Handling</PhaseTags>
+</Phase>
 
-### Phase 3 — Apex: Logic, Limits, and Bulk Safety
-
-Learn Apex syntax, then governor limits, then how to write bulkified code from day one. A trigger that works for one record and breaks for two hundred is not working code. Write tests that cover positive cases, negative cases, and bulk cases. 75% coverage is the legal minimum — not the goal.
-
-**Topics:** Triggers and Handlers · Governor Limits · Collections and SOQL in Loops · Test Classes · Async Apex
-
-### Phase 4 — Security, Profiles, and Access Control
-
-Most freshers skip this and pay for it in interviews. Understand OWD, Roles, Profiles, Permission Sets, and Sharing Rules — and more importantly, understand how they interact. Know what happens to record access when a Master-Detail parent is deleted. Know the difference between field-level security and record-level security.
-
-**Topics:** OWD and Role Hierarchy · Profiles vs Permission Sets · Sharing Rules · With Sharing / Without Sharing · Field-Level Security
-
-### Phase 5 — Integration Fundamentals
-
-REST vs SOAP, inbound vs outbound, Named Credentials, `@future` vs Queueable for callouts, and why you never make HTTP calls inside a for loop. You do not need to be an integration architect to get a first job. You do need to understand what callouts are and why they have their own set of governor limits.
-
-**Topics:** REST and SOAP Basics · Apex HTTP Callouts · Named Credentials · @future and Queueable · Error Handling
+</Roadmap>
 
 ---
 
@@ -67,15 +66,15 @@ REST vs SOAP, inbound vs outbound, Named Credentials, `@future` vs Queueable for
 
 A certification proves you covered the material. It does not prove you can build anything. Get certified because it opens doors at resume screening. Then back it with projects and the ability to explain what you built and why you made the decisions you made.
 
-| Certification | What It Covers | Priority |
-|---|---|---|
-| **Platform Developer I** | Apex, SOQL, data model, security basics, testing | ✅ Start Here |
-| **Administrator** | Declarative depth, shared language with admins and clients | 🔵 High Value |
-| **Platform App Builder** | Declarative automation, data model design, Flows | 🟡 Useful |
-| **Platform Developer II** | Advanced Apex, design patterns, integration | 🟣 After 12+ months |
+<CertGrid>
+  <CertCard name="Platform Developer I" badge="Start Here" color="tag-green">The primary cert for developer roles. Apex, SOQL, data model, security basics, testing. Do this first.</CertCard>
+  <CertCard name="Administrator" badge="High Value" color="tag-blue">Underestimated by developers. Teaches declarative depth and gives you a shared language with admins and clients.</CertCard>
+  <CertCard name="Platform App Builder" badge="Useful" color="tag-amber">Declarative automation, data model design, Flows. Good for roles where you work alongside admins.</CertCard>
+  <CertCard name="Platform Developer II" badge="Later" color="tag-purple">Advanced Apex, design patterns, integration. Aim for this after 12+ months of real work experience.</CertCard>
+</CertGrid>
 
-<Callout type="warning">
-**Common Mistake:** Collecting certs instead of building things. Three certs with no project experience and no ability to walk through real decisions will lose to one cert plus a genuine project you can discuss in depth. Certs open doors. Projects get you through them.
+<Callout variant="warn">
+  Collecting certs instead of building things. Three certs with no project experience and no ability to walk through real decisions will lose to one cert plus a genuine project you can discuss in depth. Certs open doors. Projects get you through them.
 </Callout>
 
 ---
@@ -84,18 +83,18 @@ A certification proves you covered the material. It does not prove you can build
 
 Not all topics deserve equal time. This shows the relative depth you should build in each area before your first job interview. Security and testing are intentionally high because most freshers ignore both.
 
-| Topic | Target Depth |
-|---|---|
-| Data Model and Objects | 95% |
-| Governor Limits | 90% |
-| Flow Automation | 85% |
-| Security and Access | 85% |
-| Apex and Triggers | 80% |
-| Test Classes | 80% |
-| SOQL and SOSL | 75% |
-| Integration Basics | 60% |
-| LWC | 55% |
-| Deployment and DevOps | 40% |
+<SkillsMatrix>
+  <SkillRow label="Data Model and Objects" pct={95} color="green" />
+  <SkillRow label="Flow Automation"        pct={85} color="green" />
+  <SkillRow label="Apex and Triggers"      pct={80} color="blue"  />
+  <SkillRow label="Governor Limits"        pct={90} color="blue"  />
+  <SkillRow label="Security and Access"    pct={85} color="amber" />
+  <SkillRow label="Test Classes"           pct={80} color="amber" />
+  <SkillRow label="SOQL and SOSL"          pct={75} color="blue"  />
+  <SkillRow label="Integration Basics"     pct={60} color="purple"/>
+  <SkillRow label="LWC"                    pct={55} color="purple"/>
+  <SkillRow label="Deployment and DevOps"  pct={40} color="purple"/>
+</SkillsMatrix>
 
 ---
 
@@ -105,50 +104,63 @@ Most freshers prepare by memorising definitions. They can tell you what a govern
 
 The fix is simple but uncomfortable: stop reading about Salesforce and start building things that can fail. Write a trigger, then insert 200 records and watch it hit the limit. Write a test class that tests bulk behaviour, not just a single record. Failure you cause yourself in a developer org teaches you more than two months of documentation reading.
 
-| What Gets You Hired | What Loses the Interview |
-|---|---|
-| "I built a trigger handler pattern that processes up to 200 records in a single transaction without hitting the 100 SOQL query limit. Here is how I structured the logic and what I tested for." | "Governor limits are Salesforce limits on how many operations you can perform in a single transaction. The SOQL limit is 100 queries." |
+<CardGrid>
+  <CompareCard color="green" title="✅ What Gets You Hired">
+    "I built a trigger handler pattern that processes up to 200 records in a single transaction without hitting the 100 SOQL query limit. Here is how I structured the logic and what I tested for."
+  </CompareCard>
+  <CompareCard color="blue" title="❌ What Loses the Interview">
+    "Governor limits are Salesforce limits on how many operations you can perform in a single transaction. The SOQL limit is 100 queries."
+  </CompareCard>
+</CardGrid>
 
-<Callout type="info">
-**Use This in Your Interview:** "My focus has been on understanding the why behind each concept — not just what the limit is, but what design decision forces you to respect it and what breaks at scale if you do not."
+<Callout variant="tip" label="💡 Use This in Your Interview">
+  "My focus has been on understanding the why behind each concept — not just what the limit is, but what design decision forces you to respect it and what breaks at scale if you do not."
 </Callout>
 
 ---
 
 ## How to Split Your Time Each Week
 
-**Spend time on:**
-- Building small projects in a Developer org end to end
-- Writing Apex and then deliberately breaking it to understand limits
-- Answering scenario-based questions out loud to yourself
-- Reading Salesforce documentation directly — not just blog summaries
-- One Trailhead module per concept, then stop — build instead
-
-**Stop wasting time on:**
-- Collecting Trailhead badges without building anything
-- Memorising definitions without understanding consequences
-- Watching YouTube tutorials end to end without doing them yourself
-- Sitting a fourth certification before you have done any real work
-- Comparing yourself to people who already have two years of experience
+<UseGrid>
+  <UseCard type="yes" title="✅ Spend Time On">
+    <li>Building small projects in a Developer org end to end</li>
+    <li>Writing Apex and then deliberately breaking it to understand limits</li>
+    <li>Answering scenario-based questions out loud to yourself</li>
+    <li>Reading Salesforce documentation directly — not just blog summaries</li>
+    <li>One Trailhead module per concept, then stop — build instead</li>
+  </UseCard>
+  <UseCard type="no" title="❌ Stop Wasting Time On">
+    <li>Collecting Trailhead badges without building anything</li>
+    <li>Memorising definitions without understanding consequences</li>
+    <li>Watching YouTube tutorials end to end without doing them yourself</li>
+    <li>Sitting a fourth certification before you have done any real work</li>
+    <li>Comparing yourself to people who already have two years of experience</li>
+  </UseCard>
+</UseGrid>
 
 ---
 
-> "A Salesforce developer who understands why something breaks is worth ten who only know what it does."
+<Oneliner>
+  A Salesforce developer who understands why something breaks is worth ten who only know what it does.
+</Oneliner>
 
----
-
-## Interview Questions
-
-Answer these out loud before applying anywhere. No notes.
-
-1. **[Core]** You have a trigger on the Account object. It works fine when one record is updated. A consultant runs a Data Loader import and updates 500 Accounts across multiple batches. Walk through exactly what happens inside your trigger and where it could break.
-
-2. **[Core]** A client says two users in the same role can see each other's Opportunities but should not be able to. The OWD is Private. Where would you look first and why?
-
-3. **[Senior]** You need to make an HTTP callout to an external system after a record is saved. Why can you not do this in a synchronous Apex trigger, and what is the correct approach?
-
-4. **[Senior]** A junior developer wrote a test class with 80% coverage and the deployment passed. Three months later a production bug is reported in the exact code that was tested. What went wrong?
-
-5. **[Advanced]** You are asked to choose between a Flow and an Apex Trigger to auto-populate a field on Opportunity when a custom condition is met. Walk through how you would make that decision.
-
-6. **[Core]** A Master-Detail child record exists on an Account. The Account is deleted. What happens to the child record, and how does this differ from a Lookup relationship?
+<IQSection title="Answer These Before You Apply" sub="Practice out loud. No notes. These are real interview scenarios.">
+  <IQItem num={1} level="core">
+    You have a trigger on the Account object. It works fine when one record is updated. A consultant runs a Data Loader import and updates 500 Accounts across multiple batches. Walk through exactly what happens inside your trigger and where it could break.
+  </IQItem>
+  <IQItem num={2} level="core">
+    A client says two users in the same role can see each other's Opportunities but should not be able to. The OWD is Private. Where would you look first and why?
+  </IQItem>
+  <IQItem num={3} level="senior">
+    You need to make an HTTP callout to an external system after a record is saved. Why can you not do this in a synchronous Apex trigger, and what is the correct approach?
+  </IQItem>
+  <IQItem num={4} level="senior">
+    A junior developer wrote a test class with 80% coverage and the deployment passed. Three months later a production bug is reported in the exact code that was tested. What went wrong?
+  </IQItem>
+  <IQItem num={5} level="advanced">
+    You are asked to choose between a Flow and an Apex Trigger to auto-populate a field on Opportunity when a custom condition is met. Walk through how you would make that decision.
+  </IQItem>
+  <IQItem num={6} level="core">
+    A Master-Detail child record exists on an Account. The Account is deleted. What happens to the child record, and how does this differ from a Lookup relationship?
+  </IQItem>
+</IQSection>
