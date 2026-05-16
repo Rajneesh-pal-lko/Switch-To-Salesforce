@@ -1023,20 +1023,21 @@ details.snav__group[open] .snav__chevron {
   padding: 0 0 4rem;
 }
 
-/* ── Hero — dark panel matching switchtosalesforce.com bold hero ─────────── */
+/* ── Hero — light panel matching switchtosalesforce.com ─────────────────── */
 
 .hp-hero {
-  background: linear-gradient(135deg, #080E1C 0%, #0C1729 100%);
+  background: #ffffff;
   border-radius: 20px;
   padding: 3.75rem 3rem 3.5rem;
   margin-bottom: 3rem;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
 }
 
 [data-theme="dark"] .hp-hero {
-  background: linear-gradient(135deg, #030610 0%, #060D1C 100%);
+  background: #111827;
   border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .hp-badge {
@@ -1046,11 +1047,18 @@ details.snav__group[open] .snav__chevron {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #93C5FD;
-  background: rgba(147, 197, 253, 0.12);
+  color: #185fa5;
+  background: #e6f1fb;
+  border: 1px solid #b5d4f4;
   padding: 5px 13px;
   border-radius: 999px;
   margin-bottom: 1.5rem;
+}
+
+[data-theme="dark"] .hp-badge {
+  color: #93c5fd;
+  background: rgba(147, 197, 253, 0.12);
+  border-color: rgba(147, 197, 253, 0.2);
 }
 
 .hp-hero__title {
@@ -1058,20 +1066,32 @@ details.snav__group[open] .snav__chevron {
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1.1;
-  color: #F8FAFC;
+  color: #0f172a;
   margin: 0 0 1.125rem;
 }
 
+[data-theme="dark"] .hp-hero__title {
+  color: #f8fafc;
+}
+
 .hp-accent {
-  color: #60A5D4;
+  color: #185fa5;
+}
+
+[data-theme="dark"] .hp-accent {
+  color: #60a5d4;
 }
 
 .hp-hero__sub {
   font-size: 1.0625rem;
-  color: rgba(248, 250, 252, 0.62);
+  color: #4b5563;
   line-height: 1.7;
   max-width: 520px;
   margin: 0 0 2rem;
+}
+
+[data-theme="dark"] .hp-hero__sub {
+  color: rgba(248, 250, 252, 0.62);
 }
 
 .hp-hero__actions {
@@ -1125,14 +1145,25 @@ details.snav__group[open] .snav__chevron {
   transform: translateY(-1px);
 }
 
-/* Outline button on the dark hero background */
+/* Outline button on the light hero background */
 .hp-btn--outline {
   background: transparent;
-  color: rgba(248, 250, 252, 0.85);
-  border: 1.5px solid rgba(248, 250, 252, 0.22);
+  color: #185fa5;
+  border: 1.5px solid #b5d4f4;
 }
 
 .hp-btn--outline:hover {
+  border-color: #185fa5;
+  color: #0c447c;
+  background: #e6f1fb;
+}
+
+[data-theme="dark"] .hp-btn--outline {
+  color: rgba(248, 250, 252, 0.85);
+  border-color: rgba(248, 250, 252, 0.22);
+}
+
+[data-theme="dark"] .hp-btn--outline:hover {
   border-color: rgba(248, 250, 252, 0.55);
   color: #fff;
   background: rgba(248, 250, 252, 0.08);
