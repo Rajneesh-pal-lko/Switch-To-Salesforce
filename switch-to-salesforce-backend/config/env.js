@@ -12,9 +12,21 @@ function parseFrontendUrls() {
     .filter(Boolean);
 }
 
-/** If true, allow any https://*.vercel.app origin (preview deploys). Use with care. */
+const frontendUrls = parseFrontendUrls();
+
+/**
+ * Allow https://*.vercel.app (preview URLs) in CORS when:
+ * - CORS_ALLOW_VERCEL=true|1, or
+ * - FRONTEND_URL lists any *.vercel.app origin (typical: production on Vercel) and CORS_ALLOW_VERCEL is not false|0.
+ * Set CORS_ALLOW_VERCEL=false to allow only exact FRONTEND_URL origins plus localhost.
+ */
+const corsFlag = (process.env.CORS_ALLOW_VERCEL || '').trim().toLowerCase();
 const corsAllowVercel =
-  process.env.CORS_ALLOW_VERCEL === 'true' || process.env.CORS_ALLOW_VERCEL === '1';
+  corsFlag === 'true' ||
+  corsFlag === '1' ||
+  (corsFlag !== 'false' &&
+    corsFlag !== '0' &&
+    frontendUrls.some((u) => /\.vercel\.app$/i.test(u)));
 
 const port = parseInt(process.env.PORT || '5000', 10);
 
@@ -35,7 +47,7 @@ module.exports = {
   skipDatabase,
   jwtSecret: (process.env.JWT_SECRET || '').trim(),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  frontendUrls: parseFrontendUrls(),
+  frontendUrls,
   corsAllowVercel,
   siteUrl: (process.env.SITE_URL || '').trim(),
 };
