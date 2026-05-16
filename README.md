@@ -4,6 +4,8 @@ A production-oriented **full-stack blog platform** with a **static frontend** an
 
 **Brand:** *Switch To Salesforce* — documentation-style tutorials and guides for Salesforce developers, admins, and people moving into Salesforce roles (Apex, LWC, Flows, administration, interviews, certifications, career paths).
 
+**What the website is for (audience, goals, scope):** see [`docs/SITE_PURPOSE.md`](./docs/SITE_PURPOSE.md).
+
 ## Repository layout
 
 | Directory | Role |
