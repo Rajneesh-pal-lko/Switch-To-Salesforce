@@ -5,40 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Switch To Salesforce — tutorials, career guidance, interview prep, and Salesforce development for admins and developers."
+      content="Switch To Salesforce — documentation-style tutorials for admins and developers: Apex, Lightning Web Components, Flow Builder, platform fundamentals, interviews, and certifications."
     />
-    <title>Switch To Salesforce — Home</title>
+    <title>Switch To Salesforce — Learn Salesforce</title>
     <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/track.css" />
   </head>
-  <body data-page="home">
+  <body data-page="tracks">
     <div data-include="navbar"></div>
-    <div class="layout">
-      <div data-include="sidebar"></div>
-      <main class="main">
-        <section class="hero">
-          <h1 class="hero__title">Learn Salesforce, clearly.</h1>
-          <p class="hero__lead">
-            Documentation-style tutorials for admins and developers: Apex, Lightning Web Components, Flow Builder,
-            platform fundamentals, interviews, and certifications.
-          </p>
-          <div class="hero__actions">
-            <a class="btn btn--primary" href="blog.html">Browse articles</a>
-            <a class="btn btn--ghost" href="about.html">About</a>
-          </div>
-        </section>
-        <section>
-          <h2 class="section-title">Latest posts</h2>
-          <div id="home-featured" class="blog-grid"></div>
-        </section>
-      </main>
+
+    <div class="tracks-wrapper">
+      <div class="tracks-page">
+        <div class="tracks-header">
+          <p class="tracks-label">Switch To Salesforce</p>
+          <h1 class="tracks-heading">What do you want to learn?</h1>
+          <p class="tracks-subtext">Pick a track and follow topics in order — beginner to advanced</p>
+        </div>
+
+        <div id="tracks-list" class="tracks-list" aria-live="polite">
+          <p class="muted">Loading tracks…</p>
+        </div>
+      </div>
     </div>
+
     <div data-include="footer"></div>
+
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/routes.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/sidebar-doc.js"></script>
+    <script src="js/tracks.js"></script>
   </body>
 </html>
