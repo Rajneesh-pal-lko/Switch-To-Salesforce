@@ -102,20 +102,95 @@
     if (!$home) return;
     $home.innerHTML =
       '<div class="app-home">' +
-        '<div class="app-home__badge">Learn Salesforce</div>' +
-        '<h1 class="app-home__heading">Start your Salesforce journey</h1>' +
-        '<p class="app-home__sub">' +
-          'Pick a guide from the sidebar.<br>' +
-          'Follow topics and articles in order — beginner to advanced.' +
+
+        /* ── Hero ─────────────────────────────────────────────── */
+        '<section class="hp-hero">' +
+          '<div class="hp-badge">Free Learning Platform</div>' +
+          '<h1 class="hp-hero__title">' +
+            'Salesforce Interview Prep<br>' +
+            'for <span class="hp-accent">Freshers</span>' +
+          '</h1>' +
+          '<p class="hp-hero__sub">' +
+            'Prepare for your first Salesforce interview with structured topics, ' +
+            'essential concepts, and beginner-friendly interview questions.' +
+          '</p>' +
+          '<div class="hp-hero__actions">' +
+            '<button class="hp-btn hp-btn--primary" id="hp-start-btn">Start Preparing →</button>' +
+            '<a class="hp-btn hp-btn--outline" href="https://blog.switchtosalesforce.com/" ' +
+              'target="_blank" rel="noopener">Browse Articles</a>' +
+          '</div>' +
+        '</section>' +
+
+        /* ── Supporting text ──────────────────────────────────── */
+        '<p class="hp-support">' +
+          'Built to help aspiring Salesforce professionals prepare with clarity and confidence.' +
         '</p>' +
-        '<ol class="app-home__steps">' +
-          '<li><span class="app-home__step-num">1</span> Choose a guide from the sidebar</li>' +
-          '<li><span class="app-home__step-num">2</span> Open a section to see its articles</li>' +
-          '<li><span class="app-home__step-num">3</span> Read articles in order</li>' +
-        '</ol>' +
+
+        /* ── How it works ─────────────────────────────────────── */
+        '<section class="hp-how">' +
+          '<p class="hp-label">How it works</p>' +
+          '<div class="hp-steps">' +
+            '<div class="hp-step">' +
+              '<div class="hp-step__num">01</div>' +
+              '<div class="hp-step__text">Start with beginner-friendly topics</div>' +
+            '</div>' +
+            '<div class="hp-step">' +
+              '<div class="hp-step__num">02</div>' +
+              '<div class="hp-step__text">Follow articles in recommended order</div>' +
+            '</div>' +
+            '<div class="hp-step">' +
+              '<div class="hp-step__num">03</div>' +
+              '<div class="hp-step__text">Revise and prepare for interviews</div>' +
+            '</div>' +
+          '</div>' +
+        '</section>' +
+
+        /* ── Highlight card ───────────────────────────────────── */
+        '<section class="hp-highlight">' +
+          '<p class="hp-label">Featured Guide</p>' +
+          '<div class="hp-featured-card">' +
+            '<div class="hp-featured-card__tag">Start Here</div>' +
+            '<h2 class="hp-featured-card__title">Freshers Interview Preparation</h2>' +
+            '<p class="hp-featured-card__desc">' +
+              'Core Salesforce concepts, foundational understanding, and common interview ' +
+              'questions designed for beginners entering the Salesforce ecosystem.' +
+            '</p>' +
+            '<button class="hp-btn hp-btn--primary hp-btn--sm" id="hp-card-btn">Start Learning →</button>' +
+          '</div>' +
+        '</section>' +
+
+        /* ── Coming soon ──────────────────────────────────────── */
+        '<p class="hp-coming-soon">' +
+          'Coming Soon: Advanced Freshers, Developer Interview Prep, Integrations, Scenario-Based Questions' +
+        '</p>' +
+
       '</div>';
+
     showHome();
-    document.title = 'Switch To Salesforce — Learn Salesforce';
+    document.title = 'Switch To Salesforce — Salesforce Interview Prep for Freshers';
+
+    /* Wire "Start Preparing" and "Start Learning" buttons */
+    function goToFreshers() {
+      var groups = (window._stsNavData && window._stsNavData.groups) || [];
+      /* Find first group whose name or slug contains "fresher" */
+      for (var i = 0; i < groups.length; i++) {
+        if (/fresher/i.test(groups[i].name) || /fresher/i.test(groups[i].slug)) {
+          if (window.StsNav && window.StsNav.goToGroupBySlug) {
+            window.StsNav.goToGroupBySlug(groups[i].slug);
+          }
+          return;
+        }
+      }
+      /* Fallback: open first group */
+      if (groups.length && window.StsNav && window.StsNav.goToGroupBySlug) {
+        window.StsNav.goToGroupBySlug(groups[0].slug);
+      }
+    }
+
+    var startBtn = document.getElementById('hp-start-btn');
+    if (startBtn) startBtn.addEventListener('click', goToFreshers);
+    var cardBtn = document.getElementById('hp-card-btn');
+    if (cardBtn) cardBtn.addEventListener('click', goToFreshers);
   }
 
   /* ------------------------------------------------------------------ */

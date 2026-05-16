@@ -483,6 +483,12 @@
   /* ------------------------------------------------------------------ */
 
   window.StsNav = {
+    goToGroupBySlug: function (slug) {
+      for (var i = 0; i < _data.length; i++) {
+        if (_data[i].slug === slug) { gotoLevel1(i); return; }
+      }
+      renderLevel0();
+    },
     syncRoute: function (route) {
       if (!_data.length) return; /* sidebar not ready yet */
 
