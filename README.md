@@ -56,6 +56,10 @@ Create a cluster and a database user. Whitelist `0.0.0.0/0` for testing (tighten
 
 Optional: [`render.yaml`](./render.yaml) in the repo root can be used as a Render Blueprint; you still add secrets in the dashboard.
 
+**Production only from `main`.** In Render **Settings → Build & Deploy**, set the Git **branch** to `main`. Only pushes to `main` update this production service.
+
+**Preview API for work on other branches.** Render does **not** create a separate deploy for every branch push the way Vercel does for the static site. To get a disposable API URL for each line of work, turn on **[pull request previews](https://render.com/docs/service-previews)** on the same service: open the **Previews** tab → under **Pull request previews** choose **Automatic**. Then every **pull request opened against `main`** gets its own temporary `*.onrender.com` URL, and each push to that PR branch updates the preview. A branch with no open PR has no Render preview until you open one. Preview instances receive `IS_PULL_REQUEST=true` from Render if you need different behavior (for example pointing at a test database).
+
 ### 3. Frontend (example: Vercel or Netlify)
 
 **Vercel**
