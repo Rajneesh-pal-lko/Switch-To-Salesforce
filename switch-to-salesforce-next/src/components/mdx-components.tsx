@@ -28,10 +28,10 @@ export function Callout({
   children: React.ReactNode;
 }) {
   const cls: Record<CalloutVariant, string> = {
-    analogy: "analogy-box",
-    tip: "tip-box",
-    warn: "warn-box",
-    info: "info-box",
+    analogy: "box box-analogy",
+    tip:     "box box-tip",
+    warn:    "box box-warn",
+    info:    "box box-info",
   };
   const defaultLabels: Record<CalloutVariant, string> = {
     analogy: "🍳 Real-Life Analogy",
@@ -45,6 +45,34 @@ export function Callout({
       {children}
     </div>
   );
+}
+
+/* ─── Section label ─────────────────────────────────────────────── */
+
+export function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <div className="section-label">{children}</div>;
+}
+
+/* ─── Hero meta pills ───────────────────────────────────────────── */
+
+export function HeroPills({ children }: { children: React.ReactNode }) {
+  return <div className="meta-row">{children}</div>;
+}
+
+export function Pill({
+  color = "blue",
+  children,
+}: {
+  color?: "green" | "blue" | "amber" | "purple" | "red";
+  children: React.ReactNode;
+}) {
+  return <span className={`pill pill-${color}`}>{children}</span>;
+}
+
+/* ─── Hero tag ──────────────────────────────────────────────────── */
+
+export function HeroTag({ children }: { children: React.ReactNode }) {
+  return <div className="hero-tag">{children}</div>;
 }
 
 /* ─── Roadmap ────────────────────────────────────────────────────── */
@@ -164,7 +192,7 @@ export function SkillRow({
 /* ─── Do / Don't grid ────────────────────────────────────────────── */
 
 export function UseGrid({ children }: { children: React.ReactNode }) {
-  return <div className="use-grid">{children}</div>;
+  return <div className="decision-grid">{children}</div>;
 }
 
 export function UseCard({
@@ -176,9 +204,10 @@ export function UseCard({
   title: string;
   children: React.ReactNode;
 }) {
+  const colorCls = type === "yes" ? "dcard-green" : "dcard-red";
   return (
-    <div className={`use-card ${type}`}>
-      <div className="use-title">{title}</div>
+    <div className={`dcard ${colorCls}`}>
+      <div className="dcard-title">{title}</div>
       <ul>{children}</ul>
     </div>
   );
@@ -187,7 +216,7 @@ export function UseCard({
 /* ─── Two-column comparison card ────────────────────────────────── */
 
 export function CardGrid({ children }: { children: React.ReactNode }) {
-  return <div className="pb-grid">{children}</div>;
+  return <div className="card-grid">{children}</div>;
 }
 
 export function CompareCard({
@@ -199,10 +228,11 @@ export function CompareCard({
   title: string;
   children: React.ReactNode;
 }) {
+  void color;
   return (
-    <div className={`pb-card ${color}`}>
-      <div className="pb-title">{title}</div>
-      <div className="pb-desc">{children}</div>
+    <div className="card">
+      <div className="card-title">{title}</div>
+      <div className="card-body">{children}</div>
     </div>
   );
 }
@@ -211,15 +241,15 @@ export function CompareCard({
 
 export function Oneliner({
   children,
-  attr,
+  label = "Memorise This",
 }: {
   children: React.ReactNode;
-  attr?: string;
+  label?: string;
 }) {
   return (
     <div className="oneliner">
-      {children}
-      {attr && <div className="ol-attr">{attr}</div>}
+      <div className="oneliner-label">{label}</div>
+      <div className="oneliner-text">{children}</div>
     </div>
   );
 }
@@ -236,13 +266,10 @@ export function IQSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="interview-section">
-      <div className="int-header">
-        <span className="int-tag">Interview Prep</span>
-      </div>
-      <h2>{title}</h2>
-      {sub && <p className="int-sub">{sub}</p>}
-      <div className="q-list">{children}</div>
+    <div className="iq-section">
+      <div className="iq-title">{title}</div>
+      {sub && <div className="iq-sub">{sub}</div>}
+      <div className="iq-list">{children}</div>
     </div>
   );
 }
@@ -256,14 +283,13 @@ export function IQItem({
   level: "core" | "senior" | "advanced";
   children: React.ReactNode;
 }) {
+  const cap = level.charAt(0).toUpperCase() + level.slice(1);
   return (
-    <div className="q-item">
-      <div className="q-num">{num}</div>
-      <div>
-        <div className="q-text">{children}</div>
-        <div className="q-level">
-          <span className={`level-badge ${level}`}>{level.charAt(0).toUpperCase() + level.slice(1)}</span>
-        </div>
+    <div className="iq-card">
+      <div className="iq-num">{num}</div>
+      <div className="iq-q">
+        {children}
+        <span className={`badge badge-${level}`}>{cap}</span>
       </div>
     </div>
   );
@@ -322,6 +348,10 @@ export function MDXImage({
 }
 
 export const mdxComponents: MDXComponents = {
+  SectionLabel,
+  HeroPills,
+  Pill,
+  HeroTag,
   Callout,
   Roadmap,
   Phase,
