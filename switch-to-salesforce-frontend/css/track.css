@@ -1799,6 +1799,18 @@ details.snav__group[open] .snav__chevron {
   border-color: #60A5D4;
 }
 
+/* Secondary button inside a dark CTA block — needs light text regardless of page theme */
+.pf-cta-block .pf-btn--secondary {
+  color: rgba(248, 250, 252, 0.85);
+  border-color: rgba(248, 250, 252, 0.22);
+}
+
+.pf-cta-block .pf-btn--secondary:hover {
+  color: #fff;
+  border-color: rgba(248, 250, 252, 0.55);
+  background: rgba(248, 250, 252, 0.1);
+}
+
 /* ── CTA block (dark panel, mirrors main site's final CTA section) ───────── */
 
 .pf-cta-block {
