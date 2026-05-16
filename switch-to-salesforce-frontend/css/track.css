@@ -443,3 +443,210 @@
     padding: 1.5rem 12px 4rem;
   }
 }
+
+/* ==========================================================================
+   Sidebar navigation — compact accordion replacing the old flat group list.
+   Uses the same colour palette (data-ci) as the homepage track cards.
+   All selectors are prefixed .snav__ to avoid collision with existing sidebar CSS.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Header row at the top of the sidebar panel
+   -------------------------------------------------------------------------- */
+.snav__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 9px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.snav__header-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.snav__header-home {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  line-height: 1;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+
+.snav__header-home:hover {
+  opacity: 1;
+  color: var(--accent-hover);
+}
+
+/* --------------------------------------------------------------------------
+   Group item — <details> wrapper
+   -------------------------------------------------------------------------- */
+.snav__group {
+  border: none !important;
+  background: none !important;
+  box-shadow: none !important;
+  margin: 1px 6px !important;
+  border-radius: 8px !important;
+  overflow: visible !important;
+}
+
+/* --------------------------------------------------------------------------
+   Group summary row (the clickable header)
+   -------------------------------------------------------------------------- */
+.snav__group-summary {
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  padding: 5px 8px !important;
+  min-height: 38px !important;
+  cursor: pointer !important;
+  list-style: none !important;
+  border-radius: 7px !important;
+  transition: background 0.15s ease !important;
+}
+
+/* Hide the native disclosure triangle */
+.snav__group-summary::-webkit-details-marker { display: none; }
+.snav__group-summary::marker { display: none; }
+
+.snav__group-summary:hover {
+  background: color-mix(in srgb, var(--border) 40%, transparent) !important;
+}
+
+details.snav__group[open] > .snav__group-summary {
+  background: color-mix(in srgb, var(--accent) 9%, transparent) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Group icon — 22×22 coloured box (same data-ci palette as track cards)
+   -------------------------------------------------------------------------- */
+.snav__group-icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Light mode */
+.snav__group-icon[data-ci="0"] { background: #E6F1FB; color: #185FA5; }
+.snav__group-icon[data-ci="1"] { background: #EEEDFE; color: #534AB7; }
+.snav__group-icon[data-ci="2"] { background: #E1F5EE; color: #0F6E56; }
+.snav__group-icon[data-ci="3"] { background: #FAEEDA; color: #854F0B; }
+.snav__group-icon[data-ci="4"] { background: #FCE4EC; color: #C62828; }
+.snav__group-icon[data-ci="5"] { background: #F3E5F5; color: #7B1FA2; }
+.snav__group-icon[data-ci="6"] { background: #E8F5E9; color: #2E7D32; }
+.snav__group-icon[data-ci="7"] { background: #FFF3E0; color: #E65100; }
+
+/* Dark mode */
+[data-theme="dark"] .snav__group-icon[data-ci="0"] { background: rgba(24,95,165,0.18);  color: #60A5D4; }
+[data-theme="dark"] .snav__group-icon[data-ci="1"] { background: rgba(83,74,183,0.18);  color: #A5B4FC; }
+[data-theme="dark"] .snav__group-icon[data-ci="2"] { background: rgba(15,110,86,0.18);  color: #34D399; }
+[data-theme="dark"] .snav__group-icon[data-ci="3"] { background: rgba(133,79,11,0.18);  color: #FCD34D; }
+[data-theme="dark"] .snav__group-icon[data-ci="4"] { background: rgba(198,40,40,0.18);  color: #F87171; }
+[data-theme="dark"] .snav__group-icon[data-ci="5"] { background: rgba(123,31,162,0.18); color: #D8B4FE; }
+[data-theme="dark"] .snav__group-icon[data-ci="6"] { background: rgba(46,125,50,0.18);  color: #86EFAC; }
+[data-theme="dark"] .snav__group-icon[data-ci="7"] { background: rgba(230,81,0,0.18);   color: #FCA5A5; }
+
+/* --------------------------------------------------------------------------
+   Group name, count pill, chevron
+   -------------------------------------------------------------------------- */
+.snav__group-name {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+
+details.snav__group[open] .snav__group-name {
+  color: var(--accent);
+}
+
+.snav__group-count {
+  flex-shrink: 0;
+  font-size: 0.63rem;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--border);
+  color: var(--text-muted);
+  line-height: 1.6;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+details.snav__group[open] .snav__group-count {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+.snav__chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease, color 0.15s ease;
+}
+
+details.snav__group[open] .snav__chevron {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Panel (expanded body) — remove extra padding from old styles
+   -------------------------------------------------------------------------- */
+.snav__panel {
+  padding: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Topic link list
+   -------------------------------------------------------------------------- */
+.snav__topic-list {
+  list-style: none !important;
+  margin: 2px 0 4px !important;
+  padding: 0 !important;
+}
+
+/* Indent = 8px outer + 7px gap + 22px icon + 7px gap = 44px */
+.snav__topic-link {
+  display: block !important;
+  padding: 5px 8px 5px 44px !important;
+  font-size: 0.79rem !important;
+  font-weight: 400 !important;
+  color: var(--text-muted) !important;
+  text-decoration: none !important;
+  border-radius: 6px !important;
+  margin: 0 2px !important;
+  transition: background 0.12s ease, color 0.12s ease !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.snav__topic-link:hover {
+  background: color-mix(in srgb, var(--accent) 9%, transparent) !important;
+  color: var(--accent) !important;
+}
+
+.snav__topic-link.is-active {
+  background: color-mix(in srgb, var(--accent) 12%, transparent) !important;
+  color: var(--accent) !important;
+  font-weight: 500 !important;
+}
