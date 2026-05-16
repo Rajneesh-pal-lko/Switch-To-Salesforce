@@ -46,29 +46,29 @@ The order matters. Do not jump to Apex before you understand the data model. Do 
 
 <Roadmap>
 
-<Phase num={1} title="The Data Model and Object Architecture">
+<Phase num="1" title="The Data Model and Object Architecture">
   <PhaseDesc>Understand Standard vs Custom Objects, relationships (Lookup vs Master-Detail), fields, validation rules, and how data flows through a record. Everything else sits on top of this. If you are shaky on relationships, every other concept will feel unstable.</PhaseDesc>
-  <PhaseTags num={1}>Objects and Fields | Lookup vs Master-Detail | Schema Builder | Record Types | OWD and Sharing</PhaseTags>
+  <PhaseTags num="1">Objects and Fields | Lookup vs Master-Detail | Schema Builder | Record Types | OWD and Sharing</PhaseTags>
 </Phase>
 
-<Phase num={2} title="Automation — Declarative First, Then Code">
+<Phase num="2" title="Automation — Declarative First, Then Code">
   <PhaseDesc>Learn Flows deeply — Record-Triggered, Screen, Schedule, and Autolaunched. Understand what Flows can do and, critically, where they break. Then learn why Apex exists — not as a replacement for Flows, but as the tool for what Flows cannot handle.</PhaseDesc>
-  <PhaseTags num={2}>Flow Builder | Flow Triggers | Validation Rules | Process Automation | When Not to Use Flow</PhaseTags>
+  <PhaseTags num="2">Flow Builder | Flow Triggers | Validation Rules | Process Automation | When Not to Use Flow</PhaseTags>
 </Phase>
 
-<Phase num={3} title="Apex — Logic, Limits, and Bulk Safety">
+<Phase num="3" title="Apex — Logic, Limits, and Bulk Safety">
   <PhaseDesc>Learn Apex syntax, then governor limits, then how to write bulkified code from day one. A trigger that works for one record and breaks for two hundred is not working code. Write tests that cover positive cases, negative cases, and bulk cases. 75% coverage is the legal minimum — not the goal.</PhaseDesc>
-  <PhaseTags num={3}>Triggers and Handlers | Governor Limits | Collections and SOQL in Loops | Test Classes | Async Apex</PhaseTags>
+  <PhaseTags num="3">Triggers and Handlers | Governor Limits | Collections and SOQL in Loops | Test Classes | Async Apex</PhaseTags>
 </Phase>
 
-<Phase num={4} title="Security, Profiles, and Access Control">
+<Phase num="4" title="Security, Profiles, and Access Control">
   <PhaseDesc>Most freshers skip this and pay for it in interviews. Understand OWD, Roles, Profiles, Permission Sets, and Sharing Rules — and more importantly, understand how they interact. Know what happens to record access when a Master-Detail parent is deleted. Know the difference between field-level security and record-level security.</PhaseDesc>
-  <PhaseTags num={4}>OWD and Role Hierarchy | Profiles vs Permission Sets | Sharing Rules | With Sharing / Without Sharing | Field-Level Security</PhaseTags>
+  <PhaseTags num="4">OWD and Role Hierarchy | Profiles vs Permission Sets | Sharing Rules | With Sharing / Without Sharing | Field-Level Security</PhaseTags>
 </Phase>
 
-<Phase num={5} title="Integration Fundamentals">
+<Phase num="5" title="Integration Fundamentals">
   <PhaseDesc>REST vs SOAP, inbound vs outbound, Named Credentials, @future vs Queueable for callouts, and why you never make HTTP calls inside a for loop. You do not need to be an integration architect to get a first job. You do need to understand what callouts are and why they have their own set of governor limits.</PhaseDesc>
-  <PhaseTags num={5}>REST and SOAP Basics | Apex HTTP Callouts | Named Credentials | @future and Queueable | Error Handling</PhaseTags>
+  <PhaseTags num="5">REST and SOAP Basics | Apex HTTP Callouts | Named Credentials | @future and Queueable | Error Handling</PhaseTags>
 </Phase>
 
 </Roadmap>
@@ -101,16 +101,16 @@ A certification proves you covered the material. It does not prove you can build
 Not all topics deserve equal time. This shows the relative depth you should build in each area before your first job interview. Security and testing are intentionally high because most freshers ignore both.
 
 <SkillsMatrix>
-  <SkillRow label="Data Model and Objects" pct={95} color="green" />
-  <SkillRow label="Flow Automation"        pct={85} color="green" />
-  <SkillRow label="Apex and Triggers"      pct={80} color="blue"  />
-  <SkillRow label="Governor Limits"        pct={90} color="blue"  />
-  <SkillRow label="Security and Access"    pct={85} color="amber" />
-  <SkillRow label="Test Classes"           pct={80} color="amber" />
-  <SkillRow label="SOQL and SOSL"          pct={75} color="blue"  />
-  <SkillRow label="Integration Basics"     pct={60} color="purple"/>
-  <SkillRow label="LWC"                    pct={55} color="purple"/>
-  <SkillRow label="Deployment and DevOps"  pct={40} color="purple"/>
+  <SkillRow label="Data Model and Objects" pct="95" color="green" />
+  <SkillRow label="Flow Automation"        pct="85" color="green" />
+  <SkillRow label="Apex and Triggers"      pct="80" color="blue"  />
+  <SkillRow label="Governor Limits"        pct="90" color="blue"  />
+  <SkillRow label="Security and Access"    pct="85" color="amber" />
+  <SkillRow label="Test Classes"           pct="80" color="amber" />
+  <SkillRow label="SOQL and SOSL"          pct="75" color="blue"  />
+  <SkillRow label="Integration Basics"     pct="60" color="purple"/>
+  <SkillRow label="LWC"                    pct="55" color="purple"/>
+  <SkillRow label="Deployment and DevOps"  pct="40" color="purple"/>
 </SkillsMatrix>
 
 ---
@@ -166,22 +166,22 @@ The fix is simple but uncomfortable: stop reading about Salesforce and start bui
 </Oneliner>
 
 <IQSection title="Interview Questions" sub="Answer these out loud before applying anywhere. No notes.">
-  <IQItem num={1} level="core">
+  <IQItem num="1" level="core">
     You have a trigger on the Account object. It works fine when one record is updated. A consultant runs a Data Loader import and updates 500 Accounts across multiple batches. Walk through exactly what happens inside your trigger and where it could break.
   </IQItem>
-  <IQItem num={2} level="core">
+  <IQItem num="2" level="core">
     A client says two users in the same role can see each other's Opportunities but should not be able to. The OWD is Private. Where would you look first and why?
   </IQItem>
-  <IQItem num={3} level="senior">
+  <IQItem num="3" level="senior">
     You need to make an HTTP callout to an external system after a record is saved. Why can you not do this in a synchronous Apex trigger, and what is the correct approach?
   </IQItem>
-  <IQItem num={4} level="senior">
+  <IQItem num="4" level="senior">
     A junior developer wrote a test class with 80% coverage and the deployment passed. Three months later a production bug is reported in the exact code that was tested. What went wrong?
   </IQItem>
-  <IQItem num={5} level="advanced">
+  <IQItem num="5" level="advanced">
     You are asked to choose between a Flow and an Apex Trigger to auto-populate a field on Opportunity when a custom condition is met. Walk through how you would make that decision.
   </IQItem>
-  <IQItem num={6} level="core">
+  <IQItem num="6" level="core">
     A Master-Detail child record exists on an Account. The Account is deleted. What happens to the child record, and how does this differ from a Lookup relationship?
   </IQItem>
 </IQSection>

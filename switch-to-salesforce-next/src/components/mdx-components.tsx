@@ -90,15 +90,14 @@ export function Phase({
   children,
   tagColor,
 }: {
-  num: 1 | 2 | 3 | 4 | 5;
+  num: number | string;
   title: string;
-  /** Body text as children; use <PhaseTags> inside for the tag chips */
   children: React.ReactNode;
   tagColor?: string;
 }) {
-  const idx = num - 1;
+  const idx = Number(num) - 1;
   const dotCls = dotColors[idx] ?? "dot-green";
-  void tagColor; // tagColor resolved via PhaseTags child instead
+  void tagColor;
   return (
     <div className="rm-phase">
       <div className={`rm-dot ${dotCls}`}>{num}</div>
@@ -112,8 +111,8 @@ export function PhaseDesc({ children }: { children: React.ReactNode }) {
   return <div className="rm-phase-sub">{children}</div>;
 }
 
-export function PhaseTags({ num, children }: { num: 1 | 2 | 3 | 4 | 5; children: React.ReactNode }) {
-  const idx = num - 1;
+export function PhaseTags({ num, children }: { num: number | string; children: React.ReactNode }) {
+  const idx = Number(num) - 1;
   const tagCls = tagColors[idx] ?? "tag-green";
 
   // Collect the raw text regardless of whether MDX delivered it as a
@@ -175,16 +174,17 @@ export function SkillRow({
   color = "green",
 }: {
   label: string;
-  pct: number;
+  pct: number | string;
   color?: "green" | "blue" | "amber" | "purple";
 }) {
+  const pctVal = Number(pct);
   return (
     <div className="skill-row">
       <div className="skill-label">{label}</div>
       <div className="skill-bar-wrap">
-        <div className={`skill-bar ${barColors[color] ?? "bar-green"}`} style={{ width: `${pct}%` }} />
+        <div className={`skill-bar ${barColors[color] ?? "bar-green"}`} style={{ width: `${pctVal}%` }} />
       </div>
-      <div className="skill-pct">{pct}%</div>
+      <div className="skill-pct">{pctVal}%</div>
     </div>
   );
 }
@@ -279,14 +279,14 @@ export function IQItem({
   level,
   children,
 }: {
-  num: number;
+  num: number | string;
   level: "core" | "senior" | "advanced";
   children: React.ReactNode;
 }) {
   const cap = level.charAt(0).toUpperCase() + level.slice(1);
   return (
     <div className="iq-card">
-      <div className="iq-num">{num}</div>
+      <div className="iq-num">{String(num)}</div>
       <div className="iq-q">
         {children}
         <span className={`badge badge-${level}`}>{cap}</span>
