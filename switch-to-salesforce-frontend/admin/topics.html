@@ -17,7 +17,7 @@
           <h1 class="admin-topbar__title">Topics</h1>
         </header>
         <main class="admin-content">
-          <p class="muted">Documentation topics under each group (sidebar second level).</p>
+          <p class="muted">Documentation topics under each group (sidebar second level). Use <strong>Visibility</strong> to show or hide a topic on the public website.</p>
           <div id="msg"></div>
           <div class="admin-card">
             <h2>Create topic</h2>
@@ -27,6 +27,10 @@
               <label>Slug <input name="slug" placeholder="optional" /></label>
               <label>Order <input name="order" type="number" value="0" /></label>
               <label>Description <small class="muted">(optional)</small> <textarea name="description" rows="3"></textarea></label>
+              <label style="flex-direction:row;align-items:center;gap:8px;">
+                <input name="isPublic" type="checkbox" checked style="width:auto;margin:0;" />
+                Visible on website (public)
+              </label>
               <button type="submit" class="admin-btn">Create topic</button>
             </form>
           </div>
@@ -64,16 +68,19 @@
             .replace(/</g, '&lt;');
         }
 
+        function visibilityBadge(isPublic) {
+          return isPublic !== false
+            ? '<span style="color:#15803d;font-size:.75rem;font-weight:600;">🌐 Public</span>'
+            : '<span style="color:#9a3412;font-size:.75rem;font-weight:600;">🔒 Hidden</span>';
+        }
+
         function fillGroupSelects(groups) {
-          var opts = groups
-            .map(function (g) {
-              groupMap[g._id] = g.name;
-              return '<option value="' + g._id + '">' + escapeAttr(g.name) + '</option>';
-            })
-            .join('');
+          var opts = groups.map(function (g) {
+            groupMap[g._id] = g.name;
+            return '<option value="' + g._id + '">' + escapeAttr(g.name) + '</option>';
+          }).join('');
           document.getElementById('sel-group').innerHTML = opts;
-          document.getElementById('filter-group').innerHTML =
-            '<option value="">— All groups —</option>' + opts;
+          document.getElementById('filter-group').innerHTML = '<option value="">— All groups —</option>' + opts;
         }
 
         function loadTopics() {
@@ -85,40 +92,36 @@
               return;
             }
             document.getElementById('list').innerHTML =
-              '<table class="admin-table"><thead><tr><th>Name</th><th>Slug</th><th>Group</th><th>Order</th><th>Description</th><th></th></tr></thead><tbody>' +
-              rows
-                .map(function (t) {
-                  var gn = groupMap[t.groupId] || t.groupId;
-                  return (
-                    '<tr data-id="' +
-                    escapeAttr(t._id) +
-                    '"><td><input class="admin-inline-input" data-k="name" value="' +
-                    escapeAttr(t.name) +
-                    '" /></td><td><input class="admin-inline-input" data-k="slug" value="' +
-                    escapeAttr(t.slug) +
-                    '" /></td><td><select class="admin-inline-input" data-k="groupId">' +
-                    Object.keys(groupMap)
-                      .map(function (id) {
-                        return (
-                          '<option value="' +
-                          id +
-                          '"' +
-                          (String(t.groupId) === id ? ' selected' : '') +
-                          '>' +
-                          escapeAttr(groupMap[id]) +
-                          '</option>'
-                        );
-                      })
-                      .join('') +
-                    '</select></td><td><input class="admin-inline-input" type="number" data-k="order" value="' +
-                    (t.order != null ? t.order : 0) +
-                    '" /></td><td><input class="admin-inline-input" data-k="description" value="' +
-                    escapeAttr(t.description || '') +
-                    '" /></td><td><button type="button" class="admin-btn admin-btn--sm row-save">Save</button> ' +
-                    '<button type="button" class="admin-btn admin-btn--sm admin-btn--danger row-del">Delete</button></td></tr>'
-                  );
-                })
-                .join('') +
+              '<table class="admin-table"><thead><tr>' +
+              '<th>Name</th><th>Slug</th><th>Group</th><th>Order</th><th>Description</th><th>Visibility</th><th></th>' +
+              '</tr></thead><tbody>' +
+              rows.map(function (t) {
+                var gn = groupMap[t.groupId] || t.groupId;
+                var isPublic = t.isPublic !== false;
+                return (
+                  '<tr data-id="' + escapeAttr(t._id) + '">' +
+                  '<td><input class="admin-inline-input" data-k="name" value="' + escapeAttr(t.name) + '" /></td>' +
+                  '<td><input class="admin-inline-input" data-k="slug" value="' + escapeAttr(t.slug) + '" /></td>' +
+                  '<td><select class="admin-inline-input" data-k="groupId">' +
+                    Object.keys(groupMap).map(function (id) {
+                      return '<option value="' + id + '"' + (String(t.groupId) === id ? ' selected' : '') + '>' + escapeAttr(groupMap[id]) + '</option>';
+                    }).join('') +
+                  '</select></td>' +
+                  '<td><input class="admin-inline-input" type="number" data-k="order" value="' + (t.order != null ? t.order : 0) + '" style="width:60px;" /></td>' +
+                  '<td><input class="admin-inline-input" data-k="description" value="' + escapeAttr(t.description || '') + '" /></td>' +
+                  '<td>' +
+                    visibilityBadge(isPublic) + ' ' +
+                    '<button type="button" class="admin-btn admin-btn--sm row-toggle-vis" data-is-public="' + isPublic + '">' +
+                      (isPublic ? 'Set Hidden' : 'Set Public') +
+                    '</button>' +
+                  '</td>' +
+                  '<td>' +
+                    '<button type="button" class="admin-btn admin-btn--sm row-save">Save</button> ' +
+                    '<button type="button" class="admin-btn admin-btn--sm admin-btn--danger row-del">Delete</button>' +
+                  '</td>' +
+                  '</tr>'
+                );
+              }).join('') +
               '</tbody></table>';
 
             document.querySelectorAll('.row-save').forEach(function (btn) {
@@ -133,28 +136,30 @@
                   description: tr.querySelector('[data-k=description]').value,
                 };
                 AdminData.updateTopic(id, payload)
-                  .then(function () {
-                    showMsg('Saved.', true);
-                    return loadTopics();
-                  })
-                  .catch(function (e) {
-                    showMsg(e.message || 'Save failed', false);
-                  });
+                  .then(function () { showMsg('Saved.', true); return loadTopics(); })
+                  .catch(function (e) { showMsg(e.message || 'Save failed', false); });
               });
             });
+
+            document.querySelectorAll('.row-toggle-vis').forEach(function (btn) {
+              btn.addEventListener('click', function () {
+                var tr = btn.closest('tr');
+                var id = tr.getAttribute('data-id');
+                var currentlyPublic = btn.getAttribute('data-is-public') === 'true';
+                AdminData.updateTopic(id, { isPublic: !currentlyPublic })
+                  .then(function () { showMsg('Visibility updated.', true); return loadTopics(); })
+                  .catch(function (e) { showMsg(e.message || 'Update failed', false); });
+              });
+            });
+
             document.querySelectorAll('.row-del').forEach(function (btn) {
               btn.addEventListener('click', function () {
                 var tr = btn.closest('tr');
                 var id = tr.getAttribute('data-id');
                 if (!confirm('Delete this topic?')) return;
                 AdminData.deleteTopic(id)
-                  .then(function () {
-                    showMsg('Deleted.', true);
-                    return loadTopics();
-                  })
-                  .catch(function (e) {
-                    showMsg(e.message || 'Delete failed', false);
-                  });
+                  .then(function () { showMsg('Deleted.', true); return loadTopics(); })
+                  .catch(function (e) { showMsg(e.message || 'Delete failed', false); });
               });
             });
           });
@@ -184,18 +189,13 @@
             name: fd.get('name'),
             order: Number(fd.get('order')) || 0,
             description: fd.get('description') || '',
+            isPublic: fd.get('isPublic') === 'on',
           };
           var sl = fd.get('slug');
           if (sl && String(sl).trim()) payload.slug = String(sl).trim();
           AdminData.createTopic(payload)
-            .then(function () {
-              e.target.reset();
-              showMsg('Topic created.', true);
-              return loadTopics();
-            })
-            .catch(function (err) {
-              showMsg(err.message || 'Create failed', false);
-            });
+            .then(function () { e.target.reset(); showMsg('Topic created.', true); return loadTopics(); })
+            .catch(function (err) { showMsg(err.message || 'Create failed', false); });
         });
       })();
     </script>
