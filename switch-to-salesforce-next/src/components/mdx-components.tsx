@@ -42,7 +42,7 @@ export function Callout({
   return (
     <div className={cls[variant]}>
       <div className="box-label">{label ?? defaultLabels[variant]}</div>
-      <p>{children}</p>
+      {children}
     </div>
   );
 }
@@ -87,15 +87,17 @@ export function PhaseDesc({ children }: { children: React.ReactNode }) {
 export function PhaseTags({ num, children }: { num: 1 | 2 | 3 | 4 | 5; children: React.ReactNode }) {
   const idx = num - 1;
   const tagCls = tagColors[idx] ?? "tag-green";
+
+  // Collect the raw text regardless of whether MDX delivered it as a
+  // plain string or wrapped it inside a <p> element.
+  const raw = collectText(children);
+  const tags = raw.split("|").map((t) => t.trim()).filter(Boolean);
+
   return (
     <div className="rm-tags">
-      {React.Children.map(children, (child) =>
-        typeof child === "string"
-          ? child.split("|").map((t) => t.trim()).filter(Boolean).map((t) => (
-              <span key={t} className={`rm-tag ${tagCls}`}>{t}</span>
-            ))
-          : child
-      )}
+      {tags.map((t) => (
+        <span key={t} className={`rm-tag ${tagCls}`}>{t}</span>
+      ))}
     </div>
   );
 }
@@ -216,7 +218,7 @@ export function Oneliner({
 }) {
   return (
     <div className="oneliner">
-      <p>{children}</p>
+      {children}
       {attr && <div className="ol-attr">{attr}</div>}
     </div>
   );
@@ -236,7 +238,7 @@ export function IQSection({
   return (
     <div className="interview-section">
       <div className="int-header">
-        <span className="int-tag">Interview Questions</span>
+        <span className="int-tag">Interview Prep</span>
       </div>
       <h2>{title}</h2>
       {sub && <p className="int-sub">{sub}</p>}
