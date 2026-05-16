@@ -1152,6 +1152,14 @@ details.snav__group[open] .snav__chevron {
   max-width: none;
 }
 
+/* .article-wrap (styles.css) sets background: var(--bg-primary) which creates
+   a card/box effect when rendered inside the SPA reader — make it transparent
+   so the article blends naturally into the page background. */
+.spa-article .article-wrap {
+  background: transparent;
+  min-height: unset;
+}
+
 /* Breadcrumb */
 .spa-breadcrumb {
   display: flex;
